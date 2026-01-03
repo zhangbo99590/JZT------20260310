@@ -1,0 +1,457 @@
+/* AI政策搜索页面样式 */
+
+.searchPage {
+  min-height: 100vh;
+  background: #f5f7fa;
+}
+
+/* 搜索区域 */
+.searchSection {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  padding: 60px 24px 80px;
+  position: relative;
+}
+
+.searchSection::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 60px;
+  background: #f5f7fa;
+  border-radius: 60px 60px 0 0;
+}
+
+.searchContainer {
+  max-width: 1200px;
+  margin: 0 auto;
+  position: relative;
+  z-index: 1;
+}
+
+.searchTitle {
+  color: white;
+  font-size: 42px;
+  font-weight: 700;
+  text-align: center;
+  margin-bottom: 16px;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+.searchSubtitle {
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 18px;
+  text-align: center;
+  margin-bottom: 40px;
+}
+
+.searchBox {
+  max-width: 800px;
+  margin: 0 auto 24px;
+}
+
+.searchBox :global(.ant-input-search) {
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+}
+
+.searchBox :global(.ant-input-affix-wrapper) {
+  padding: 16px 20px;
+  font-size: 16px;
+  border-radius: 12px;
+  border: none;
+}
+
+.searchBox :global(.ant-btn-primary) {
+  height: 56px;
+  padding: 0 32px;
+  font-size: 16px;
+  border-radius: 0 12px 12px 0;
+}
+
+.hotSearches {
+  max-width: 800px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.hotTag {
+  cursor: pointer;
+  background: rgba(255, 255, 255, 0.2);
+  color: white;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  transition: all 0.3s ease;
+}
+
+.hotTag:hover {
+  background: rgba(255, 255, 255, 0.3);
+  border-color: rgba(255, 255, 255, 0.5);
+  transform: translateY(-2px);
+}
+
+/* 搜索结果区域 */
+.resultsSection {
+  padding: 24px;
+  margin-top: -40px;
+  position: relative;
+  z-index: 2;
+}
+
+.resultsContainer {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.loadingContainer {
+  text-align: center;
+  padding: 80px 20px;
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+}
+
+.resultsHeader {
+  margin-bottom: 24px;
+}
+
+.resultsHeader h2 {
+  font-size: 24px;
+  font-weight: 600;
+  color: #262626;
+  margin: 0;
+}
+
+.resultCount {
+  color: #1890ff;
+  font-weight: 700;
+}
+
+/* 高级搜索面板 */
+.advancedSearch {
+  max-width: 800px;
+  margin: 24px auto;
+  padding: 24px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  backdrop-filter: blur(10px);
+}
+
+/* 多选工具栏 */
+.selectionToolbar {
+  margin-bottom: 24px;
+  background: linear-gradient(135deg, #e6f7ff 0%, #bae7ff 100%);
+  border: 2px solid #1890ff;
+  border-radius: 12px;
+}
+
+.selectionToolbar :global(.ant-card-body) {
+  padding: 16px 24px;
+}
+
+/* 政策卡片列表 */
+.resultsList {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.policyCard {
+  border-radius: 16px;
+  border: 2px solid #f0f0f0;
+  transition: all 0.3s ease;
+  overflow: hidden;
+  position: relative;
+}
+
+.policyCard:hover {
+  border-color: #1890ff;
+  box-shadow: 0 8px 24px rgba(24, 144, 255, 0.15);
+  transform: translateY(-4px);
+}
+
+.policyCard.selected {
+  border-color: #1890ff;
+  background: #f0f7ff;
+  box-shadow: 0 4px 16px rgba(24, 144, 255, 0.2);
+}
+
+.policyCard.selected::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 4px;
+  background: linear-gradient(180deg, #1890ff 0%, #52c41a 100%);
+}
+
+.policyCard :global(.ant-card-body) {
+  padding: 24px;
+}
+
+.cardHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 16px;
+  gap: 16px;
+}
+
+.cardTitle {
+  flex: 1;
+  display: flex;
+  align-items: center;
+}
+
+.titleText {
+  font-size: 18px;
+  font-weight: 600;
+  color: #262626;
+  line-height: 1.4;
+}
+
+.matchScore {
+  padding: 6px 16px;
+  border-radius: 20px;
+  color: white;
+  font-weight: 600;
+  font-size: 14px;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.cardContent {
+  margin-bottom: 20px;
+}
+
+.summary {
+  color: #595959;
+  font-size: 15px;
+  line-height: 1.6;
+  margin-bottom: 16px;
+}
+
+.cardMeta {
+  margin-bottom: 12px;
+}
+
+.sources {
+  display: flex;
+  align-items: center;
+  padding-top: 12px;
+  border-top: 1px solid #f0f0f0;
+}
+
+.cardActions {
+  display: flex;
+  gap: 12px;
+}
+
+.cardActions button {
+  flex: 1;
+}
+
+/* 政策详情抽屉 */
+.policyDetail {
+  padding: 8px 0;
+}
+
+.detailSection {
+  margin-bottom: 32px;
+}
+
+.detailSection:last-child {
+  margin-bottom: 0;
+}
+
+.sectionTitle {
+  font-size: 18px;
+  font-weight: 600;
+  color: #262626;
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.sectionContent {
+  color: #595959;
+  font-size: 15px;
+  line-height: 1.8;
+  margin: 0;
+}
+
+.listContent {
+  margin: 0;
+  padding-left: 24px;
+  color: #595959;
+  font-size: 15px;
+  line-height: 1.8;
+}
+
+.listContent li {
+  margin-bottom: 8px;
+}
+
+.relatedPolicies {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.relatedItem {
+  display: flex;
+  align-items: center;
+  padding: 12px;
+  background: #f5f7fa;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.relatedItem:hover {
+  background: #e6f7ff;
+  transform: translateX(4px);
+}
+
+.relatedItem span {
+  color: #262626;
+  font-size: 14px;
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+  .searchSection {
+    padding: 40px 16px 60px;
+  }
+
+  .searchTitle {
+    font-size: 32px;
+  }
+
+  .searchSubtitle {
+    font-size: 16px;
+  }
+
+  .advancedSearch {
+    padding: 16px;
+  }
+
+  .resultsSection {
+    padding: 16px;
+  }
+
+  .resultsHeader > div {
+    flex-direction: column;
+    align-items: flex-start !important;
+    gap: 12px;
+  }
+
+  .selectionToolbar :global(.ant-card-body) {
+    padding: 12px 16px;
+  }
+
+  .policyCard :global(.ant-card-body) {
+    padding: 16px;
+  }
+
+  .cardHeader {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .matchScore {
+    align-self: flex-start;
+  }
+
+  .cardActions {
+    flex-direction: column;
+  }
+
+  .cardActions button {
+    width: 100%;
+  }
+}
+
+/* 空状态 */
+:global(.ant-empty) {
+  padding: 60px 20px;
+}
+
+/* 抽屉样式优化 */
+:global(.ant-drawer-body) {
+  padding: 24px;
+}
+
+/* 标签样式优化 */
+:global(.ant-tag) {
+  border-radius: 4px;
+  padding: 4px 12px;
+  font-size: 13px;
+  transition: all 0.3s ease;
+}
+
+/* 可点击标签样式 */
+.cardMeta :global(.ant-tag[style*="cursor: pointer"]),
+.detailSection :global(.ant-tag[style*="cursor: pointer"]) {
+  transition: all 0.3s ease;
+}
+
+.cardMeta :global(.ant-tag[style*="cursor: pointer"]:hover),
+.detailSection :global(.ant-tag[style*="cursor: pointer"]:hover) {
+  transform: translateY(-2px);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  opacity: 0.85;
+}
+
+/* 来源样式 */
+.sources {
+  display: flex;
+  align-items: center;
+  padding-top: 12px;
+  border-top: 1px solid #f0f0f0;
+}
+
+.sources :global(.ant-tag) {
+  transition: all 0.3s ease;
+}
+
+.sources :global(.ant-tag:hover) {
+  transform: translateY(-2px);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+/* 按钮样式优化 */
+.cardActions :global(.ant-btn) {
+  border-radius: 8px;
+  height: 40px;
+  font-weight: 500;
+}
+
+/* 加载动画 */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.policyCard {
+  animation: fadeIn 0.5s ease-out;
+}
+
+.policyCard:nth-child(1) {
+  animation-delay: 0.1s;
+}
+
+.policyCard:nth-child(2) {
+  animation-delay: 0.2s;
+}
+
+.policyCard:nth-child(3) {
+  animation-delay: 0.3s;
+}
