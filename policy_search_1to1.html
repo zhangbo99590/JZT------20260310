@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>智慧政策平台 - 政策搜索演示 (1:1 还原版)</title>
+    
+    <!-- React & ReactDOM -->
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    
+    <!-- Babel -->
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    
+    <!-- DayJS -->
+    <script src="https://unpkg.com/dayjs@1.11.10/dayjs.min.js"></script>
+
+    <!-- Ant Design -->
+    <link rel="stylesheet" href="https://unpkg.com/antd@5.12.2/dist/reset.css">
+    <script src="https://unpkg.com/antd@5.12.2/dist/antd.min.js"></script>
+    
+    <!-- Ant Design Icons -->
+    <script src="https://unpkg.com/@ant-design/icons/dist/index.umd.js"></script>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <style>
+        body { margin: 0; padding: 0; background: #f5f7fa; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', sans-serif; }
+        .page-wrapper { min-height: 100vh; }
+        .policy-card:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.1); transition: all 0.3s; }
+        
+        /* 1:1 Header Styles */
+        .header-title { color: #0f172a; font-size: 48px; font-weight: 800; margin-bottom: 12px; line-height: 1.1; letter-spacing: -0.02em; }
+        .header-subtitle { color: #64748b; font-size: 18px; margin-bottom: 8px; }
+        
+        /* Tab Styles */
+        .tab-item { cursor: pointer; font-size: 20px; padding-bottom: 12px; transition: all 0.3s; display: flex; align-items: center; gap: 8px; border-bottom: 3px solid transparent; }
+        .tab-item.active { color: #1677ff; font-weight: 700; border-bottom-color: #1677ff; }
+        .tab-item.inactive { color: #94a3b8; font-weight: 500; }
+
+        /* Filter Tag Styles */
+        .filter-tag { cursor: pointer; transition: all 0.2s; }
+        .filter-tag:hover { transform: scale(1.05); }
+        .filter-tag-active { background: linear-gradient(to right, #2563eb, #1d4ed8) !important; color: white !important; border-color: #2563eb !important; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1) !important; }
+        .filter-tag-inactive { background: white !important; color: #4b5563 !important; border-color: #e5e7eb !important; }
+        .filter-tag-inactive:hover { border-color: #3b82f6 !important; color: #2563eb !important; }
+
+        /* Industry Tag Styles */
+        .industry-tag-active { background: linear-gradient(to right, #059669, #047857) !important; color: white !important; border-color: #059669 !important; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1) !important; }
+        .industry-tag-inactive { background: white !important; color: #4b5563 !important; border-color: #e5e7eb !important; }
+        .industry-tag-inactive:hover { border-color: #10b981 !important; color: #059669 !important; }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useEffect, useMemo } = React;
+        const { 
+            Button, Input, Card, Space, Tag, Badge, List, 
+            Typography, message, Modal, Tooltip, Spin, Divider, Alert
+        } = antd;
+        const { Title, Text, Paragraph } = Typography;
+
+        // Icons
+        const Icons = window['ant-design-icons'] || {};
+        const SearchOutlined = Icons.SearchOutlined || (() => <span>🔍</span>);
+        const RobotOutlined = Icons.RobotOutlined || (() => <span>🤖</span>);
+        const ReloadOutlined = Icons.ReloadOutlined || (() => <span>↻</span>);
+        const InfoCircleOutlined = Icons.InfoCircleOutlined || (() => <span>ℹ️</span>);
+        const FilterOutlined = Icons.FilterOutlined || (() => <span>📊</span>);
+        const DownOutlined = Icons.DownOutlined || (() => <span>▼</span>);
+        const UpOutlined = Icons.UpOutlined || (() => <span>▲</span>);
+        const CloseOutlined = Icons.CloseOutlined || (() => <span>✕</span>);
+
+        // Data Constants
+        const BEIJING_DISTRICTS = [
+            '东城区', '西城区', '朝阳区', '海淀区', '丰台区', '石景山区',
+            '通州区', '顺义区', '昌平区', '大兴区', '房山区', '门头沟区',
+            '怀柔区', '平谷区', '密云区', '延庆区'
+        ];
+        const HIGH_FREQUENCY_DISTRICTS = ['东城区', '西城区', '朝阳区', '海淀区', '丰台区', '石景山区'];
+
+        const INDUSTRIES = [
+            { category: '城乡建设与生态环境', subcategories: ['城乡建设、环境保护 / 节能与资源综合利用', '城乡建设、环境保护 / 城市规划', '环境保护 / 污染防治', '城市建设 / 基础设施'] },
+            { category: '科技创新与教育', subcategories: ['科技、教育 / 科技', '科技创新 / 研发投入', '教育培训 / 人才培养', '技术转移 / 成果转化'] },
+            { category: '综合政务与监管', subcategories: ['综合政务 / 安全生产监管 / 其他', '市场监管、安全生产监管 / 其他', '综合政务 / 政务公开', '行政审批 / 简政放权'] }
+        ];
+
+        const hotSearchKeywords = ['高新技术企业认定', '专精特新企业', '研发费用加计扣除', '科技创新券', '人才引进政策', '金融科技创新'];
+
+        const mockPolicies = [
+            { id: '1', title: '北京市丰台区促进金融科技创新发展专项资金管理办法', summary: '支持丰台区金融科技企业创新发展，提供专项资金支持技术创新、产品研发等，最高补贴500万元。', publishOrg: '丰台区金融服务办公室', district: '丰台区', category: '金融补贴', tags: ['金融科技', '专项资金'], matchScore: 92, publishDate: '2024-03-15' },
+            { id: '2', title: '朝阳区高新技术企业认定奖励政策实施细则', summary: '对通过高新技术企业认定的朝阳区企业给予奖励，首次认定奖励30万元，重新认定奖励20万元。', publishOrg: '朝阳区科学技术委员会', district: '朝阳区', category: '科技创新', tags: ['高新技术', '奖励政策'], matchScore: 88, publishDate: '2024-02-20' }
+        ];
+
+        // Components
+        const PolicyCard = ({ policy }) => (
+            <Card className="policy-card" style={{ marginBottom: 16, borderRadius: 12, border: '1px solid #f1f5f9' }}>
+                <div className="flex justify-between items-start mb-3">
+                    <Title level={5} style={{ margin: 0, fontSize: 18, fontWeight: 700 }}>{policy.title}</Title>
+                    <Tag color="blue" style={{ margin: 0, borderRadius: 4, fontWeight: 600 }}>{policy.matchScore}% 匹配</Tag>
+                </div>
+                <Paragraph ellipsis={{ rows: 2 }} className="text-slate-500 mb-4">{policy.summary}</Paragraph>
+                <div className="flex flex-wrap gap-2 items-center">
+                    <Tag className="bg-slate-100 border-none text-slate-600">{policy.district}</Tag>
+                    <Tag className="bg-blue-50 border-none text-blue-600">{policy.category}</Tag>
+                    <span className="text-slate-400 text-sm ml-auto">{policy.publishDate}</span>
+                </div>
+            </Card>
+        );
+
+        const AIPolicySearchV2 = () => {
+            const [searchTab, setSearchTab] = useState("search");
+            const [searchKeyword, setSearchKeyword] = useState("");
+            const [selectedDistricts, setSelectedDistricts] = useState([]);
+            const [selectedIndustries, setSelectedIndustries] = useState([]);
+            const [showAllDistricts, setShowAllDistricts] = useState(false);
+            const [showResults, setShowResults] = useState(false);
+            const [loading, setLoading] = useState(false);
+
+            const displayedDistricts = showAllDistricts ? BEIJING_DISTRICTS : HIGH_FREQUENCY_DISTRICTS;
+            const displayedIndustries = INDUSTRIES.flatMap(cat => cat.subcategories).slice(0, 8);
+
+            const handleSearch = () => {
+                setLoading(true);
+                setShowResults(true);
+                setTimeout(() => setLoading(false), 800);
+            };
+
+            const handleReset = () => {
+                setSearchKeyword("");
+                setSelectedDistricts([]);
+                setSelectedIndustries([]);
+                setShowResults(false);
+                message.success('已重置所有筛选条件');
+            };
+
+            const totalFilters = selectedDistricts.length + selectedIndustries.length;
+
+            return (
+                <div className="min-h-screen bg-slate-50">
+                    {/* Header */}
+                    <div className="bg-white py-10 border-b border-slate-200">
+                        <div className="max-w-6xl mx-auto px-8 text-center">
+                            <h1 className="header-title">项目列表</h1>
+                            <p className="header-subtitle">展示可申报的政策项目列表，支持筛选和快速启动申报</p>
+                            <p className="text-slate-500 text-xl mb-8">精准匹配，辅助补贴申报</p>
+
+                            {/* Tabs */}
+                            <div className="flex justify-center gap-12 mb-6">
+                                <div className={`tab-item ${searchTab === 'search' ? 'active' : 'inactive'}`} onClick={() => setSearchTab('search')}>
+                                    <SearchOutlined /> 政策搜索
+                                </div>
+                                <div className={`tab-item ${searchTab === 'match' ? 'active' : 'inactive'}`} onClick={() => setSearchTab('match')}>
+                                    <RobotOutlined /> 政策匹配
+                                    <Tooltip title="完善企业信息后匹配更精准">
+                                        <InfoCircleOutlined style={{ fontSize: 14, color: '#faad14' }} />
+                                    </Tooltip>
+                                </div>
+                            </div>
+                            <div className="text-slate-400 text-sm">
+                                {searchTab === 'search' ? <><SearchOutlined className="mr-1" /> 政策搜索：主动检索政策</> : <><RobotOutlined className="mr-1" /> 政策匹配：智能推荐适配政策</>}
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Content */}
+                    <div className="max-w-6xl mx-auto px-8 py-8">
+                        {searchTab === 'search' && (
+                            <div className="space-y-6">
+                                {/* Main Search Box */}
+                                <div className="flex gap-4">
+                                    <Input 
+                                        size="large" 
+                                        placeholder="请输入政策标题或关键词..." 
+                                        prefix={<SearchOutlined className="text-slate-300" />}
+                                        value={searchKeyword}
+                                        onChange={e => setSearchKeyword(e.target.value)}
+                                        className="rounded-lg h-12 shadow-sm border-slate-200"
+                                        onPressEnter={handleSearch}
+                                    />
+                                    <Button type="primary" size="large" className="h-12 px-8 rounded-lg font-bold" onClick={handleSearch}>搜索</Button>
+                                </div>
+
+                                {/* Filter Panel */}
+                                <Card className="rounded-xl border-slate-200 shadow-sm">
+                                    <div className="flex items-center justify-between mb-6">
+                                        <div className="flex items-center gap-2">
+                                            <FilterOutlined className="text-blue-600" />
+                                            <span className="font-bold text-slate-700">筛选条件</span>
+                                            {totalFilters > 0 && <Badge count={totalFilters} style={{ backgroundColor: '#1890ff' }} />}
+                                        </div>
+                                        <Button size="small" icon={<ReloadOutlined />} onClick={handleReset} className="text-slate-500 hover:text-blue-600 border-slate-200">重置筛选</Button>
+                                    </div>
+
+                                    {/* Districts */}
+                                    <div className="mb-6">
+                                        <div className="flex items-center gap-2 mb-3">
+                                            <span className="text-sm font-bold text-slate-600">北京市行政区域</span>
+                                            <span className="text-xs text-slate-400">支持多选</span>
+                                        </div>
+                                        <div className="flex flex-wrap gap-2">
+                                            {displayedDistricts.map(d => (
+                                                <Tag 
+                                                    key={d} 
+                                                    className={`filter-tag px-3 py-1 rounded-md border ${selectedDistricts.includes(d) ? 'filter-tag-active' : 'filter-tag-inactive'}`}
+                                                    onClick={() => setSelectedDistricts(prev => prev.includes(d) ? prev.filter(x => x !== d) : [...prev, d])}
+                                                >
+                                                    {d}
+                                                </Tag>
+                                            ))}
+                                            <Button type="text" size="small" className="text-blue-600" onClick={() => setShowAllDistricts(!showAllDistricts)}>
+                                                {showAllDistricts ? <><UpOutlined /> 收起</> : <><DownOutlined /> 更多</>}
+                                            </Button>
+                                        </div>
+                                    </div>
+
+                                    {/* Industries */}
+                                    <div className="mb-6">
+                                        <div className="flex items-center gap-2 mb-3">
+                                            <span className="text-sm font-bold text-slate-600">行业筛选</span>
+                                            <span className="text-xs text-slate-400">核心筛选</span>
+                                        </div>
+                                        <div className="flex flex-wrap gap-2">
+                                            {displayedIndustries.map(i => (
+                                                <Tag 
+                                                    key={i} 
+                                                    className={`filter-tag px-3 py-1 rounded-md border max-w-xs truncate ${selectedIndustries.includes(i) ? 'industry-tag-active' : 'industry-tag-inactive'}`}
+                                                    onClick={() => setSelectedIndustries(prev => prev.includes(i) ? prev.filter(x => x !== i) : [...prev, i])}
+                                                >
+                                                    {i}
+                                                </Tag>
+                                            ))}
+                                        </div>
+                                    </div>
+
+                                    {/* Quick Search Button */}
+                                    {(totalFilters > 0 || searchKeyword) && (
+                                        <div className="pt-4 border-t border-slate-100 flex justify-center">
+                                            <Button type="primary" size="large" icon={<SearchOutlined />} className="px-10 rounded-lg h-12 bg-blue-600" onClick={handleSearch}>立即搜索</Button>
+                                        </div>
+                                    )}
+                                </Card>
+
+                                {/* Hot Keywords */}
+                                <div className="flex items-center gap-3 px-2">
+                                    <span className="text-slate-400 text-sm shrink-0">热门搜索：</span>
+                                    <div className="flex flex-wrap gap-2">
+                                        {hotSearchKeywords.map(k => (
+                                            <Tag 
+                                                key={k} 
+                                                className="cursor-pointer bg-white hover:border-blue-400 hover:text-blue-600 transition-colors px-3 py-1"
+                                                onClick={() => {setSearchKeyword(k); handleSearch();}}
+                                            >
+                                                {k}
+                                            </Tag>
+                                        ))}
+                                    </div>
+                                </div>
+
+                                {/* Results Area */}
+                                {showResults && (
+                                    <div className="mt-8">
+                                        <div className="flex justify-between items-center mb-6">
+                                            <Text className="text-lg">找到 <span className="font-bold text-blue-600">{mockPolicies.length}</span> 条相关政策</Text>
+                                            <Tag color="green">查询耗时: 85ms</Tag>
+                                        </div>
+                                        {loading ? (
+                                            <div className="py-20 text-center"><Spin size="large" tip="正在为您匹配最精准的政策..." /></div>
+                                        ) : (
+                                            <List dataSource={mockPolicies} renderItem={p => <PolicyCard policy={p} />} />
+                                        )}
+                                    </div>
+                                )}
+                            </div>
+                        )}
+
+                        {searchTab === 'match' && (
+                            <Card className="rounded-2xl py-20 shadow-xl border-none text-center">
+                                <div className="w-24 h-24 bg-blue-50 rounded-full flex items-center justify-center mx-auto mb-8">
+                                    <RobotOutlined style={{ fontSize: 48, color: '#1677ff' }} />
+                                </div>
+                                <h2 className="text-3xl font-bold text-slate-800 mb-4">智能政策匹配</h2>
+                                <p className="text-slate-500 text-lg mb-12 max-w-xl mx-auto">输入您的企业名称，系统将基于大数据为您智能匹配最适配的政策项目</p>
+                                <div className="max-w-2xl mx-auto">
+                                    <Input.Search 
+                                        placeholder="请输入企业名称，例如：北京某某科技有限公司" 
+                                        enterButton="开始智能匹配" 
+                                        size="large" 
+                                        className="h-14 rounded-xl overflow-hidden"
+                                        onSearch={v => {
+                                            if(!v) return message.warning('请输入企业名称');
+                                            message.loading('正在分析企业工商数据...', 1)
+                                                .then(() => message.loading('正在多维度匹配政策库...', 1))
+                                                .then(() => message.success('匹配完成！为您推荐3项核心政策'));
+                                        }}
+                                    />
+                                    <p className="mt-6 text-slate-400 text-sm">已累计为 300,000+ 家企业提供精准政策服务</p>
+                                </div>
+                            </Card>
+                        )}
+                    </div>
+                </div>
+            );
+        };
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<AIPolicySearchV2 />);
+    </script>
+</body>
+</html>

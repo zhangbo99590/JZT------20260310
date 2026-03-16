@@ -6,6 +6,8 @@
  * @module searchUtils
  */
 
+import { simulateDelay } from "./commonUtils";
+
 /**
  * 搜索选项接口
  */
@@ -225,15 +227,6 @@ export function paginateArray<T>(
     pageSize,
     totalPages: Math.ceil(items.length / pageSize),
   };
-}
-
-/**
- * 模拟API延迟
- * @param ms 延迟毫秒数
- * @returns Promise
- */
-export function simulateDelay(ms: number = 300): Promise<void> {
-  return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
 /**

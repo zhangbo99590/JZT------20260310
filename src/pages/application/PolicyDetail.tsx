@@ -56,14 +56,15 @@ import {
   EyeOutlined,
   TrophyOutlined,
   RocketOutlined,
-  SafetyOutlined
+  SafetyOutlined,
+  FormOutlined
 } from '@ant-design/icons';
 import ReactECharts from 'echarts-for-react';
 import * as echarts from 'echarts';
 import { useNavigate, useLocation, useParams } from 'react-router-dom';
 import { DESIGN_TOKENS } from './config/designTokens';
 import html2canvas from 'html2canvas';
-import { jsPDF } from 'jspdf';
+import jsPDF from 'jspdf';
 import dayjs from 'dayjs';
 import styles from './PolicyDetail.module.css';
 
@@ -126,25 +127,27 @@ const PolicyDetail: React.FC = () => {
   const [applicationData, setApplicationData] = useState<ApplicationDetailData | null>(null);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [loginModalVisible, setLoginModalVisible] = useState(false);
+  const [chartsLoading, setChartsLoading] = useState(true);
   const printRef = useRef<HTMLDivElement>(null);
 
   // 模拟数据
   const mockPolicyData: PolicyDetailData = {
     id: '1',
-    title: '2024-2025年北京市节能技术改造项目奖励',
+    title: '专精特新中小企业认定',
     status: 'in_progress',
-    deadline: '2026-03-31',
-    startTime: '2026-01-01',
-    department: '北京市发展和改革委员会',
+    deadline: '2026-06-30',
+    startTime: '2026-03-01',
+    department: '北京市经济和信息化局',
     region: '北京市',
-    funding: '最高500万元',
+    funding: '无直接资金，享受培育政策',
     type: '技术创新',
-    description: '为鼓励企业实施节能技术改造，提升能源利用效率，降低能源消耗，促进绿色低碳发展，特制定本奖励办法。',
+    description: '引导中小企业走专业化、精细化、特色化、新颖化发展道路，增强核心竞争力。',
     conditions: [
       '在北京市注册的独立法人企业',
-      '完成节能技术改造项目并通过验收',
-      '节能量达到100吨标准煤以上',
-      '项目投资额在50万元以上'
+      '从事特定细分市场时间达到2年以上',
+      '上年度研发费用总额不低于100万元',
+      '上年度营业收入总额在1000万元以上',
+      '主导产品在细分市场占有率排名国内前列'
     ],
     materials: [
       {
@@ -283,6 +286,15 @@ const PolicyDetail: React.FC = () => {
     return 'in_progress';
   };
 
+  // 更新页面标题和记录日志
+  useEffect(() => {
+    if (policyData?.title) {
+      const originalTitle = document.title;
+      document.title = policyData.title;
+      console.log(`[${new Date().toISOString()}] Page Title Updated: "${originalTitle}" -> "${policyData.title}"`);
+    }
+  }, [policyData?.title]);
+
   // 加载数据
   useEffect(() => {
     const loadData = async () => {
@@ -314,6 +326,14 @@ const PolicyDetail: React.FC = () => {
 
     loadData();
   }, [id, location.state]);
+
+  // Simulate chart data loading
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setChartsLoading(false);
+    }, 800);
+    return () => clearTimeout(timer);
+  }, []);
 
   // 处理返回
   const handleBack = () => {
@@ -417,16 +437,27 @@ const PolicyDetail: React.FC = () => {
     );
   }
 
-  const status = getProjectStatus(policyData);
-  const countdownDays = status === 'in_progress' ? getCountdownDays(policyData.deadline) : 0;
+  const status = policyData ? getProjectStatus(policyData) : 'not_started';
+  const countdownDays = policyData && status === 'in_progress' ? getCountdownDays(policyData.deadline) : 0;
 
-  // ECharts 配置
+  // Enhanced ECharts configuration with better interactivity
   const getRadarOption = () => ({
     title: {
       text: '政策竞争力分析',
-      textStyle: { fontSize: 14 }
+      textStyle: { fontSize: 14, fontWeight: 'bold' }
     },
-    tooltip: {},
+    tooltip: {
+      trigger: 'item',
+      formatter: (params: any) => {
+        const indicators = ['资金力度', '申报难度', '竞争程度', '匹配度', '获批率'];
+        let result = `<div style="padding: 8px;"><strong>${params.name}</strong><br/>`;
+        params.value.forEach((val: number, idx: number) => {
+          result += `${indicators[idx]}: <strong>${val}%</strong><br/>`;
+        });
+        result += '</div>';
+        return result;
+      }
+    },
     radar: {
       indicator: [
         { name: '资金力度', max: 100 },
@@ -441,14 +472,108 @@ const PolicyDetail: React.FC = () => {
     series: [{
       name: '政策分析',
       type: 'radar',
+      emphasis: {
+        lineStyle: {
+          width: 4
+        }
+      },
       data: [
         {
           value: [85, 60, 70, 90, 75],
           name: '当前政策',
           itemStyle: { color: DESIGN_TOKENS.colors.primary },
-          areaStyle: { opacity: 0.3 }
+          areaStyle: { opacity: 0.3 },
+          label: {
+            show: true,
+            formatter: (params: any) => params.value
+          }
         }
+      ]
     }]
+  });
+
+  // Enhanced trend chart with detailed tooltips
+  const getTrendOption = () => ({
+    title: {
+      text: '申报趋势分析',
+      textStyle: { fontSize: 14, fontWeight: 'bold' }
+    },
+    tooltip: {
+      trigger: 'axis',
+      axisPointer: {
+        type: 'cross',
+        label: {
+          backgroundColor: '#6a7985'
+        }
+      },
+      formatter: (params: any) => {
+        let result = `<div style="padding: 8px;"><strong>${params[0].axisValue}</strong><br/>`;
+        params.forEach((item: any) => {
+          const rate = item.seriesName === '申报数量' ? 
+            ((params[1].value / item.value) * 100).toFixed(1) : 
+            ((item.value / params[0].value) * 100).toFixed(1);
+          result += `<div style="margin: 4px 0;">
+            ${item.marker} ${item.seriesName}: <strong>${item.value}</strong>
+            ${item.seriesName === '获批数量' ? `<span style="color: #52c41a;"> (获批率: ${rate}%)</span>` : ''}
+          </div>`;
+        });
+        result += '</div>';
+        return result;
+      }
+    },
+    legend: {
+      data: ['申报数量', '获批数量'],
+      bottom: 10
+    },
+    grid: {
+      left: '3%',
+      right: '4%',
+      bottom: '15%',
+      containLabel: true
+    },
+    xAxis: {
+      type: 'category',
+      data: ['1月', '2月', '3月', '4月', '5月', '6月'],
+      boundaryGap: false
+    },
+    yAxis: {
+      type: 'value',
+      name: '数量'
+    },
+    series: [
+      {
+        name: '申报数量',
+        type: 'line',
+        data: [45, 52, 38, 65, 58, 72],
+        itemStyle: { color: DESIGN_TOKENS.colors.primary },
+        smooth: true,
+        emphasis: {
+          focus: 'series',
+          itemStyle: {
+            borderWidth: 3,
+            borderColor: DESIGN_TOKENS.colors.primary,
+            shadowBlur: 10,
+            shadowColor: 'rgba(0, 0, 0, 0.3)'
+          }
+        }
+      },
+      {
+        name: '获批数量',
+        type: 'line',
+        data: [32, 38, 28, 48, 42, 54],
+        itemStyle: { color: DESIGN_TOKENS.colors.success },
+        smooth: true,
+        emphasis: {
+          focus: 'series',
+          itemStyle: {
+            borderWidth: 3,
+            borderColor: DESIGN_TOKENS.colors.success,
+            shadowBlur: 10,
+            shadowColor: 'rgba(0, 0, 0, 0.3)'
+          }
+        }
+      }
+    ]
   });
 
   // 检查是否超时 (>48h)
@@ -612,7 +737,7 @@ const PolicyDetail: React.FC = () => {
                 )
               },
               {
-                title: <span style={{ color: 'rgba(255,255,255,0.8)' }}>{applicationData ? '申报详情' : '政策详情'}</span>
+                title: <span style={{ color: 'rgba(255,255,255,0.8)' }}>{policyData.title}</span>
               }
             ]}
           />
@@ -675,37 +800,69 @@ const PolicyDetail: React.FC = () => {
             </Col>
             <Col>
               <Space direction="vertical" align="end">
-                <Button 
-                  type="primary" 
-                  size="large"
-                  icon={<StarFilled />}
-                  style={{
-                    backgroundColor: DESIGN_TOKENS.colors.text.white,
-                    color: DESIGN_TOKENS.colors.primary,
-                    border: 'none',
-                    borderRadius: DESIGN_TOKENS.borderRadius.md,
-                    fontWeight: 600,
-                    height: '48px',
-                    padding: '0 24px'
-                  }}
-                  onClick={handleApply}
-                >
-                  立即申报
-                </Button>
+                <Tooltip title={status === 'ended' ? '申报已截止' : '点击后自动关联当前政策和企业信息，直接进入申报向导'}>
+                  <Button 
+                    type="primary" 
+                    size="large"
+                    icon={<FormOutlined />}
+                    disabled={status === 'ended'}
+                    style={{
+                      backgroundColor: status === 'ended' ? '#d9d9d9' : DESIGN_TOKENS.colors.text.white,
+                      color: status === 'ended' ? '#999' : DESIGN_TOKENS.colors.primary,
+                      border: 'none',
+                      borderRadius: DESIGN_TOKENS.borderRadius.md,
+                      fontWeight: 600,
+                      height: '48px',
+                      padding: '0 24px',
+                      cursor: status === 'ended' ? 'not-allowed' : 'pointer'
+                    }}
+                    onClick={() => {
+                      if (status !== 'ended') {
+                        // Auto-associate policy and enterprise info
+                        const queryParams = new URLSearchParams({
+                          policyId: policyData.id,
+                          policyTitle: policyData.title,
+                          autoFill: 'true'
+                        });
+                        navigate(`/application/apply/${policyData.id}?${queryParams.toString()}`);
+                        message.success('已自动关联政策信息，请继续填写申报材料');
+                      }
+                    }}
+                  >
+                    {status === 'ended' ? '申报已截止' : '立即申报'}
+                  </Button>
+                </Tooltip>
                 <Space>
-                  <Tooltip title="收藏">
+                  <Tooltip title="收藏到我的收藏">
                     <Button 
                       type="text" 
                       icon={<HeartOutlined />} 
                       style={{ color: DESIGN_TOKENS.colors.text.white }}
+                      onClick={() => {
+                        message.success('已收藏至"我的收藏"');
+                      }}
                     />
                   </Tooltip>
-                  <Tooltip title="分享">
+                  <Tooltip title="分享政策">
                     <Button 
                       type="text" 
                       icon={<ShareAltOutlined />} 
                       style={{ color: DESIGN_TOKENS.colors.text.white }}
+                      onClick={() => {
+                        const shareUrl = window.location.href;
+                        navigator.clipboard.writeText(shareUrl);
+                        message.success('政策链接已复制到剪贴板');
+                      }}
                     />
+                  </Tooltip>
+                  <Tooltip title="查看次数">
+                    <Button 
+                      type="text" 
+                      icon={<EyeOutlined />} 
+                      style={{ color: DESIGN_TOKENS.colors.text.white }}
+                    >
+                      {Math.floor(Math.random() * 1000) + 500}
+                    </Button>
                   </Tooltip>
                 </Space>
               </Space>
@@ -753,32 +910,90 @@ const PolicyDetail: React.FC = () => {
         <Row gutter={[DESIGN_TOKENS.spacing.md, DESIGN_TOKENS.spacing.md]}>
           {/* 主内容区 */}
           <Col xs={24} lg={16}>
-            {/* Status Alert Card */}
-            <Alert
-              message={
-                <Space>
-                  <CalendarOutlined />
-                  <Text strong>申报状态提醒</Text>
-                </Space>
-              }
-              description={
-                <Space direction="vertical" size={4}>
-                  <Text>截止时间：{policyData.deadline}</Text>
-                  {status === 'in_progress' && countdownDays > 0 && (
-                    <Text type="warning">还剩 {countdownDays} 天，请抓紧申报！</Text>
-                  )}
-                </Space>
-              }
-              type={status === 'in_progress' ? 'info' : status === 'ended' ? 'error' : 'warning'}
-              showIcon
+            {/* Enhanced Status Alert Card with Progress */}
+            <Card
               style={{ 
                 marginBottom: DESIGN_TOKENS.spacing.md,
                 borderRadius: DESIGN_TOKENS.borderRadius.md,
-                boxShadow: DESIGN_TOKENS.shadow.sm
+                boxShadow: DESIGN_TOKENS.shadow.md,
+                border: `2px solid ${status === 'ended' ? DESIGN_TOKENS.colors.error : DESIGN_TOKENS.colors.primary}`
               }}
-            />
+              headStyle={{
+                backgroundColor: status === 'ended' ? '#fff1f0' : '#e6f7ff',
+                borderBottom: `2px solid ${status === 'ended' ? DESIGN_TOKENS.colors.error : DESIGN_TOKENS.colors.primary}`
+              }}
+              title={
+                <Space>
+                  <CalendarOutlined style={{ fontSize: '18px', color: status === 'ended' ? DESIGN_TOKENS.colors.error : DESIGN_TOKENS.colors.primary }} />
+                  <Text strong style={{ fontSize: DESIGN_TOKENS.fontSize.lg }}>申报状态提醒</Text>
+                  {status === 'ended' && <Tag color="error">已截止</Tag>}
+                  {status === 'in_progress' && <Tag color="processing">申报中</Tag>}
+                  {status === 'not_started' && <Tag color="default">未开始</Tag>}
+                </Space>
+              }
+            >
+              <Space direction="vertical" size={16} style={{ width: '100%' }}>
+                <Row gutter={24}>
+                  <Col span={8}>
+                    <Space direction="vertical" size={4}>
+                      <Text type="secondary" style={{ fontSize: DESIGN_TOKENS.fontSize.sm }}>开始时间</Text>
+                      <Text strong style={{ fontSize: DESIGN_TOKENS.fontSize.md }}>{policyData.startTime}</Text>
+                    </Space>
+                  </Col>
+                  <Col span={8}>
+                    <Space direction="vertical" size={4}>
+                      <Text type="secondary" style={{ fontSize: DESIGN_TOKENS.fontSize.sm }}>截止时间</Text>
+                      <Text strong style={{ fontSize: DESIGN_TOKENS.fontSize.md, color: status === 'ended' ? DESIGN_TOKENS.colors.error : DESIGN_TOKENS.colors.text.primary }}>
+                        {policyData.deadline}
+                      </Text>
+                    </Space>
+                  </Col>
+                  <Col span={8}>
+                    <Space direction="vertical" size={4}>
+                      <Text type="secondary" style={{ fontSize: DESIGN_TOKENS.fontSize.sm }}>剩余天数</Text>
+                      <Text strong style={{ 
+                        fontSize: DESIGN_TOKENS.fontSize.xl, 
+                        color: status === 'ended' ? DESIGN_TOKENS.colors.error : countdownDays <= 7 ? DESIGN_TOKENS.colors.warning : DESIGN_TOKENS.colors.success 
+                      }}>
+                        {status === 'ended' ? '已截止' : countdownDays > 0 ? `${countdownDays} 天` : '即将截止'}
+                      </Text>
+                    </Space>
+                  </Col>
+                </Row>
+                
+                {/* Progress Bar */}
+                <div>
+                  <Text type="secondary" style={{ fontSize: DESIGN_TOKENS.fontSize.sm, marginBottom: 8, display: 'block' }}>申报进度</Text>
+                  <Progress 
+                    percent={status === 'ended' ? 100 : status === 'in_progress' ? 50 : 0} 
+                    status={status === 'ended' ? 'exception' : 'active'}
+                    strokeColor={status === 'ended' ? DESIGN_TOKENS.colors.error : DESIGN_TOKENS.colors.primary}
+                  />
+                </div>
 
-            {/* 基本信息卡片 */}
+                {/* Current Audit Node */}
+                {status === 'in_progress' && (
+                  <Alert
+                    message="当前审核节点"
+                    description="政策申报材料准备阶段，请及时提交申报材料"
+                    type="info"
+                    showIcon
+                    icon={<ClockCircleOutlined />}
+                  />
+                )}
+                
+                {status === 'ended' && (
+                  <Alert
+                    message="申报已截止"
+                    description="该政策申报时间已结束，请关注其他可申报政策"
+                    type="error"
+                    showIcon
+                  />
+                )}
+              </Space>
+            </Card>
+
+            {/* Enhanced Basic Information Card */}
             <Card 
               title={
                 <Space>
@@ -797,43 +1012,74 @@ const PolicyDetail: React.FC = () => {
                 backgroundColor: '#FAFBFC'
               }}
             >
-              <Row gutter={[24, 16]}>
-                <Col span={12}>
-                  <Space direction="vertical" size={4}>
-                    <Text type="secondary">实施主体单位</Text>
-                    <Text strong style={{ fontSize: DESIGN_TOKENS.fontSize.md }}>{policyData.department}</Text>
+              <Descriptions column={2} bordered size="middle">
+                <Descriptions.Item label="实施主体单位" span={2}>
+                  <Text strong>{policyData.department}</Text>
+                </Descriptions.Item>
+                <Descriptions.Item label="申报对象">
+                  <Text>{policyData.region}</Text>
+                </Descriptions.Item>
+                <Descriptions.Item label="项目类别">
+                  <Tag 
+                    color={DESIGN_TOKENS.colors.tag.tech.bg}
+                    style={{ 
+                      color: DESIGN_TOKENS.colors.tag.tech.text,
+                      border: `1px solid ${DESIGN_TOKENS.colors.tag.tech.border}`,
+                      borderRadius: DESIGN_TOKENS.borderRadius.sm
+                    }}
+                  >
+                    {policyData.type}
+                  </Tag>
+                </Descriptions.Item>
+                <Descriptions.Item label="补贴金额">
+                  <Text strong style={{ color: DESIGN_TOKENS.colors.warning, fontSize: DESIGN_TOKENS.fontSize.md }}>
+                    <DollarOutlined /> {policyData.funding}
+                  </Text>
+                </Descriptions.Item>
+                <Descriptions.Item label="申报时间">
+                  <Text>{policyData.startTime} 至 {policyData.deadline}</Text>
+                </Descriptions.Item>
+                <Descriptions.Item label="政策依据" span={2}>
+                  <Text>根据《北京市促进科技创新发展条例》及相关实施细则</Text>
+                </Descriptions.Item>
+                <Descriptions.Item label="申报条件" span={2}>
+                  <Space direction="vertical" size={8} style={{ width: '100%' }}>
+                    {policyData.conditions.map((condition, index) => (
+                      <div key={index} style={{ display: 'flex', alignItems: 'flex-start' }}>
+                        <CheckCircleOutlined style={{ color: DESIGN_TOKENS.colors.success, marginRight: 8, marginTop: 4 }} />
+                        <Text>{condition}</Text>
+                      </div>
+                    ))}
                   </Space>
-                </Col>
-                <Col span={12}>
-                  <Space direction="vertical" size={4}>
-                    <Text type="secondary">申报对象</Text>
-                    <Text strong style={{ fontSize: DESIGN_TOKENS.fontSize.md }}>{policyData.region}</Text>
-                  </Space>
-                </Col>
-                <Col span={12}>
-                  <Space direction="vertical" size={4}>
-                    <Text type="secondary">项目类别</Text>
-                    <Tag 
-                      color={DESIGN_TOKENS.colors.tag.tech.bg}
-                      style={{ 
-                        color: DESIGN_TOKENS.colors.tag.tech.text,
-                        border: `1px solid ${DESIGN_TOKENS.colors.tag.tech.border}`,
-                        borderRadius: DESIGN_TOKENS.borderRadius.sm
-                      }}
-                    >
-                      {policyData.type}
-                    </Tag>
-                  </Space>
-                </Col>
-                <Col span={12}>
-                  <Space direction="vertical" size={4}>
-                    <Text type="secondary">扶持金额</Text>
-                    <Text strong style={{ fontSize: DESIGN_TOKENS.fontSize.md, color: DESIGN_TOKENS.colors.warning }}>
-                      <DollarOutlined /> {policyData.funding}
-                    </Text>
-                  </Space>
-                </Col>
-              </Row>
+                </Descriptions.Item>
+                <Descriptions.Item label="材料清单" span={2}>
+                  <List
+                    size="small"
+                    dataSource={policyData.materials}
+                    renderItem={(item) => (
+                      <List.Item>
+                        <Space>
+                          <Badge status={item.required ? 'error' : 'default'} />
+                          <Text>{item.name}</Text>
+                          {item.required && <Tag color="red">必填</Tag>}
+                          <Text type="secondary" style={{ fontSize: DESIGN_TOKENS.fontSize.sm }}>
+                            ({item.format})
+                          </Text>
+                        </Space>
+                      </List.Item>
+                    )}
+                  />
+                </Descriptions.Item>
+              </Descriptions>
+              
+              <Divider />
+              
+              <div style={{ marginTop: 16 }}>
+                <Paragraph style={{ fontSize: DESIGN_TOKENS.fontSize.md }}>
+                  <Text strong>政策说明：</Text>
+                  {policyData.description}
+                </Paragraph>
+              </div>
             </Card>
 
             {/* 数据可视化分析 */}
@@ -863,7 +1109,11 @@ const PolicyDetail: React.FC = () => {
                     borderRadius: DESIGN_TOKENS.borderRadius.md,
                     border: `1px solid ${DESIGN_TOKENS.colors.border}`
                   }}>
-                    <ReactECharts option={getRadarOption()} style={{ height: 280 }} />
+                    {chartsLoading ? (
+                      <Skeleton active paragraph={{ rows: 6 }} />
+                    ) : (
+                      <ReactECharts option={getRadarOption()} style={{ height: 280 }} />
+                    )}
                   </div>
                 </Col>
                 <Col span={12}>
@@ -873,7 +1123,11 @@ const PolicyDetail: React.FC = () => {
                     borderRadius: DESIGN_TOKENS.borderRadius.md,
                     border: `1px solid ${DESIGN_TOKENS.colors.border}`
                   }}>
-                    <ReactECharts option={getTrendOption()} style={{ height: 280 }} />
+                    {chartsLoading ? (
+                      <Skeleton active paragraph={{ rows: 6 }} />
+                    ) : (
+                      <ReactECharts option={getTrendOption()} style={{ height: 280 }} />
+                    )}
                   </div>
                 </Col>
               </Row>

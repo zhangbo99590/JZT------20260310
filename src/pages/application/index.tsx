@@ -63,7 +63,8 @@ import { useNavigate, useLocation, useSearchParams } from 'react-router-dom';
 import * as echarts from 'echarts';
 import ReactECharts from 'echarts-for-react';
 import { DESIGN_TOKENS } from './config/designTokens';
-import MyApplications from './MyApplications';
+import OptimizedMyApplications from './OptimizedMyApplications';
+import HighlightText from '../../components/common/HighlightText';
 
 const { Content } = Layout;
 const { Title, Text } = Typography;
@@ -71,80 +72,48 @@ const { Option } = Select;
 
 
 
-const mockProjects: ProjectItem[] = [
-  {
-    id: '1',
-    title: '2026年北京市中小企业技术创新资助项目',
-    description: '支持中小企业开展技术创新活动，提升企业核心竞争力，推动产业升级转型。',
-    type: '技术创新',
-    region: '北京市',
-    funding: '最高100万元',
-    deadline: '2026-03-31',
-    status: 'in_progress',
-    startTime: '2026-01-01',
-    department: '北京市科技委员会',
-    industry: '高新技术',
-    targetAudience: '中小企业',
-    year: '2026',
-    viewCount: 1247,
-    applyCount: 89,
-    isApplied: false
-  },
-  {
-    id: '2',
-    title: '海淀区高层次人才创业支持计划',
-    description: '面向海淀区引进和培养的高层次人才，支持其创办高新技术企业。',
-    type: '人才引进',
-    region: '海淀区',
-    funding: '最高80万元',
-    deadline: '2026-04-15',
-    status: 'in_progress',
-    startTime: '2026-02-01',
-    department: '海淀区人才办',
-    industry: '人才服务',
-    targetAudience: '高层次人才',
-    year: '2026',
-    viewCount: 892,
-    applyCount: 56,
-    isApplied: false
-  },
-  {
-    id: '3',
-    title: '朝阳区文化创意产业发展扶持资金',
-    description: '扶持文化创意企业发展，促进文化产业繁荣，打造文化创意产业集群。',
-    type: '其他',
-    region: '朝阳区',
-    funding: '最高50万元',
-    deadline: '2025-12-31',
-    status: 'ended',
-    startTime: '2025-06-01',
-    department: '朝阳区文化委',
-    industry: '文化创意',
-    targetAudience: '文创企业',
-    year: '2025',
-    viewCount: 654,
-    applyCount: 123,
-    isApplied: false
-  },
-  {
-    id: '4',
-    title: '丰台区科技型中小企业研发费用补贴',
-    description: '对符合条件的科技型中小企业给予研发费用补贴，激励企业加大研发投入。',
-    type: '技术创新',
-    region: '丰台区',
-    funding: '最高30万元',
-    deadline: '2026-05-31',
-    status: 'not_started',
-    startTime: '2026-03-01',
-    department: '丰台区科委',
-    industry: '科技服务',
-    targetAudience: '科技型企业',
-    year: '2026',
-    viewCount: 432,
-    applyCount: 0,
-    isApplied: false
-  }
-];
+const mockProjects: ProjectItem[] = Array.from({ length: 45 }, (_, i) => {
+  const districts = ['海淀区', '朝阳区', '丰台区', '西城区', '东城区', '石景山区', '通州区', '昌平区', '大兴区', '顺义区'];
+  const policyTypes = ['高新技术企业认定', '专精特新企业认定', '科技创新补贴', '人才引进支持', '产业升级补贴', '绿色发展支持', '数字化转型补贴', '创新创业支持', '研发费用补贴', '知识产权支持'];
+  const departments = ['科技委员会', '发改委', '经信局', '人社局', '财政局', '商务局', '文化委', '环保局', '交通委', '建委'];
+  const industries = ['高新技术', '人工智能', '生物医药', '新能源', '新材料', '电子信息', '文化创意', '现代服务', '金融科技', '环保技术'];
+  const targetAudiences = ['中小企业', '初创企业', '高新技术企业', '科技型企业', '成长型企业', '创新型企业', '专精特新企业', '高层次人才', '技术人才', '创业团队'];
+  const types = ['技术创新', '人才引进', '产业升级', '绿色发展', '数字化转型', '创新创业', '知识产权', '其他'];
+  const statuses = ['in_progress', 'not_started', 'ended'];
+  const fundingAmounts = ['10万元', '20万元', '30万元', '50万元', '80万元', '100万元', '150万元', '200万元', '300万元', '500万元'];
+  
+  const district = districts[i % districts.length];
+  const policyType = policyTypes[i % policyTypes.length];
+  const department = departments[i % departments.length];
+  const industry = industries[i % industries.length];
+  const targetAudience = targetAudiences[i % targetAudiences.length];
+  const type = types[i % types.length];
+  const status = statuses[i % statuses.length] as 'in_progress' | 'not_started' | 'ended';
+  const funding = fundingAmounts[i % fundingAmounts.length];
+  
+  const year = i < 15 ? '2026' : i < 30 ? '2025' : '2024';
+  const month = String((i % 12) + 1).padStart(2, '0');
+  const day = String((i % 28) + 1).padStart(2, '0');
+  
+  return {
+    id: String(i + 1),
+    title: `${district}${policyType}项目（${year}年第${Math.floor(i/10) + 1}批）`,
+    description: `面向${targetAudience}的${policyType}支持项目，旨在促进${industry}领域的技术创新和产业升级，提升企业核心竞争力和市场占有率。通过资金支持、政策指导和服务保障，全面推动企业高质量发展。`,
+    type,
+    region: district,
+    funding: `最高${funding}`,
+    deadline: `${year}-${month}-${day}`,
+    status,
+    startTime: `${parseInt(year) - 1}-${month}-01`,
+    department: `${district}${department}`,
+    industry,
+    targetAudience,
+    year,
+    viewCount: Math.floor(Math.random() * 2000) + 100,
+    applyCount: Math.floor(Math.random() * 200) + 10,
+    isApplied: Math.random() > 0.8
+  };
+});
 
 // 类型定义
 interface ProjectItem {
@@ -207,7 +176,7 @@ const OptimizedApplicationManagement: React.FC = () => {
 
   const [pagination, setPagination] = useState({
     current: 1,
-    pageSize: 10,
+    pageSize: 20,
     total: 0
   });
   const [filters, setFilters] = useState<FilterState>({
@@ -225,6 +194,7 @@ const OptimizedApplicationManagement: React.FC = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [loginModalVisible, setLoginModalVisible] = useState(false);
   const [jumpPage, setJumpPage] = useState('');
+  const [searchText, setSearchText] = useState('');
 
   // 模拟数据
 
@@ -471,117 +441,157 @@ const OptimizedApplicationManagement: React.FC = () => {
 
   // 渲染筛选区域
   const renderFilterSection = () => {
-    const coreFilters = ['status', 'year', 'department'];
-    const allFilters = ['policyLevel', 'status', 'department', 'industry', 'targetAudience', 'year', 'projectType'];
-    const displayFilters = filterExpanded ? allFilters : coreFilters;
-
     const filterLabels = {
       policyLevel: '政策层级',
       status: '申报状态',
       department: '主管部门',
       industry: '行业/主题',
-      targetAudience: '申领对象',
+      targetAudience: '审核对象',
       year: '年度',
       projectType: '项目类型'
     };
 
+    const allFilters = ['policyLevel', 'status', 'department', 'industry', 'targetAudience', 'year', 'projectType'];
+
     return (
       <Card 
-        size="small" 
         style={{ 
-          marginBottom: DESIGN_TOKENS.spacing.sm,
-          border: `1px solid ${DESIGN_TOKENS.colors.border}`,
-          borderRadius: DESIGN_TOKENS.borderRadius.sm,
+          marginBottom: 24,
+          background: '#fafafa',
+          border: '1px solid #e8e8e8',
+          borderRadius: '8px',
           boxShadow: 'none'
         }}
-        styles={{ body: { padding: `${DESIGN_TOKENS.spacing.sm}px ${DESIGN_TOKENS.spacing.md}px` } }}
+        styles={{ body: { padding: '24px' } }}
       >
-        <Row gutter={[DESIGN_TOKENS.spacing.sm, DESIGN_TOKENS.spacing.sm]} align="middle">
-          {displayFilters.map(filterKey => (
-            <Col key={filterKey} xs={24} sm={12} md={8} lg={6} xl={4}>
-              <div>
-                <Text 
-                  type="secondary" 
-                  style={{ 
-                    fontSize: DESIGN_TOKENS.fontSize.sm, 
-                    marginBottom: '4px', 
-                    display: 'block',
-                    color: DESIGN_TOKENS.colors.text.secondary,
-                    fontFamily: 'Microsoft YaHei'
-                  }}
-                >
-                  {filterLabels[filterKey as keyof typeof filterLabels]}
-                </Text>
-                {filterKey === 'policyLevel' ? (
-                  <Cascader
-                    placeholder="请选择"
-                    options={filterOptions.policyLevel}
-                    multiple
-                    maxTagCount={3}
-                    showSearch
-                    style={{ 
-                      width: '100%',
-                      borderRadius: DESIGN_TOKENS.borderRadius.sm
-                    }}
-                    value={filters.policyLevel as any}
-                    onChange={(value) => setFilters(prev => ({ ...prev, policyLevel: value as (string | number)[][] }))}
-                  />
-                ) : (
-                  <Select
-                    placeholder="请选择"
-                    mode="multiple"
-                    allowClear
-                    showSearch
-                    style={{ 
-                      width: '100%'
-                    }}
-                    value={filters[filterKey as keyof FilterState]}
-                    onChange={(value) => setFilters(prev => ({ ...prev, [filterKey]: value }))}
-                    maxTagCount={filterKey === 'department' ? 5 : undefined}
-                  >
-                    {filterOptions[filterKey as keyof typeof filterOptions]?.map((option: any) => (
-                      <Option key={option.value} value={option.value}>
-                        {option.label}
-                      </Option>
-                    ))}
-                  </Select>
-                )}
-              </div>
-            </Col>
-          ))}
-          
-          <Col flex="auto">
-            <Space style={{ float: 'right' }}>
-              {filterExpanded && (
-                <Button 
-                  type="link" 
-                  onClick={resetFilters}
-                  style={{ 
-                    padding: '0 8px',
-                    color: DESIGN_TOKENS.colors.primary,
-                    fontFamily: 'Microsoft YaHei'
-                  }}
-                >
-                  重置
-                </Button>
-              )}
-              <Button 
-                type="link" 
-                icon={filterExpanded ? <UpOutlined /> : <DownOutlined />}
-                onClick={() => setFilterExpanded(!filterExpanded)}
-                style={{ 
-                  padding: '0 8px',
-                  color: DESIGN_TOKENS.colors.primary,
-                  fontFamily: 'Microsoft YaHei',
-                  display: 'flex',
-                  alignItems: 'center'
-                }}
-              >
-                {filterExpanded ? '收起' : '更多'}
-              </Button>
-            </Space>
-          </Col>
-        </Row>
+        {/* 筛选条件区域 */}
+        {filterExpanded && (
+          <>
+            <Row gutter={[16, 16]} style={{ marginBottom: 16 }}>
+              {allFilters.slice(0, 3).map(filterKey => (
+                <Col key={filterKey} xs={24} sm={12} md={8} lg={8}>
+                  <div>
+                    <Text 
+                      style={{ 
+                        fontSize: '13px', 
+                        color: '#8c8c8c',
+                        marginBottom: '6px', 
+                        display: 'block',
+                        fontWeight: 500
+                      }}
+                    >
+                      {filterLabels[filterKey as keyof typeof filterLabels]}
+                    </Text>
+                    {filterKey === 'policyLevel' ? (
+                      <Cascader
+                        placeholder="请选择"
+                        options={filterOptions.policyLevel}
+                        multiple
+                        maxTagCount={2}
+                        showSearch
+                        style={{ 
+                          width: '100%',
+                          height: '40px'
+                        }}
+                        value={filters.policyLevel as any}
+                        onChange={(value) => setFilters(prev => ({ ...prev, policyLevel: value as (string | number)[][] }))}
+                      />
+                    ) : (
+                      <Select
+                        placeholder="请选择"
+                        mode="multiple"
+                        allowClear
+                        showSearch
+                        style={{ 
+                          width: '100%',
+                          height: '40px'
+                        }}
+                        value={filters[filterKey as keyof FilterState]}
+                        onChange={(value) => setFilters(prev => ({ ...prev, [filterKey]: value }))}
+                        maxTagCount={2}
+                      >
+                        {filterOptions[filterKey as keyof typeof filterOptions]?.map((option: any) => (
+                          <Option key={option.value} value={option.value}>
+                            {option.label}
+                          </Option>
+                        ))}
+                      </Select>
+                    )}
+                  </div>
+                </Col>
+              ))}
+            </Row>
+            <Row gutter={[16, 16]}>
+              {allFilters.slice(3).map(filterKey => (
+                <Col key={filterKey} xs={24} sm={12} md={8} lg={6}>
+                  <div>
+                    <Text 
+                      style={{ 
+                        fontSize: '13px', 
+                        color: '#8c8c8c',
+                        marginBottom: '6px', 
+                        display: 'block',
+                        fontWeight: 500
+                      }}
+                    >
+                      {filterLabels[filterKey as keyof typeof filterLabels]}
+                    </Text>
+                    <Select
+                      placeholder="请选择"
+                      mode="multiple"
+                      allowClear
+                      showSearch
+                      style={{ 
+                        width: '100%',
+                        height: '40px'
+                      }}
+                      value={filters[filterKey as keyof FilterState]}
+                      onChange={(value) => setFilters(prev => ({ ...prev, [filterKey]: value }))}
+                      maxTagCount={2}
+                    >
+                      {filterOptions[filterKey as keyof typeof filterOptions]?.map((option: any) => (
+                        <Option key={option.value} value={option.value}>
+                          {option.label}
+                        </Option>
+                      ))}
+                    </Select>
+                  </div>
+                </Col>
+              ))}
+            </Row>
+          </>
+        )}
+        
+        {/* 操作按钮区 */}
+        <div style={{ 
+          display: 'flex', 
+          justifyContent: 'flex-end', 
+          alignItems: 'center',
+          gap: '12px',
+          marginTop: filterExpanded ? 16 : 0
+        }}>
+          <Button 
+            onClick={resetFilters}
+            style={{ 
+              height: '40px',
+              borderRadius: '6px',
+              fontWeight: 500
+            }}
+          >
+            重置
+          </Button>
+          <Button 
+            icon={filterExpanded ? <UpOutlined /> : <DownOutlined />}
+            onClick={() => setFilterExpanded(!filterExpanded)}
+            style={{ 
+              height: '40px',
+              borderRadius: '6px',
+              fontWeight: 500
+            }}
+          >
+            {filterExpanded ? '收起' : '展开筛选'}
+          </Button>
+        </div>
       </Card>
     );
   };
@@ -592,29 +602,32 @@ const OptimizedApplicationManagement: React.FC = () => {
     const canApply = isLoggedIn && status === 'in_progress' && !project.isApplied;
     const countdownDays = status === 'in_progress' ? getCountdownDays(project.deadline) : 0;
     const typeStyle = getTypeTagStyle(project.type);
+    const isExpired = status === 'ended';
     
     return (
       <Card
         key={project.id}
-        hoverable
+        hoverable={!isExpired}
         style={{
-          height: '200px',
-          marginBottom: DESIGN_TOKENS.spacing.md,
-          border: `0.5px solid ${DESIGN_TOKENS.colors.border}`,
-          borderRadius: DESIGN_TOKENS.borderRadius.lg,
+          height: '280px',
+          marginBottom: 20,
+          border: '1px solid #e8e8e8',
+          borderRadius: '12px',
+          boxShadow: '0 2px 8px rgba(0,0,0,0.06)',
           transition: 'all 0.3s ease',
-          cursor: 'pointer'
+          cursor: isExpired ? 'default' : 'pointer',
+          opacity: isExpired ? 0.7 : 1
         }}
         styles={{ 
           body: { 
-            padding: DESIGN_TOKENS.spacing.sm,
+            padding: '20px',
             height: '100%',
             display: 'flex',
             flexDirection: 'column'
           }
         }}
         onClick={(e) => {
-          // 如果点击的是按钮，不触发卡片点击
+          if (isExpired) return;
           const target = e.target as HTMLElement;
           if (target.closest('button')) {
             return;
@@ -622,203 +635,211 @@ const OptimizedApplicationManagement: React.FC = () => {
           handleViewDetail(project);
         }}
         onMouseEnter={(e) => {
-          e.currentTarget.style.boxShadow = '0 2px 8px rgba(0,0,0,0.08)';
-          e.currentTarget.style.transform = 'translateY(-2px)';
+          if (!isExpired) {
+            e.currentTarget.style.boxShadow = '0 4px 16px rgba(0,0,0,0.12)';
+            e.currentTarget.style.transform = 'translateY(-2px)';
+          }
         }}
         onMouseLeave={(e) => {
-          e.currentTarget.style.boxShadow = 'none';
-          e.currentTarget.style.transform = 'translateY(0)';
+          if (!isExpired) {
+            e.currentTarget.style.boxShadow = '0 2px 8px rgba(0,0,0,0.06)';
+            e.currentTarget.style.transform = 'translateY(0)';
+          }
         }}
       >
-        {/* 标题区 */}
-        <div style={{ marginBottom: DESIGN_TOKENS.spacing.xs }}>
+        {/* 顶部：项目名称 */}
+        <div style={{ marginBottom: '12px' }}>
           <Title 
-            level={5} 
+            level={4} 
             style={{ 
               margin: 0, 
-              fontSize: DESIGN_TOKENS.fontSize.lg, 
-              fontWeight: 'bold',
-              color: DESIGN_TOKENS.colors.text.primary,
-              fontFamily: 'Microsoft YaHei',
-              cursor: 'pointer',
+              fontSize: '18px', 
+              fontWeight: 600,
+              color: '#262626',
+              lineHeight: '26px',
               display: '-webkit-box',
               WebkitLineClamp: 2,
               WebkitBoxOrient: 'vertical',
-              overflow: 'hidden',
-              lineHeight: '1.4'
+              overflow: 'hidden'
             }}
-            onClick={() => handleViewDetail(project)}
+            onClick={() => !isExpired && handleViewDetail(project)}
           >
-            {project.title}
+            <HighlightText 
+              text={project.title} 
+              keywords={searchText || ''}
+              highlightStyle={{
+                backgroundColor: '#fff2e8',
+                color: '#fa541c',
+                fontWeight: 600,
+                padding: '2px 4px',
+                borderRadius: '3px'
+              }}
+            />
           </Title>
         </div>
 
-        {/* 信息区 */}
-        <div style={{ flex: 1, marginBottom: DESIGN_TOKENS.spacing.sm }}>
+        {/* 中部：扶持描述 */}
+        <div style={{ flex: 1, marginBottom: '16px' }}>
           <Text 
             style={{ 
-              fontSize: DESIGN_TOKENS.fontSize.md,
-              color: DESIGN_TOKENS.colors.text.secondary,
-              fontFamily: 'Microsoft YaHei',
+              fontSize: '14px',
+              color: '#595959',
+              lineHeight: '22px',
               display: '-webkit-box',
-              WebkitLineClamp: 1,
+              WebkitLineClamp: 2,
               WebkitBoxOrient: 'vertical',
-              overflow: 'hidden',
-              marginBottom: DESIGN_TOKENS.spacing.xs,
-              lineHeight: '1.4'
+              overflow: 'hidden'
             }}
           >
-            {project.description}
+            <HighlightText 
+              text={project.description} 
+              keywords={searchText || ''}
+              highlightStyle={{
+                backgroundColor: '#fff7e6',
+                color: '#fa8c16',
+                fontWeight: 500,
+                padding: '1px 3px',
+                borderRadius: '2px'
+              }}
+            />
           </Text>
-          
-          {/* 标签组 */}
-          <Space wrap style={{ marginBottom: DESIGN_TOKENS.spacing.xs }}>
+        </div>
+        
+        {/* 下部：标签组 */}
+        <div style={{ marginBottom: '16px' }}>
+          <Space wrap size={[8, 8]}>
             <Tag 
               style={{
-                backgroundColor: typeStyle.bg,
-                color: typeStyle.text,
+                backgroundColor: '#e6f7ff',
+                color: '#1890ff',
                 border: 'none',
-                borderRadius: DESIGN_TOKENS.borderRadius.md,
-                padding: '4px 8px',
-                fontSize: DESIGN_TOKENS.fontSize.sm,
-                fontFamily: 'Microsoft YaHei'
+                borderRadius: '6px',
+                padding: '4px 10px',
+                fontSize: '12px',
+                fontWeight: 500
               }}
             >
               {project.type}
             </Tag>
             <Tag 
               style={{
-                backgroundColor: DESIGN_TOKENS.colors.tag.region.bg,
-                color: DESIGN_TOKENS.colors.tag.region.text,
+                backgroundColor: '#f6ffed',
+                color: '#52c41a',
                 border: 'none',
-                borderRadius: DESIGN_TOKENS.borderRadius.md,
-                padding: '4px 8px',
-                fontSize: DESIGN_TOKENS.fontSize.sm,
-                fontFamily: 'Microsoft YaHei'
+                borderRadius: '6px',
+                padding: '4px 10px',
+                fontSize: '12px',
+                fontWeight: 500
               }}
             >
               {project.region}
             </Tag>
             <Tag 
               style={{
-                backgroundColor: DESIGN_TOKENS.colors.tag.funding.bg,
-                color: DESIGN_TOKENS.colors.tag.funding.text,
+                backgroundColor: '#fff7e6',
+                color: '#fa8c16',
                 border: 'none',
-                borderRadius: DESIGN_TOKENS.borderRadius.md,
-                padding: '4px 8px',
-                fontSize: DESIGN_TOKENS.fontSize.sm,
-                fontFamily: 'Microsoft YaHei'
+                borderRadius: '6px',
+                padding: '4px 10px',
+                fontSize: '12px',
+                fontWeight: 500
               }}
             >
               {project.funding}
             </Tag>
           </Space>
-          
-          {/* 截止时间和倒计时 */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: DESIGN_TOKENS.spacing.xs }}>
-            <ExclamationCircleOutlined style={{ color: DESIGN_TOKENS.colors.error, fontSize: DESIGN_TOKENS.fontSize.sm }} />
-            <Text style={{ fontSize: DESIGN_TOKENS.fontSize.sm, color: DESIGN_TOKENS.colors.error, fontFamily: 'Microsoft YaHei' }}>
-              截止时间：{project.deadline}
-            </Text>
-            {status === 'in_progress' && countdownDays > 0 && (
-              <Text style={{ fontSize: DESIGN_TOKENS.fontSize.sm, color: DESIGN_TOKENS.colors.error, fontFamily: 'Microsoft YaHei' }}>
-                倒计时 {countdownDays} 天
+        </div>
+        
+        {/* 截止时间（倒计时样式高亮） */}
+        <div style={{ 
+          background: countdownDays <= 7 && status === 'in_progress' ? '#fff2e8' : '#f8f9fa',
+          padding: '12px',
+          borderRadius: '8px',
+          marginBottom: '16px',
+          border: `1px solid ${countdownDays <= 7 && status === 'in_progress' ? '#ffbb96' : '#e9ecef'}`
+        }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <Text style={{ fontSize: '12px', color: '#8c8c8c' }}>截止时间</Text>
+            <div style={{ textAlign: 'right' }}>
+              <Text style={{ 
+                fontSize: '14px', 
+                fontWeight: 500,
+                color: isExpired ? '#ff4d4f' : (countdownDays <= 7 && status === 'in_progress' ? '#fa541c' : '#262626')
+              }}>
+                {project.deadline}
               </Text>
-            )}
+              {status === 'in_progress' && countdownDays > 0 && (
+                <div style={{ fontSize: '12px', color: countdownDays <= 7 ? '#fa541c' : '#1890ff', marginTop: '2px' }}>
+                  {countdownDays <= 7 && <ClockCircleOutlined style={{ marginRight: 4 }} />}
+                  还剩 {countdownDays} 天
+                </div>
+              )}
+              {isExpired && (
+                <div style={{ fontSize: '12px', color: '#ff4d4f', marginTop: '2px' }}>
+                  <StopOutlined style={{ marginRight: 4 }} />已截止
+                </div>
+              )}
+            </div>
           </div>
         </div>
 
-        {/* 操作区 */}
-        <div style={{ display: 'flex', justifyContent: 'flex-end', gap: DESIGN_TOKENS.spacing.xs }}>
+        {/* 底部：操作按钮组 */}
+        <div style={{ 
+          display: 'flex', 
+          justifyContent: 'flex-end', 
+          gap: '12px',
+          paddingTop: '16px',
+          borderTop: '1px solid #f0f0f0'
+        }}>
           <Button 
             size="middle"
             style={{ 
-              width: '88px', 
-              height: '34px',
-              borderRadius: DESIGN_TOKENS.borderRadius.md,
-              backgroundColor: DESIGN_TOKENS.colors.cardBackground,
-              borderColor: DESIGN_TOKENS.colors.primary,
-              color: DESIGN_TOKENS.colors.primary,
-              fontFamily: 'Microsoft YaHei',
-              transition: 'all 0.3s ease'
+              borderRadius: '6px',
+              fontWeight: 500
             }}
             onClick={() => handleViewDetail(project)}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.transform = 'translateY(-2px)';
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.transform = 'translateY(0)';
-            }}
           >
             查看详情
           </Button>
-          <ApplyButton
-            status={status as any}
-            isApplied={false} // 强制显示为"立即申报"，允许重新申报或编辑
-            onApply={() => handleApplyClick(project)}
-            style={{ width: '88px', height: '34px' }}
-          />
+          
+          {isExpired ? (
+            <Button 
+              size="middle"
+              disabled
+              style={{ 
+                borderRadius: '6px',
+                backgroundColor: '#f5f5f5',
+                borderColor: '#d9d9d9',
+                color: '#bfbfbf'
+              }}
+            >
+              已截止
+            </Button>
+          ) : (
+            <Button
+              type="primary"
+              size="middle"
+              style={{ 
+                borderRadius: '6px',
+                fontWeight: 500
+              }}
+              onClick={() => handleApplyClick(project)}
+            >
+              立即申报
+            </Button>
+          )}
         </div>
       </Card>
     );
   };
 
-  // 渲染概览统计
-  const renderOverview = () => (
-    <Row gutter={[16, 16]} style={{ marginBottom: DESIGN_TOKENS.spacing.md }}>
-      <Col xs={12} sm={6} md={6}>
-        <Card size="small" style={{ borderRadius: DESIGN_TOKENS.borderRadius.sm, border: `1px solid ${DESIGN_TOKENS.colors.border}` }}>
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                <div>
-                    <div style={{ fontSize: '14px', color: DESIGN_TOKENS.colors.text.secondary, fontFamily: 'Microsoft YaHei' }}>正在申报</div>
-                    <div style={{ fontSize: '24px', fontWeight: 'bold', color: DESIGN_TOKENS.colors.primary, fontFamily: 'Microsoft YaHei' }}>12</div>
-                </div>
-                <ClockCircleOutlined style={{ fontSize: '24px', color: DESIGN_TOKENS.colors.primary, opacity: 0.2 }} />
-            </div>
-        </Card>
-      </Col>
-      <Col xs={12} sm={6} md={6}>
-        <Card size="small" style={{ borderRadius: DESIGN_TOKENS.borderRadius.sm, border: `1px solid ${DESIGN_TOKENS.colors.border}` }}>
-             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                <div>
-                    <div style={{ fontSize: '14px', color: DESIGN_TOKENS.colors.text.secondary, fontFamily: 'Microsoft YaHei' }}>即将截止</div>
-                    <div style={{ fontSize: '24px', fontWeight: 'bold', color: DESIGN_TOKENS.colors.error, fontFamily: 'Microsoft YaHei' }}>3</div>
-                </div>
-                <ExclamationCircleOutlined style={{ fontSize: '24px', color: DESIGN_TOKENS.colors.error, opacity: 0.2 }} />
-            </div>
-        </Card>
-      </Col>
-       <Col xs={12} sm={6} md={6}>
-        <Card size="small" style={{ borderRadius: DESIGN_TOKENS.borderRadius.sm, border: `1px solid ${DESIGN_TOKENS.colors.border}` }}>
-             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                <div>
-                    <div style={{ fontSize: '14px', color: DESIGN_TOKENS.colors.text.secondary, fontFamily: 'Microsoft YaHei' }}>本月新增</div>
-                    <div style={{ fontSize: '24px', fontWeight: 'bold', color: DESIGN_TOKENS.colors.success, fontFamily: 'Microsoft YaHei' }}>8</div>
-                </div>
-                <FileTextOutlined style={{ fontSize: '24px', color: DESIGN_TOKENS.colors.success, opacity: 0.2 }} />
-            </div>
-        </Card>
-      </Col>
-       <Col xs={12} sm={6} md={6}>
-        <Card size="small" style={{ borderRadius: DESIGN_TOKENS.borderRadius.sm, border: `1px solid ${DESIGN_TOKENS.colors.border}` }}>
-             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                <div>
-                    <div style={{ fontSize: '14px', color: DESIGN_TOKENS.colors.text.secondary, fontFamily: 'Microsoft YaHei' }}>累计发布</div>
-                    <div style={{ fontSize: '24px', fontWeight: 'bold', color: DESIGN_TOKENS.colors.text.primary, fontFamily: 'Microsoft YaHei' }}>156</div>
-                </div>
-                <BarChartOutlined style={{ fontSize: '24px', color: DESIGN_TOKENS.colors.text.primary, opacity: 0.2 }} />
-            </div>
-        </Card>
-      </Col>
-    </Row>
-  );
+
 
   // 渲染项目列表
   const renderProjectList = () => {
     if (loading) {
       return (
         <div>
-          {renderOverview()}
           {renderFilterSection()}
           <Divider style={{ margin: `${DESIGN_TOKENS.spacing.sm}px 0`, borderColor: DESIGN_TOKENS.colors.border }} />
           <Row gutter={[20, 0]}>
@@ -837,7 +858,6 @@ const OptimizedApplicationManagement: React.FC = () => {
     if (projects.length === 0) {
       return (
         <div>
-          {renderOverview()}
           {renderFilterSection()}
           <Divider style={{ margin: `${DESIGN_TOKENS.spacing.sm}px 0`, borderColor: DESIGN_TOKENS.colors.border }} />
           <Empty
@@ -871,7 +891,6 @@ const OptimizedApplicationManagement: React.FC = () => {
 
     return (
       <div>
-        {renderOverview()}
         {renderFilterSection()}
         <Divider style={{ margin: `${DESIGN_TOKENS.spacing.sm}px 0`, borderColor: DESIGN_TOKENS.colors.border }} />
         
@@ -890,12 +909,14 @@ const OptimizedApplicationManagement: React.FC = () => {
           ))}
         </Row>
         
-        {/* 分页 */}
+        {/* 分页区布局优化 - 居中对齐 */}
         <div style={{ 
-          textAlign: 'center', 
-          marginTop: DESIGN_TOKENS.spacing.lg,
-          padding: `${DESIGN_TOKENS.spacing.md}px 0`,
-          borderTop: `1px solid ${DESIGN_TOKENS.colors.border}`
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          marginTop: 32,
+          padding: '24px 0',
+          borderTop: '1px solid #e8e8e8'
         }}>
           <Space size="large" align="center">
             <Pagination
@@ -903,41 +924,25 @@ const OptimizedApplicationManagement: React.FC = () => {
               pageSize={pagination.pageSize}
               total={pagination.total}
               showSizeChanger
+              showQuickJumper
               showTotal={(total, range) => (
-                <Text style={{ fontFamily: 'Microsoft YaHei', color: DESIGN_TOKENS.colors.text.secondary }}>
-                  第 {range[0]}-{range[1]} 条/共 {total} 条
+                <Text style={{ color: '#8c8c8c', fontSize: '14px' }}>
+                  共 {total} 条项目，当前显示 {range[0]}-{range[1]} 条
                 </Text>
               )}
-              pageSizeOptions={['10', '20', '30']}
+              pageSizeOptions={['8', '16', '24']}
               onChange={(page, pageSize) => {
                 setPagination(prev => ({ ...prev, current: page, pageSize }));
               }}
               style={{
-                fontFamily: 'Microsoft YaHei'
+                '& .ant-pagination-item': {
+                  borderRadius: '6px'
+                },
+                '& .ant-pagination-item-active': {
+                  borderColor: '#1890ff'
+                }
               }}
             />
-            <Space>
-              <Text style={{ fontFamily: 'Microsoft YaHei', color: DESIGN_TOKENS.colors.text.secondary }}>跳至第</Text>
-              <Input
-                size="small"
-                value={jumpPage}
-                onChange={(e) => setJumpPage(e.target.value)}
-                style={{ width: '60px', textAlign: 'center' }}
-                onPressEnter={handleJumpPage}
-              />
-              <Text style={{ fontFamily: 'Microsoft YaHei', color: DESIGN_TOKENS.colors.text.secondary }}>页</Text>
-              <Button 
-                size="small" 
-                type="primary" 
-                onClick={handleJumpPage}
-                style={{
-                  borderRadius: DESIGN_TOKENS.borderRadius.sm,
-                  fontFamily: 'Microsoft YaHei'
-                }}
-              >
-                确定
-              </Button>
-            </Space>
           </Space>
         </div>
       </div>
@@ -1107,7 +1112,7 @@ const OptimizedApplicationManagement: React.FC = () => {
       case 'list':
         return renderProjectList();
       case 'status':
-        return <MyApplications />;
+        return <OptimizedMyApplications />;
       case 'statistics':
         return renderStatistics();
       default:

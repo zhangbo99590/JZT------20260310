@@ -58,7 +58,6 @@ export function useUserForm(
       status: record.status || "0",
     };
 
-    console.log("编辑用户数据映射:", mappedRecord); // 调试日志
     form.setFieldsValue(mappedRecord as unknown as UserFormData);
     setIsModalVisible(true);
   };
@@ -113,7 +112,6 @@ export function useUserForm(
       setTimeout(() => {
         // 如果用户被禁用，先切换筛选条件到"全部状态"，再刷新列表
         if (editingUser && values.status === "1" && setStatus) {
-          console.log("[useUserForm] 用户被禁用，切换到全部状态");
           setStatus(undefined); // undefined 表示"全部状态"
         }
         // 等待 React 状态更新后再刷新列表

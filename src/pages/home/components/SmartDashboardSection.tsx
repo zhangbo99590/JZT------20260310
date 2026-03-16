@@ -4,22 +4,25 @@
  * 功能: 提供丰富的数据分析图表和政策热力图
  */
 
-import React, { useState } from 'react';
-import { Card, Row, Col, Select, Tabs, Typography, Progress } from 'antd';
+import React, { useState, useEffect } from 'react';
+import { Card, Row, Col, Select, Tabs, Typography, Progress, message, Button } from 'antd';
 import { 
   BarChartOutlined, 
   PieChartOutlined, 
   LineChartOutlined,
   HeatMapOutlined,
   TrophyOutlined,
-  RiseOutlined
+  RiseOutlined,
+  DeleteOutlined
 } from '@ant-design/icons';
+import { useNavigate } from 'react-router-dom';
 import SafeECharts from '../../../components/SafeECharts';
 import { 
   getSmartTrendOption, 
   getPolicyDistributionOption, 
   getFundFlowOption 
 } from '../config/chartConfig';
+import { removeElement } from '../../../utils/domUtils';
 
 const { Option } = Select;
 const { Text, Title } = Typography;
@@ -67,8 +70,47 @@ interface SmartDashboardSectionProps {
 }
 
 export const SmartDashboardSection: React.FC<SmartDashboardSectionProps> = ({ loading = false }) => {
+  const navigate = useNavigate();
   const [selectedPeriod, setSelectedPeriod] = useState('6months');
   const [activeTab, setActiveTab] = useState('trend');
+  const [isVisible, setIsVisible] = useState(true);
+
+  // 如果组件已被删除，则不渲染任何内容
+  if (!isVisible) {
+    return null;
+  }
+
+  const handleDelete = async () => {
+    // 查找目标元素 - 这里我们给外层 Card 添加一个特定的 ID 以便精确查找
+    const targetId = 'smart-dashboard-card';
+    const element = document.getElementById(targetId);
+    
+    if (!element) {
+      message.error('未找到目标元素');
+      return;
+    }
+
+    const result = await removeElement(element, {
+      sync: false,
+      beforeDelete: async () => {
+        // 模拟一些清理工作或确认对话框
+        return new Promise<boolean>((resolve) => {
+          // 这里可以添加确认弹窗逻辑
+          const confirmed = window.confirm('确定要删除这个智能数据看板吗？此操作不可逆。');
+          resolve(confirmed);
+        });
+      },
+      afterDelete: () => {
+        // 更新组件状态以触发 React 重新渲染（虽然 DOM 已经被删除了，但为了保持 React 状态一致性）
+        setIsVisible(false);
+        message.success('智能数据看板已成功删除');
+      }
+    });
+
+    if (!result.success && result.message !== '删除操作被 beforeDelete 钩子取消') {
+      message.error(result.message);
+    }
+  };
 
   const getHeatColor = (heat: number) => {
     if (heat >= 90) return '#ff4d4f';
@@ -76,6 +118,13 @@ export const SmartDashboardSection: React.FC<SmartDashboardSectionProps> = ({ lo
     if (heat >= 70) return '#fadb14';
     if (heat >= 60) return '#52c41a';
     return '#1890ff';
+  };
+
+  const handleChartClick = (params: any) => {
+    if (params.componentType === 'series') {
+      const monthData = applicationTrendData[params.dataIndex];
+      message.info(`查看 ${monthData.month} 的申报记录`);
+    }
   };
 
   const items = [
@@ -91,7 +140,13 @@ export const SmartDashboardSection: React.FC<SmartDashboardSectionProps> = ({ lo
         <Row gutter={[16, 16]}>
           <Col xs={24} lg={16}>
             <div style={{ height: '300px' }}>
-              <SafeECharts option={getSmartTrendOption(applicationTrendData)} style={{ height: '100%', width: '100%' }} />
+              <SafeECharts 
+                option={getSmartTrendOption(applicationTrendData)} 
+                style={{ height: '100%', width: '100%' }}
+                onEvents={{
+                  click: handleChartClick
+                }}
+              />
             </div>
           </Col>
           <Col xs={24} lg={8}>
@@ -237,6 +292,7 @@ export const SmartDashboardSection: React.FC<SmartDashboardSectionProps> = ({ lo
 
   return (
     <Card
+      id="smart-dashboard-card"
       loading={loading}
       className="hover-card"
       title={
@@ -245,16 +301,26 @@ export const SmartDashboardSection: React.FC<SmartDashboardSectionProps> = ({ lo
             <BarChartOutlined style={{ color: '#1890ff', marginRight: '8px' }} />
             智能数据看板
           </div>
-          <Select
-            value={selectedPeriod}
-            onChange={setSelectedPeriod}
-            style={{ width: 120 }}
-            size="small"
-          >
-            <Option value="3months">近3个月</Option>
-            <Option value="6months">近6个月</Option>
-            <Option value="1year">近1年</Option>
-          </Select>
+          <div style={{ display: 'flex', gap: '8px' }}>
+            <Select
+              value={selectedPeriod}
+              onChange={setSelectedPeriod}
+              style={{ width: 120 }}
+              size="small"
+            >
+              <Option value="3months">近3个月</Option>
+              <Option value="6months">近6个月</Option>
+              <Option value="1year">近1年</Option>
+            </Select>
+            <Button 
+              type="text" 
+              danger 
+              icon={<DeleteOutlined />} 
+              size="small" 
+              onClick={handleDelete}
+              title="删除此看板"
+            />
+          </div>
         </div>
       }
       style={{ marginBottom: '24px' }}

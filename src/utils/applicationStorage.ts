@@ -85,7 +85,6 @@ export const saveApplicationData = (projectId: string, data: any): boolean => {
     const encodedData = encodeData(storageData);
     StorageUtils.setItem(storageKey, encodedData);
     
-    console.log('申报数据暂存成功:', projectId);
     return true;
   } catch (error) {
     console.error('申报数据暂存失败:', error);
@@ -109,7 +108,6 @@ export const getApplicationData = (projectId: string): any | null => {
     
     // 检查是否过期
     if (isDataExpired(storageData.timestamp)) {
-      console.log('暂存数据已过期，自动清除');
       removeApplicationData(projectId);
       return null;
     }
@@ -128,7 +126,6 @@ export const removeApplicationData = (projectId: string): void => {
   try {
     const storageKey = getStorageKey(projectId);
     StorageUtils.removeItem(storageKey);
-    console.log('申报数据已清除:', projectId);
   } catch (error) {
     console.error('删除申报数据失败:', error);
   }
@@ -149,7 +146,6 @@ export const cleanExpiredData = (): void => {
           const storageData = decodeData(encodedData);
           if (isDataExpired(storageData.timestamp)) {
             StorageUtils.removeItem(key);
-            console.log('已清理过期数据:', key);
           }
         }
       } catch (error) {

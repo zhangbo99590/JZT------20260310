@@ -10,7 +10,7 @@ export const mockCompanyProfile: CompanyProfile = {
   id: "1",
   // 基础信息
   companyName: "深圳创新科技有限公司",
-  creditCode: "91440300MA5XXXXX0X",
+  creditCode: "91440300MA5XXXXXX",
   legalPerson: "张三",
   registeredCapital: "1000万元",
   establishDate: "2018-03-15",

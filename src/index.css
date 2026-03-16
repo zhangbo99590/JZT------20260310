@@ -45,3 +45,9 @@ body {
   height: 100vh;
   background: #f5f7fa;
 }
+
+/* 隐藏特定的调试控件 */
+button[title*="Send element"],
+button[title*="Send console"] {
+  display: none !important;
+}

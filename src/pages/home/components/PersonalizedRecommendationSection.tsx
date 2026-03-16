@@ -4,20 +4,15 @@
  * 功能: 基于企业画像的智能政策匹配和个性化推荐
  */
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Card, Row, Col, Typography, Tag, Button, Progress, Avatar, List, Divider, Badge, Tooltip } from 'antd';
+import { Card, Row, Col, Typography, Tag, Button, Avatar, List, Divider, Badge, Tooltip } from 'antd';
 import ApplyButton from '../../../components/common/ApplyButton';
 import { 
-  BulbOutlined, 
   StarOutlined, 
-  RocketOutlined,
   UserOutlined,
-  CheckCircleOutlined,
   ClockCircleOutlined,
-  FireOutlined,
-  HeartOutlined,
-  ThunderboltOutlined
+  HeartOutlined
 } from '@ant-design/icons';
 
 const { Text, Title, Paragraph } = Typography;
@@ -44,14 +39,6 @@ interface PolicyRecommendation {
   benefits: string[];
   isHot: boolean;
   isUrgent: boolean;
-}
-
-interface SmartInsight {
-  type: 'opportunity' | 'risk' | 'trend' | 'suggestion';
-  title: string;
-  content: string;
-  priority: 'high' | 'medium' | 'low';
-  actionable: boolean;
 }
 
 export const PersonalizedRecommendationSection: React.FC = () => {
@@ -110,30 +97,6 @@ export const PersonalizedRecommendationSection: React.FC = () => {
     }
   ]);
 
-  const [insights, setInsights] = useState<SmartInsight[]>([
-    {
-      type: 'opportunity',
-      title: '政策机遇窗口期',
-      content: '基于您的企业画像，当前有3项高匹配度政策即将截止申报，建议优先关注技术创新类补贴',
-      priority: 'high',
-      actionable: true
-    },
-    {
-      type: 'suggestion',
-      title: '申报成功率提升建议',
-      content: '完善知识产权布局可提升申报成功率15%，建议加强专利申请和软件著作权登记',
-      priority: 'medium',
-      actionable: true
-    },
-    {
-      type: 'trend',
-      title: '行业政策趋势',
-      content: '软件行业政策支持力度持续加大，预计Q2将发布新一轮数字化转型专项扶持政策',
-      priority: 'medium',
-      actionable: false
-    }
-  ]);
-
   const getDifficultyColor = (difficulty: string) => {
     switch (difficulty) {
       case 'easy': return '#52c41a';
@@ -149,16 +112,6 @@ export const PersonalizedRecommendationSection: React.FC = () => {
       case 'medium': return '中等';
       case 'hard': return '困难';
       default: return '未知';
-    }
-  };
-
-  const getInsightIcon = (type: string) => {
-    switch (type) {
-      case 'opportunity': return <RocketOutlined style={{ color: '#52c41a' }} />;
-      case 'risk': return <ThunderboltOutlined style={{ color: '#ff4d4f' }} />;
-      case 'trend': return <FireOutlined style={{ color: '#fa8c16' }} />;
-      case 'suggestion': return <BulbOutlined style={{ color: '#1890ff' }} />;
-      default: return <StarOutlined />;
     }
   };
 
@@ -199,36 +152,6 @@ export const PersonalizedRecommendationSection: React.FC = () => {
           </div>
 
           <Divider />
-
-          <div>
-            <div style={{ marginBottom: '12px' }}>
-              <Text type="secondary">政策匹配度</Text>
-              <Progress 
-                percent={92} 
-                strokeColor="#52c41a"
-                format={() => '92%'}
-                size="small"
-              />
-            </div>
-            <div style={{ marginBottom: '12px' }}>
-              <Text type="secondary">申报活跃度</Text>
-              <Progress 
-                percent={78} 
-                strokeColor="#1890ff"
-                format={() => '活跃'}
-                size="small"
-              />
-            </div>
-            <div>
-              <Text type="secondary">成功率预测</Text>
-              <Progress 
-                percent={85} 
-                strokeColor="#fa8c16"
-                format={() => '85%'}
-                size="small"
-              />
-            </div>
-          </div>
         </Card>
       </Col>
 
@@ -329,63 +252,6 @@ export const PersonalizedRecommendationSection: React.FC = () => {
               )}
             />
           </div>
-        </Card>
-      </Col>
-
-      {/* 智能洞察 */}
-      <Col xs={24}>
-        <Card
-          className="hover-card"
-          title={
-            <div style={{ display: 'flex', alignItems: 'center' }}>
-              <BulbOutlined style={{ color: '#722ed1', marginRight: '8px' }} />
-              智能洞察
-            </div>
-          }
-        >
-          <Row gutter={[16, 16]}>
-            {insights.map((insight, index) => (
-              <Col xs={24} md={8} key={index}>
-                <Card 
-                  size="small"
-                  className="hover-card"
-                  style={{ 
-                    height: '120px',
-                    background: insight.priority === 'high' ? '#fff2e8' : 
-                               insight.priority === 'medium' ? '#f6ffed' : '#f0f5ff',
-                    border: `1px solid ${insight.priority === 'high' ? '#ffd591' : 
-                                       insight.priority === 'medium' ? '#b7eb8f' : '#adc6ff'}`
-                  }}
-                >
-                  <div style={{ display: 'flex', alignItems: 'flex-start' }}>
-                    <div style={{ marginRight: '12px', marginTop: '2px' }}>
-                      {getInsightIcon(insight.type)}
-                    </div>
-                    <div style={{ flex: 1 }}>
-                      <Text strong style={{ fontSize: '13px' }}>
-                        {insight.title}
-                      </Text>
-                      <Paragraph 
-                        style={{ 
-                          margin: '4px 0 8px 0', 
-                          fontSize: '12px', 
-                          color: '#666' 
-                        }}
-                        ellipsis={{ rows: 2 }}
-                      >
-                        {insight.content}
-                      </Paragraph>
-                      {insight.actionable && (
-                        <Button type="link" size="small" style={{ padding: 0, height: 'auto' }}>
-                          立即行动
-                        </Button>
-                      )}
-                    </div>
-                  </div>
-                </Card>
-              </Col>
-            ))}
-          </Row>
         </Card>
       </Col>
     </Row>

@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>智慧政策平台 - 政策搜索演示</title>
+    <!-- React & ReactDOM -->
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    
+    <!-- Babel -->
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    
+    <!-- Ant Design -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/antd/5.12.2/reset.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/dayjs/1.11.10/dayjs.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/antd/5.12.2/antd.min.js"></script>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://unpkg.com/lucide-react/dist/umd/lucide-react.min.js"></script>
+
+    <!-- ECharts -->
+    <script src="https://cdn.jsdelivr.net/npm/echarts/dist/echarts.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/echarts-for-react/lib/core.js"></script> <!-- This might fail, use direct ECharts -->
+
+    <style>
+        body { margin: 0; padding: 0; background: #f5f7fa; }
+        .page-wrapper { min-height: 100vh; }
+        /* Simple spinner */
+        .spinner { border: 4px solid rgba(0,0,0,0.1); width: 36px; height: 36px; border-radius: 50%; border-left-color: #09f; animation: spin 1s linear infinite; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useEffect, useRef, useMemo, useCallback } = React;
+        const { 
+            Button, Input, Card, Tabs, Space, Tag, Badge, List, 
+            Typography, message, Modal, AutoComplete, Radio, Tooltip, 
+            Progress, Spin, Collapse, Select, Slider, Form, Checkbox, Row, Col, Divider, Alert
+        } = antd;
+        const { Title, Text, Paragraph } = Typography;
+        const { Panel } = Collapse;
+        const { Option } = Select;
+        const { 
+            SearchOutlined, RobotOutlined, FileTextOutlined, ThunderboltOutlined, 
+            HomeOutlined, BarChartOutlined, RiseOutlined, FireOutlined, 
+            RightOutlined, CloseCircleFilled, InfoCircleOutlined, ClockCircleOutlined, 
+            CheckCircleOutlined, StarOutlined, StarFilled, ExclamationCircleOutlined, 
+            DownloadOutlined, TeamOutlined, MessageOutlined, SyncOutlined, 
+            FilterOutlined, PhoneOutlined, ReloadOutlined, LoadingOutlined, 
+            DownOutlined, UpOutlined, CloseOutlined 
+        } = antdIcons; // Antd icons are exposed via window.antdIcons usually? Or separate CDN.
+        
+        // Fix for Antd Icons: check global variable
+        // If not available, define simple fallbacks or load correctly
+    </script>
+    
+    <!-- Load Ant Design Icons -->
+    <script src="https://unpkg.com/@ant-design/icons/dist/index.umd.js"></script>
+    <script>
+        // Map icons to window.icons for convenience in babel script
+        window.icons = window['icons'] || {}; // Check where antd icons are exported
+    </script>
+
+    <script type="text/babel">
+        // --- Mock Dependencies ---
+        const useNavigate = () => (path) => console.log('Navigate to:', path);
+        const useLocation = () => ({ pathname: '/' });
+        const useSearchParams = () => [new URLSearchParams(), () => {}];
+        
+        // Mock Lucide Icons (basic ones)
+        const ArrowLeftRight = () => <span>↔</span>;
+        const Trophy = () => <span>🏆</span>;
+        const Sparkles = () => <span>✨</span>;
+        const PencilRuler = () => <span>📏</span>;
+        const ArrowUpFromLine = () => <span>⬆</span>;
+        const ChevronLeft = () => <span>&lt;</span>;
+        const ChevronRight = () => <span>&gt;</span>;
+        const FileIcon = () => <span>📄</span>;
+        const Check = () => <span>✓</span>;
+        const Pencil = () => <span>✎</span>;
+        const Briefcase = () => <span>💼</span>;
+        const Eye = () => <span>👁</span>;
+
+        // Mock Data & Utils
+        const segmentKeyword = (keyword) => {
+            if (!keyword) return [];
+            return keyword.split(/\s+/).filter(k => k.length > 0);
+        };
+        
+        const hotSearchKeywords = [
+            '高新技术企业认定', '专精特新企业', '研发费用加计扣除', '科技创新券',
+            '人才引进政策', '金融科技创新', '数字经济发展', '绿色发展基金'
+        ];
+
+        // Mock Policy Data
+        const mockPolicies = [
+            {
+                id: '1',
+                title: '北京市丰台区促进金融科技创新发展专项资金管理办法',
+                summary: '支持丰台区金融科技企业创新发展，提供专项资金支持技术创新、产品研发等，最高补贴500万元。',
+                industry: '财政、金融、审计 / 金融服务',
+                publishDate: '2024-03-15',
+                publishOrg: '丰台区金融服务办公室',
+                district: '丰台区',
+                level: '区级',
+                category: '政策文件',
+                tags: ['金融科技', '创新发展', '专项资金'],
+                matchScore: 92
+            },
+            {
+                id: '2',
+                title: '朝阳区高新技术企业认定奖励政策实施细则',
+                summary: '对通过高新技术企业认定的朝阳区企业给予奖励，首次认定奖励30万元，重新认定奖励20万元。',
+                industry: '科技、教育 / 科技创新',
+                publishDate: '2024-02-20',
+                publishOrg: '朝阳区科学技术委员会',
+                district: '朝阳区',
+                level: '区级',
+                category: '科技创新',
+                tags: ['高新技术', '企业认定', '奖励政策'],
+                matchScore: 88
+            }
+        ];
+
+        // --- Simplified Child Components ---
+        
+        const PageWrapper = ({ children }) => <div className="page-wrapper">{children}</div>;
+        
+        const PolicyCard = ({ policy, onClick }) => (
+            <Card hoverable style={{ marginBottom: 16 }} onClick={() => onClick(policy.id)}>
+                <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                    <Title level={5}>{policy.title}</Title>
+                    <Tag color="blue">{policy.matchScore}% 匹配</Tag>
+                </div>
+                <Paragraph ellipsis={{ rows: 2 }}>{policy.summary}</Paragraph>
+                <Space>
+                    <Tag>{policy.district}</Tag>
+                    <Tag>{policy.category}</Tag>
+                    <Text type="secondary">{policy.publishDate}</Text>
+                </Space>
+            </Card>
+        );
+
+        // Simplified Filter Component
+        const EnhancedPolicyFilter = ({ searchKeyword, onFilterChange, onSearchExecuted }) => {
+            const [localKeyword, setLocalKeyword] = useState(searchKeyword);
+            
+            useEffect(() => {
+                setLocalKeyword(searchKeyword);
+            }, [searchKeyword]);
+
+            const handleSearch = () => {
+                // Simulate search
+                setTimeout(() => {
+                    const results = mockPolicies.filter(p => 
+                        !localKeyword || p.title.includes(localKeyword) || p.tags.some(t => t.includes(localKeyword))
+                    );
+                    onSearchExecuted && onSearchExecuted({
+                        total: results.length,
+                        items: results,
+                        executionTime: 100
+                    });
+                }, 500);
+            };
+
+            // Trigger search on mount or keyword change
+            useEffect(() => {
+                if (localKeyword) handleSearch();
+            }, [localKeyword]);
+
+            return (
+                <Card style={{ marginBottom: 24 }}>
+                    <div style={{ display: 'flex', gap: 16, alignItems: 'center', marginBottom: 16 }}>
+                        <Input 
+                            size="large" 
+                            placeholder="输入关键词搜索政策..." 
+                            prefix={<SearchOutlined />} 
+                            value={localKeyword}
+                            onChange={e => {
+                                setLocalKeyword(e.target.value);
+                                onFilterChange && onFilterChange({ keyword: e.target.value });
+                            }}
+                            onPressEnter={handleSearch}
+                        />
+                        <Button type="primary" size="large" onClick={handleSearch}>搜索</Button>
+                        <Button icon={<ReloadOutlined />} onClick={() => {
+                            setLocalKeyword('');
+                            onFilterChange && onFilterChange({ clearKeyword: true });
+                            onSearchExecuted && onSearchExecuted({ total: 0, items: [] });
+                        }}>重置筛选</Button>
+                    </div>
+                    <div>
+                        <Text strong>热门搜索：</Text>
+                        {hotSearchKeywords.slice(0, 5).map(k => (
+                            <Tag key={k} style={{ cursor: 'pointer' }} onClick={() => {
+                                setLocalKeyword(k);
+                                onFilterChange && onFilterChange({ keyword: k });
+                            }}>{k}</Tag>
+                        ))}
+                    </div>
+                </Card>
+            );
+        };
+        
+        // Error Boundary Mock
+        const FilterErrorBoundary = ({ children }) => <>{children}</>;
+
+        // --- Main Component Port ---
+        // (Simplified version of AIPolicySearchV2)
+        const AIPolicySearchV2 = () => {
+            const [searchTab, setSearchTab] = useState("search");
+            const [inputValues, setInputValues] = useState({ search: "", match: "" });
+            const [showResults, setShowResults] = useState(false);
+            const [searchLoading, setSearchLoading] = useState(false);
+            const [searchResults, setSearchResults] = useState([]);
+            const [performanceMetrics, setPerformanceMetrics] = useState({
+                queryTime: 0, renderTime: 0, memoryUsage: 0, cacheHitRate: 0, errorRate: 0
+            });
+            
+            // Handlers
+            const handleSearchAction = (value) => {
+                setSearchLoading(true);
+                setShowResults(true);
+                setInputValues(prev => ({ ...prev, search: value }));
+                
+                // Simulate search delay
+                setTimeout(() => {
+                    const results = mockPolicies.filter(p => 
+                        !value || p.title.includes(value) || p.tags.some(t => t.includes(value))
+                    );
+                    setSearchResults(results);
+                    setSearchLoading(false);
+                    message.success(`找到 ${results.length} 条相关政策`);
+                    
+                    setPerformanceMetrics({
+                        queryTime: 120,
+                        renderTime: 16,
+                        memoryUsage: 10,
+                        cacheHitRate: 0.8,
+                        errorRate: 0
+                    });
+                }, 800);
+            };
+
+            const handleFilterChange = (filters) => {
+                if (filters.keyword !== undefined) {
+                    setInputValues(prev => ({ ...prev, search: filters.keyword }));
+                }
+                if (filters.clearKeyword) {
+                    setInputValues(prev => ({ ...prev, search: "" }));
+                    setShowResults(false);
+                    setSearchResults([]);
+                }
+            };
+
+            return (
+                <PageWrapper>
+                    <div className="min-h-screen" style={{ background: "#f5f7fa", paddingBottom: 40 }}>
+                        {/* Header */}
+                        <div style={{ background: "#fff", padding: "20px 0", borderBottom: "1px solid #e8e8e8" }}>
+                            <div style={{ maxWidth: 1200, margin: "0 auto", padding: "0 24px", textAlign: "center" }}>
+                                <Title level={1} style={{ marginBottom: 12 }}>项目列表</Title>
+                                <Paragraph style={{ fontSize: 18, color: "#64748b" }}>
+                                    展示可申报的政策项目列表，支持筛选和快速启动申报
+                                </Paragraph>
+                                
+                                {/* Tabs */}
+                                <div style={{ display: 'flex', justifyContent: 'center', marginTop: 32, gap: 48 }}>
+                                    <div 
+                                        style={{ 
+                                            cursor: 'pointer', 
+                                            color: searchTab === 'search' ? '#1677ff' : '#94a3b8',
+                                            fontWeight: searchTab === 'search' ? 700 : 500,
+                                            fontSize: 20,
+                                            borderBottom: searchTab === 'search' ? '3px solid #1677ff' : '3px solid transparent',
+                                            paddingBottom: 12,
+                                            display: 'flex', alignItems: 'center', gap: 8
+                                        }}
+                                        onClick={() => setSearchTab('search')}
+                                    >
+                                        <SearchOutlined /> 政策搜索
+                                    </div>
+                                    <div 
+                                        style={{ 
+                                            cursor: 'pointer', 
+                                            color: searchTab === 'match' ? '#1677ff' : '#94a3b8',
+                                            fontWeight: searchTab === 'match' ? 700 : 500,
+                                            fontSize: 20,
+                                            borderBottom: searchTab === 'match' ? '3px solid #1677ff' : '3px solid transparent',
+                                            paddingBottom: 12,
+                                            display: 'flex', alignItems: 'center', gap: 8
+                                        }}
+                                        onClick={() => setSearchTab('match')}
+                                    >
+                                        <RobotOutlined /> 政策匹配
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Content */}
+                        <div style={{ maxWidth: 1200, margin: "24px auto", padding: "0 24px" }}>
+                            {searchTab === "search" && (
+                                <FilterErrorBoundary>
+                                    <EnhancedPolicyFilter
+                                        searchKeyword={inputValues.search}
+                                        onFilterChange={handleFilterChange}
+                                        onSearchExecuted={(res) => {
+                                            setSearchResults(res.items || []);
+                                            setShowResults(true);
+                                            // Mock metrics update
+                                            setPerformanceMetrics({
+                                                queryTime: res.executionTime || 0,
+                                                renderTime: 10,
+                                                memoryUsage: 5,
+                                                cacheHitRate: 0.5,
+                                                errorRate: 0
+                                            });
+                                        }}
+                                    />
+                                </FilterErrorBoundary>
+                            )}
+
+                            {/* Results */}
+                            {showResults && (
+                                <div>
+                                    <div style={{ marginBottom: 16, display: 'flex', justifyContent: 'space-between' }}>
+                                        <Text>找到 {searchResults.length} 条结果</Text>
+                                        <Space>
+                                            <Tag color="green">查询耗时: {performanceMetrics.queryTime}ms</Tag>
+                                        </Space>
+                                    </div>
+                                    
+                                    {searchLoading ? (
+                                        <div style={{ textAlign: 'center', padding: 40 }}>
+                                            <Spin size="large" tip="搜索中..." />
+                                        </div>
+                                    ) : (
+                                        <List
+                                            grid={{ gutter: 16, column: 1 }}
+                                            dataSource={searchResults}
+                                            renderItem={item => (
+                                                <List.Item>
+                                                    <PolicyCard policy={item} onClick={(id) => message.info(`查看政策详情: ${id}`)} />
+                                                </List.Item>
+                                            )}
+                                        />
+                                    )}
+                                </div>
+                            )}
+                            
+                            {searchTab === "match" && (
+                                <Card style={{ textAlign: 'center', padding: 40 }}>
+                                    <RobotOutlined style={{ fontSize: 48, color: '#1677ff', marginBottom: 16 }} />
+                                    <Title level={3}>智能政策匹配</Title>
+                                    <Paragraph>
+                                        请输入企业名称，我们将为您匹配最适合的政策项目。
+                                    </Paragraph>
+                                    <Space direction="vertical" style={{ width: '100%', maxWidth: 600 }}>
+                                        <Input.Search 
+                                            placeholder="请输入企业名称" 
+                                            enterButton="开始匹配" 
+                                            size="large"
+                                            onSearch={value => {
+                                                if(!value) return message.warning('请输入企业名称');
+                                                message.loading('正在分析企业数据...', 1)
+                                                    .then(() => message.success('匹配完成！为您推荐3项政策'));
+                                            }}
+                                        />
+                                    </Space>
+                                </Card>
+                            )}
+                        </div>
+                    </div>
+                </PageWrapper>
+            );
+        };
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<AIPolicySearchV2 />);
+    </script>
+</body>
+</html>

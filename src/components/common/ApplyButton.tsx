@@ -34,7 +34,7 @@ export interface ApplyButtonProps extends Omit<ButtonProps, 'type'> {
  * 标准化的申报操作按钮，根据项目状态自动切换样式和文案。
  * 集成了统一的 Tooltip 提示逻辑。
  */
-export const ApplyButton: React.FC<ApplyButtonProps> = ({
+const ApplyButton: React.FC<ApplyButtonProps> = ({
   status = 'in_progress',
   isApplied = false,
   onApply,

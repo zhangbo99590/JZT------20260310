@@ -59,6 +59,8 @@ import {
   getRemainingDays,
   cleanExpiredData
 } from '../../utils/applicationStorage';
+import QualificationDrawer from './components/QualificationDrawer';
+import { QUALIFICATION_DATA } from './components/QualificationSelector';
 
 const { Title, Text, Paragraph } = Typography;
 const { Step } = Steps;
@@ -89,6 +91,21 @@ const ApplyWizardWithLayout: React.FC = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   const [previewVisible, setPreviewVisible] = useState(false);
+  const [qualificationDrawerVisible, setQualificationDrawerVisible] = useState(false);
+
+  // 获取资质名称的辅助函数
+  const getQualificationLabel = (value: string) => {
+    const qualification = QUALIFICATION_DATA
+      .flatMap(g => g.qualifications)
+      .find(q => q.value === value);
+    return qualification?.label || value;
+  };
+
+  // 获取已选资质的显示文本
+  const getSelectedQualificationsText = (values: string[]) => {
+    if (!values || values.length === 0) return '';
+    return values.map(v => getQualificationLabel(v)).join('、');
+  };
 
   // 从路由状态获取项目信息和登录状态
   useEffect(() => {
@@ -348,12 +365,12 @@ const ApplyWizardWithLayout: React.FC = () => {
     // 模拟数据生成（结合formData）
     const previewData = {
       basicInfo: {
-        projectName: formData.projectName || '高新技术企业认定项目',
-        applicant: formData.companyName || '深圳市创新科技有限公司',
-        creditCode: formData.creditCode || '91440300MA5XXXXX1X',
-        legalPerson: formData.legalPerson || '张三',
-        contact: formData.contactPerson || '李四',
-        phone: formData.contactPhone || '13800138000',
+        projectName: formData.projectName || '',
+        applicant: formData.companyName || '',
+        creditCode: formData.creditCode || '',
+        legalPerson: formData.legalPerson || '',
+        contact: formData.contactPerson || '',
+        phone: formData.contactPhone || '',
         address: '深圳市南山区科技园xx栋xx楼',
         date: '2026年02月27日'
       },
@@ -669,17 +686,92 @@ const ApplyWizardWithLayout: React.FC = () => {
           headStyle={{ borderBottom: 'none', paddingLeft: 0 }}
           bodyStyle={{ paddingLeft: 0, paddingRight: 0 }}
         >
+          <Alert
+            message="资质选择说明"
+            description="点击输入框打开资质选择器，支持分组浏览、搜索定位、多选资质，查看详细申报条件和核心价值。"
+            type="info"
+            showIcon
+            style={{ marginBottom: 16 }}
+          />
           <Form.Item
             name="projectType"
-            rules={[{ required: false, message: '请选择申报资质类型' }]}
+            rules={[
+              { 
+                required: true, 
+                message: '请至少选择一个申报资质类型',
+                type: 'array',
+                min: 1
+              }
+            ]}
           >
-            <Select placeholder="请选择申报资质类型" size="large">
-              <Select.Option value="type1">国家高新技术企业认定</Select.Option>
-              <Select.Option value="type2">深圳市技术攻关项目</Select.Option>
-              <Select.Option value="type3">企业技术中心认定</Select.Option>
-            </Select>
+            <Input
+              size="large"
+              placeholder="请选择申报资质类型（支持多选）"
+              readOnly
+              onClick={() => setQualificationDrawerVisible(true)}
+              value={getSelectedQualificationsText(form.getFieldValue('projectType') || [])}
+              suffix={
+                <Space>
+                  {form.getFieldValue('projectType')?.length > 0 && (
+                    <Tag color="blue">{form.getFieldValue('projectType').length}</Tag>
+                  )}
+                  <Button type="link" size="small" onClick={(e) => {
+                    e.stopPropagation();
+                    setQualificationDrawerVisible(true);
+                  }}>
+                    点击选择
+                  </Button>
+                </Space>
+              }
+              style={{ cursor: 'pointer' }}
+            />
           </Form.Item>
+          
+          {/* 已选资质标签展示 */}
+          {form.getFieldValue('projectType')?.length > 0 && (
+            <div style={{ marginTop: 12 }}>
+              <Text type="secondary" style={{ fontSize: 12, marginBottom: 8, display: 'block' }}>
+                已选资质：
+              </Text>
+              <Space wrap>
+                {form.getFieldValue('projectType').map((value: string) => {
+                  return (
+                    <Tag
+                      key={value}
+                      color="blue"
+                      closable
+                      onClose={(e) => {
+                        e.preventDefault();
+                        const current = form.getFieldValue('projectType') || [];
+                        const newValues = current.filter((v: string) => v !== value);
+                        form.setFieldsValue({
+                          projectType: newValues
+                        });
+                        // 触发表单验证
+                        form.validateFields(['projectType']);
+                      }}
+                    >
+                      {getQualificationLabel(value)}
+                    </Tag>
+                  );
+                })}
+              </Space>
+            </div>
+          )}
         </Card>
+        
+        {/* 资质选择抽屉 */}
+        <QualificationDrawer
+          visible={qualificationDrawerVisible}
+          value={form.getFieldValue('projectType') || []}
+          onClose={() => setQualificationDrawerVisible(false)}
+          onConfirm={(selectedValues) => {
+            form.setFieldsValue({ projectType: selectedValues });
+            // 触发表单验证
+            form.validateFields(['projectType']).catch(() => {});
+            setQualificationDrawerVisible(false);
+          }}
+        />
 
         {/* 3. 企业财务数据 */}
         <Card 

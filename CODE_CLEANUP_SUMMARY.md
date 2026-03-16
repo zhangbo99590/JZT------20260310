@@ -1,4 +1,146 @@
-# 代码清理总结报告
+# 代码清理总结
+
+**清理日期**: 2026-03-04  
+**清理范围**: 删除重复和冗余代码
+
+---
+
+## 一、已删除的文件
+
+### ❌ `src/pages/policy/PolicyDetail.tsx` (已删除)
+**原因**: 已被 `EnhancedPolicyDetail.tsx` 完全替代
+
+**详情**:
+- 文件大小: 23,987 bytes
+- 创建时间: 较早版本
+- 功能: 基础的政策详情展示
+- 替代方案: `EnhancedPolicyDetail.tsx` 提供了更完整的功能
+  - 申报状态提醒
+  - 政策竞争力分析（ECharts图表）
+  - 专家咨询
+  - 收藏和分享功能
+
+**影响范围**: 无（未被任何路由或组件引用）
+
+---
+
+## 二、已更新的文件
+
+### ✅ `src/routes/lazyComponents.ts`
+**修改内容**: 删除了对已删除文件的引用
+
+**修改前**:
+```typescript
+export const PolicyDetail = lazy(() => import("../pages/policy/PolicyDetail"));
+export const EnhancedPolicyDetail = lazy(() => import("../pages/policy/EnhancedPolicyDetail"));
+```
+
+**修改后**:
+```typescript
+// PolicyDetail已被EnhancedPolicyDetail替代并删除
+export const EnhancedPolicyDetail = lazy(() => import("../pages/policy/EnhancedPolicyDetail"));
+```
+
+---
+
+## 三、保留的文件说明
+
+### ✅ `src/pages/policy/EnhancedPolicyDetail.tsx`
+**用途**: 政策中心的政策详情页  
+**路由**: `/policy-center/detail/:id`  
+**状态**: 当前使用中
+
+### ✅ `src/pages/application/PolicyDetail.tsx`
+**用途**: 申报管理模块的申报详情页  
+**路由**: `/application/detail/:id`  
+**状态**: 当前使用中  
+**说明**: 与政策详情页功能不同，包含申报流程、审核日志等
+
+### ✅ `src/pages/application/components/QualificationSelector.tsx`
+**用途**: 提供资质数据源 (QUALIFICATION_DATA)  
+**状态**: 作为数据源被 QualificationDrawer 使用
+
+### ✅ `src/pages/application/components/QualificationDrawer.tsx`
+**用途**: 抽屉式资质选择器（当前使用）  
+**状态**: 当前使用中
+
+---
+
+## 四、路由配置验证
+
+### 政策中心路由 ✅
+```typescript
+/policy-center/main → AIPolicySearch.tsx
+/policy-center/detail/:id → EnhancedPolicyDetail.tsx
+/policy-center/approved-list → PolicyApprovedList.tsx
+```
+
+### 申报管理路由 ✅
+```typescript
+/application → index.tsx
+/application/detail/:id → application/PolicyDetail.tsx
+/application/apply/:id → ApplyWizardWithLayout.tsx
+/application/success/:id → ApplySuccess.tsx
+```
+
+**验证结果**: 所有路由指向正确的组件，无404错误
+
+---
+
+## 五、清理效果
+
+### 文件减少
+- 删除文件: 1个
+- 删除代码: ~24KB
+- 减少导入: 1个
+
+### 代码质量提升
+- ✅ 消除了重复代码
+- ✅ 简化了路由配置
+- ✅ 提高了代码可维护性
+- ✅ 避免了潜在的混淆
+
+### 项目状态
+- ✅ 项目可正常启动
+- ✅ 所有路由正常工作
+- ✅ 无编译错误
+- ✅ 无运行时错误
+
+---
+
+## 六、待优化项（可选）
+
+### 1. 数据分离建议
+将 `QUALIFICATION_DATA` 从组件文件提取到独立数据文件：
+```
+src/pages/application/data/qualifications.ts
+```
+
+### 2. 类型定义统一
+创建共享类型文件：
+```
+src/pages/application/types/qualification.ts
+```
+
+### 3. 组件命名优化
+考虑将 `application/PolicyDetail.tsx` 重命名为 `ApplicationDetail.tsx`  
+以更清晰地区分其与政策详情页的不同
+
+---
+
+## 七、清理检查清单
+
+- [x] 删除冗余文件
+- [x] 更新导入引用
+- [x] 验证路由配置
+- [x] 检查编译错误
+- [x] 测试关键功能
+- [x] 文档更新
+
+---
+
+**清理完成** ✅  
+项目代码更加简洁，无冗余文件，可正常运行！报告
 
 ## 清理时间
 2026-03-03

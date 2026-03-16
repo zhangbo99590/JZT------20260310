@@ -1,0 +1,1533 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>璟智通 - 政策搜索系统</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/antd/5.12.8/reset.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/echarts/5.4.3/echarts.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/lucide/0.294.0/umd/lucide.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: #f5f7fa;
+            color: #333;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* 头部样式 */
+        .header {
+            background: #ffffff;
+            padding: 20px 0;
+            border-bottom: 1px solid #e8e8e8;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+            color: #1890ff;
+        }
+
+        .nav-tabs {
+            display: flex;
+            gap: 30px;
+        }
+
+        .nav-tab {
+            padding: 10px 20px;
+            border: none;
+            background: none;
+            cursor: pointer;
+            font-size: 16px;
+            color: #666;
+            border-radius: 6px;
+            transition: all 0.3s ease;
+        }
+
+        .nav-tab.active {
+            background: #1890ff;
+            color: white;
+        }
+
+        .nav-tab:hover {
+            background: #e6f7ff;
+            color: #1890ff;
+        }
+
+        /* 搜索区域 */
+        .search-section {
+            background: white;
+            padding: 40px 0;
+            text-align: center;
+        }
+
+        .search-title {
+            font-size: 32px;
+            font-weight: 600;
+            color: #1890ff;
+            margin-bottom: 10px;
+        }
+
+        .search-subtitle {
+            font-size: 16px;
+            color: #666;
+            margin-bottom: 30px;
+        }
+
+        .search-box {
+            max-width: 600px;
+            margin: 0 auto;
+            position: relative;
+        }
+
+        .search-input {
+            width: 100%;
+            height: 50px;
+            padding: 0 60px 0 20px;
+            border: 2px solid #d9d9d9;
+            border-radius: 25px;
+            font-size: 16px;
+            outline: none;
+            transition: border-color 0.3s ease;
+        }
+
+        .search-input:focus {
+            border-color: #1890ff;
+        }
+
+        .search-btn {
+            position: absolute;
+            right: 5px;
+            top: 5px;
+            height: 40px;
+            padding: 0 20px;
+            background: #1890ff;
+            color: white;
+            border: none;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background 0.3s ease;
+        }
+
+        .search-btn:hover {
+            background: #40a9ff;
+        }
+
+        /* 热门搜索标签 */
+        .hot-searches {
+            margin-top: 20px;
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .hot-tag {
+            padding: 6px 12px;
+            background: #f0f0f0;
+            border-radius: 15px;
+            font-size: 12px;
+            color: #666;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .hot-tag:hover {
+            background: #1890ff;
+            color: white;
+        }
+
+        .hot-tag.hot {
+            background: #ff4d4f;
+            color: white;
+        }
+
+        .hot-tag.recommend {
+            background: #faad14;
+            color: white;
+        }
+
+        /* 筛选控件 */
+        .filter-section {
+            background: linear-gradient(135deg, #f5f7fa 0%, #ffffff 100%);
+            border-radius: 16px;
+            padding: 24px;
+            margin: 24px 0;
+            border: 1px solid #e8e8e8;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+        }
+
+        .filter-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .filter-title {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .filter-count {
+            background: #e6f7ff;
+            color: #1890ff;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        .reset-btn {
+            padding: 6px 12px;
+            background: none;
+            border: 1px solid #d9d9d9;
+            border-radius: 6px;
+            color: #666;
+            cursor: pointer;
+            font-size: 12px;
+            transition: all 0.3s ease;
+        }
+
+        .reset-btn:hover {
+            border-color: #1890ff;
+            color: #1890ff;
+        }
+
+        .filter-group {
+            margin-bottom: 20px;
+        }
+
+        .filter-group-title {
+            font-size: 14px;
+            font-weight: 500;
+            color: #333;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .filter-group-subtitle {
+            font-size: 12px;
+            color: #999;
+        }
+
+        .filter-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .filter-tag {
+            padding: 6px 12px;
+            background: white;
+            border: 1px solid #d9d9d9;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 12px;
+            color: #666;
+            transition: all 0.3s ease;
+        }
+
+        .filter-tag:hover {
+            border-color: #1890ff;
+            color: #1890ff;
+            transform: translateY(-1px);
+            box-shadow: 0 2px 4px rgba(24,144,255,0.2);
+        }
+
+        .filter-tag.selected {
+            background: linear-gradient(135deg, #1890ff, #40a9ff);
+            border-color: #1890ff;
+            color: white;
+            box-shadow: 0 2px 8px rgba(24,144,255,0.3);
+        }
+
+        .more-btn {
+            padding: 6px 12px;
+            background: none;
+            border: none;
+            color: #1890ff;
+            cursor: pointer;
+            font-size: 12px;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        /* 已选条件 */
+        .selected-filters {
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid #e8e8e8;
+        }
+
+        .selected-filters-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .selected-filters-title {
+            font-size: 14px;
+            font-weight: 500;
+            color: #333;
+        }
+
+        .selected-filters-count {
+            font-size: 12px;
+            color: #1890ff;
+            margin-left: 8px;
+        }
+
+        .quick-search-btn {
+            background: #1890ff;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 4px rgba(24,144,255,0.2);
+        }
+
+        .quick-search-btn:hover {
+            background: #40a9ff;
+            box-shadow: 0 4px 8px rgba(24,144,255,0.3);
+        }
+
+        .quick-search-btn:disabled {
+            background: #f5f5f5;
+            color: #ccc;
+            cursor: not-allowed;
+            box-shadow: none;
+        }
+
+        .selected-tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 4px 8px;
+            background: #f5f5f5;
+            color: #666;
+            border: 1px solid #d9d9d9;
+            border-radius: 4px;
+            font-size: 12px;
+            margin: 2px;
+        }
+
+        .selected-tag .close {
+            cursor: pointer;
+            color: #999;
+            font-size: 10px;
+        }
+
+        .selected-tag .close:hover {
+            color: #ff4d4f;
+        }
+
+        /* 搜索结果 */
+        .results-section {
+            background: white;
+            border-radius: 8px;
+            margin-top: 24px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+        }
+
+        .results-header {
+            padding: 16px 20px;
+            border-bottom: 1px solid #e8e8e8;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .results-tabs {
+            display: flex;
+            gap: 20px;
+        }
+
+        .results-tab {
+            padding: 8px 16px;
+            border: none;
+            background: none;
+            cursor: pointer;
+            font-size: 14px;
+            color: #666;
+            border-radius: 4px;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .results-tab.active {
+            color: #1890ff;
+            background: #e6f7ff;
+        }
+
+        .results-tab .badge {
+            background: #1890ff;
+            color: white;
+            font-size: 10px;
+            padding: 2px 6px;
+            border-radius: 10px;
+            margin-left: 4px;
+        }
+
+        .sort-select {
+            padding: 6px 12px;
+            border: 1px solid #d9d9d9;
+            border-radius: 4px;
+            font-size: 12px;
+            outline: none;
+        }
+
+        .results-stats {
+            padding: 12px 20px;
+            background: #fafafa;
+            font-size: 12px;
+            color: #666;
+        }
+
+        .results-list {
+            padding: 0;
+        }
+
+        .result-item {
+            padding: 20px;
+            border-bottom: 1px solid #f0f0f0;
+            transition: background 0.3s ease;
+        }
+
+        .result-item:hover {
+            background: #fafafa;
+        }
+
+        .result-item:last-child {
+            border-bottom: none;
+        }
+
+        .result-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 8px;
+            cursor: pointer;
+        }
+
+        .result-title:hover {
+            color: #1890ff;
+        }
+
+        .result-meta {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 8px;
+            font-size: 12px;
+            color: #999;
+        }
+
+        .result-summary {
+            font-size: 14px;
+            color: #666;
+            line-height: 1.6;
+            margin-bottom: 12px;
+        }
+
+        .result-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+        }
+
+        .result-tag {
+            padding: 2px 6px;
+            background: #f0f0f0;
+            border-radius: 3px;
+            font-size: 10px;
+            color: #666;
+        }
+
+        .result-tag.level {
+            background: #e6f7ff;
+            color: #1890ff;
+        }
+
+        .result-tag.subsidy {
+            background: #fff7e6;
+            color: #fa8c16;
+        }
+
+        /* 空状态 */
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #999;
+        }
+
+        .empty-icon {
+            font-size: 48px;
+            margin-bottom: 16px;
+        }
+
+        .empty-text {
+            font-size: 16px;
+            margin-bottom: 8px;
+        }
+
+        .empty-subtext {
+            font-size: 14px;
+            color: #ccc;
+        }
+
+        /* 加载状态 */
+        .loading {
+            text-align: center;
+            padding: 40px;
+        }
+
+        .spinner {
+            width: 32px;
+            height: 32px;
+            border: 3px solid #f0f0f0;
+            border-top: 3px solid #1890ff;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 16px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* 性能监控 */
+        .performance-monitor {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            padding: 16px;
+            width: 300px;
+            z-index: 1000;
+            display: none;
+        }
+
+        .performance-monitor.show {
+            display: block;
+        }
+
+        .performance-toggle {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: white;
+            border: 1px solid #d9d9d9;
+            border-radius: 6px;
+            padding: 8px 12px;
+            cursor: pointer;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            font-size: 12px;
+            color: #666;
+            z-index: 999;
+        }
+
+        .performance-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .performance-metric {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            font-size: 12px;
+        }
+
+        .performance-chart {
+            height: 150px;
+            margin-top: 12px;
+        }
+
+        /* 响应式设计 */
+        @media (max-width: 768px) {
+            .container {
+                padding: 0 16px;
+            }
+
+            .header-content {
+                flex-direction: column;
+                gap: 16px;
+            }
+
+            .nav-tabs {
+                gap: 16px;
+            }
+
+            .search-title {
+                font-size: 24px;
+            }
+
+            .filter-section {
+                padding: 16px;
+            }
+
+            .filter-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 12px;
+            }
+
+            .results-header {
+                flex-direction: column;
+                gap: 12px;
+                align-items: flex-start;
+            }
+
+            .performance-monitor {
+                width: calc(100vw - 32px);
+                right: 16px;
+            }
+        }
+
+        /* 高亮样式 */
+        .highlight {
+            background: #ff4d4f;
+            color: white;
+            padding: 1px 2px;
+            border-radius: 2px;
+        }
+
+        /* 动画样式 */
+        @keyframes slideInRight {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        @keyframes slideOutRight {
+            from {
+                transform: translateX(0);
+                opacity: 1;
+            }
+            to {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .fade-in {
+            animation: fadeIn 0.3s ease;
+        }
+
+        /* 改进的按钮样式 */
+        .quick-search-btn:not(:disabled):hover {
+            transform: translateY(-1px);
+            box-shadow: 0 6px 12px rgba(24,144,255,0.4);
+        }
+
+        .filter-tag:hover:not(.selected) {
+            transform: translateY(-1px);
+        }
+
+        /* 搜索结果项动画 */
+        .result-item {
+            animation: fadeIn 0.3s ease;
+        }
+
+        /* 加载状态改进 */
+        .loading {
+            animation: fadeIn 0.3s ease;
+        }
+    </style>
+</head>
+<body>
+    <!-- 头部 -->
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">璟智通</div>
+                <nav class="nav-tabs">
+                    <button class="nav-tab active" data-tab="search">政策搜索</button>
+                    <button class="nav-tab" data-tab="match">智能匹配</button>
+                    <button class="nav-tab" data-tab="analysis">数据分析</button>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <!-- 主要内容 -->
+    <main class="container">
+        <!-- 搜索区域 -->
+        <section class="search-section">
+            <h1 class="search-title">智能政策搜索</h1>
+            <p class="search-subtitle">精准匹配，助力企业发展</p>
+            
+            <div class="search-box">
+                <input type="text" class="search-input" placeholder="请输入政策关键词，如：高新技术企业认定、专精特新..." id="searchInput">
+                <button class="search-btn" id="searchBtn">立即搜索</button>
+            </div>
+
+            <!-- 热门搜索 -->
+            <div class="hot-searches" id="hotSearches">
+                <span class="hot-tag hot">高新技术企业认定</span>
+                <span class="hot-tag hot">专精特新企业</span>
+                <span class="hot-tag hot">研发费用加计扣除</span>
+                <span class="hot-tag recommend">科技创新券</span>
+                <span class="hot-tag recommend">人才引进政策</span>
+                <span class="hot-tag recommend">金融科技创新</span>
+                <span class="hot-tag">数字经济发展</span>
+                <span class="hot-tag">绿色发展基金</span>
+            </div>
+        </section>
+
+        <!-- 筛选控件 -->
+        <section class="filter-section" id="filterSection">
+            <div class="filter-header">
+                <div class="filter-title">
+                    <span>🔍</span>
+                    <span>筛选条件</span>
+                    <span class="filter-count" id="filterCount">已选 0 项</span>
+                </div>
+                <button class="reset-btn" id="resetBtn">重置筛选</button>
+            </div>
+
+            <!-- 北京市行政区域 -->
+            <div class="filter-group">
+                <div class="filter-group-title">
+                    北京市行政区域
+                    <span class="filter-group-subtitle">支持多选</span>
+                </div>
+                <div class="filter-tags" id="districtTags">
+                    <span class="filter-tag" data-type="district" data-value="东城区">东城区</span>
+                    <span class="filter-tag" data-type="district" data-value="西城区">西城区</span>
+                    <span class="filter-tag" data-type="district" data-value="朝阳区">朝阳区</span>
+                    <span class="filter-tag" data-type="district" data-value="海淀区">海淀区</span>
+                    <span class="filter-tag" data-type="district" data-value="丰台区">丰台区</span>
+                    <span class="filter-tag" data-type="district" data-value="石景山区">石景山区</span>
+                    <span class="filter-tag" data-type="district" data-value="通州区" style="display: none;">通州区</span>
+                    <span class="filter-tag" data-type="district" data-value="顺义区" style="display: none;">顺义区</span>
+                    <span class="filter-tag" data-type="district" data-value="昌平区" style="display: none;">昌平区</span>
+                    <span class="filter-tag" data-type="district" data-value="大兴区" style="display: none;">大兴区</span>
+                    <span class="filter-tag" data-type="district" data-value="房山区" style="display: none;">房山区</span>
+                    <span class="filter-tag" data-type="district" data-value="门头沟区" style="display: none;">门头沟区</span>
+                    <span class="filter-tag" data-type="district" data-value="平谷区" style="display: none;">平谷区</span>
+                    <span class="filter-tag" data-type="district" data-value="怀柔区" style="display: none;">怀柔区</span>
+                    <span class="filter-tag" data-type="district" data-value="密云区" style="display: none;">密云区</span>
+                    <span class="filter-tag" data-type="district" data-value="延庆区" style="display: none;">延庆区</span>
+                    <button class="more-btn" id="moreDistricts">更多 ▼</button>
+                </div>
+            </div>
+
+            <!-- 行业筛选 -->
+            <div class="filter-group">
+                <div class="filter-group-title">
+                    行业筛选
+                    <span class="filter-group-subtitle">支持多选</span>
+                    <span style="background: #fff7e6; color: #fa8c16; padding: 2px 6px; border-radius: 3px; font-size: 10px;">核心筛选</span>
+                </div>
+                <div class="filter-tags" id="industryTags">
+                    <span class="filter-tag" data-type="industry" data-value="科技、教育 / 科技">科技、教育 / 科技</span>
+                    <span class="filter-tag" data-type="industry" data-value="工业、交通 / 信息产业">工业、交通 / 信息产业</span>
+                    <span class="filter-tag" data-type="industry" data-value="城乡建设、环境保护">城乡建设、环境保护</span>
+                    <span class="filter-tag" data-type="industry" data-value="财政、金融、审计">财政、金融、审计</span>
+                    <span class="filter-tag" data-type="industry" data-value="商贸、海关、旅游" style="display: none;">商贸、海关、旅游</span>
+                    <span class="filter-tag" data-type="industry" data-value="综合政务" style="display: none;">综合政务</span>
+                    <span class="filter-tag" data-type="industry" data-value="市场监管" style="display: none;">市场监管</span>
+                    <span class="filter-tag" data-type="industry" data-value="人力资源社会保障" style="display: none;">人力资源社会保障</span>
+                    <button class="more-btn" id="moreIndustries">更多 ▼</button>
+                </div>
+            </div>
+
+            <!-- 已选筛选条件 -->
+            <div class="selected-filters" id="selectedFilters" style="display: none;">
+                <div class="selected-filters-header">
+                    <div>
+                        <span class="selected-filters-title">已选筛选条件</span>
+                        <span class="selected-filters-count" id="selectedCount">0 个</span>
+                    </div>
+                    <button class="quick-search-btn" id="quickSearchBtn">查一下</button>
+                </div>
+                <div id="selectedTags"></div>
+            </div>
+        </section>
+
+        <!-- 搜索结果 -->
+        <section class="results-section" id="resultsSection" style="display: none;">
+            <div class="results-header">
+                <div class="results-tabs">
+                    <button class="results-tab active" data-category="all">
+                        全部 <span class="badge" id="allCount">0</span>
+                    </button>
+                    <button class="results-tab" data-category="policy">
+                        政策文件 <span class="badge" id="policyCount">0</span>
+                    </button>
+                    <button class="results-tab" data-category="project">
+                        相关项目 <span class="badge" id="projectCount">0</span>
+                    </button>
+                    <button class="results-tab" data-category="enterprise">
+                        扶持企业 <span class="badge" id="enterpriseCount">0</span>
+                    </button>
+                </div>
+                <select class="sort-select" id="sortSelect">
+                    <option value="relevance">默认排序</option>
+                    <option value="date">发布时间</option>
+                    <option value="subsidy">补贴金额</option>
+                </select>
+            </div>
+
+            <div class="results-stats" id="resultsStats">
+                找到 <strong>0</strong> 条相关结果
+            </div>
+
+            <div class="results-list" id="resultsList">
+                <!-- 搜索结果将在这里动态生成 -->
+            </div>
+        </section>
+
+        <!-- 空状态 -->
+        <div class="empty-state" id="emptyState">
+            <div class="empty-icon">🔍</div>
+            <div class="empty-text">请输入关键词进行搜索</div>
+            <div class="empty-subtext">支持政策名称、关键词、行业等多种搜索方式</div>
+        </div>
+
+        <!-- 加载状态 -->
+        <div class="loading" id="loadingState" style="display: none;">
+            <div class="spinner"></div>
+            <div>正在搜索中...</div>
+        </div>
+    </main>
+
+    <!-- 性能监控 -->
+    <div class="performance-toggle" id="performanceToggle">
+        性能监控 📊
+    </div>
+
+    <div class="performance-monitor" id="performanceMonitor">
+        <div class="performance-header">
+            <span>筛选性能监控</span>
+            <button onclick="togglePerformanceMonitor()" style="background: none; border: none; cursor: pointer;">✕</button>
+        </div>
+        <div class="performance-metric">
+            <span>查询时间:</span>
+            <span id="queryTime">0ms</span>
+        </div>
+        <div class="performance-metric">
+            <span>缓存命中率:</span>
+            <span id="cacheHitRate">0%</span>
+        </div>
+        <div class="performance-metric">
+            <span>结果数量:</span>
+            <span id="resultCount">0</span>
+        </div>
+        <div class="performance-chart" id="performanceChart"></div>
+    </div>
+
+    <script>
+        // 模拟政策数据
+        const mockPolicies = [
+            {
+                id: '1',
+                title: '北京市高新技术企业认定管理办法',
+                summary: '为加强高新技术企业认定管理工作，规范认定程序，促进高新技术产业发展，根据国家相关规定，制定本办法。',
+                district: '朝阳区',
+                industry: '科技、教育 / 科技',
+                level: '市级',
+                subsidyType: '税收优惠',
+                subsidyAmount: '减免15%企业所得税',
+                publishDate: '2024-01-15',
+                department: '北京市科学技术委员会',
+                tags: ['高新技术', '税收优惠', '企业认定'],
+                type: 'policy'
+            },
+            {
+                id: '2',
+                title: '专精特新中小企业培育工程实施方案',
+                summary: '为培育一批专业化、精细化、特色化、新颖化的中小企业，提升中小企业创新能力和专业化水平，制定本实施方案。',
+                district: '海淀区',
+                industry: '工业、交通 / 信息产业',
+                level: '国家级',
+                subsidyType: '直接补贴',
+                subsidyAmount: '最高200万元',
+                publishDate: '2024-02-20',
+                department: '工业和信息化部',
+                tags: ['专精特新', '中小企业', '创新能力'],
+                type: 'project'
+            },
+            {
+                id: '3',
+                title: '研发费用加计扣除政策实施细则',
+                summary: '为进一步激发企业创新活力，加大研发投入，完善研发费用加计扣除政策，制定本实施细则。',
+                district: '丰台区',
+                industry: '科技、教育 / 科技',
+                level: '国家级',
+                subsidyType: '税收优惠',
+                subsidyAmount: '100%加计扣除',
+                publishDate: '2024-03-10',
+                department: '国家税务总局',
+                tags: ['研发费用', '加计扣除', '税收优惠'],
+                type: 'policy'
+            },
+            {
+                id: '4',
+                title: '北京市科技创新券管理办法',
+                summary: '为支持中小微企业和创新创业团队购买科技服务，降低创新创业成本，促进科技成果转化，制定本管理办法。',
+                district: '西城区',
+                industry: '科技、教育 / 科技',
+                level: '市级',
+                subsidyType: '创新券',
+                subsidyAmount: '最高20万元',
+                publishDate: '2024-01-25',
+                department: '北京市科学技术委员会',
+                tags: ['科技创新券', '中小微企业', '科技服务'],
+                type: 'policy'
+            },
+            {
+                id: '5',
+                title: '金融科技创新监管试点实施方案',
+                summary: '为推动金融科技创新发展，建立健全金融科技创新监管机制，促进金融科技应用，制定本实施方案。',
+                district: '东城区',
+                industry: '财政、金融、审计',
+                level: '市级',
+                subsidyType: '政策支持',
+                subsidyAmount: '监管沙盒',
+                publishDate: '2024-02-15',
+                department: '北京市金融监管局',
+                tags: ['金融科技', '创新监管', '试点'],
+                type: 'project'
+            }
+        ];
+
+        // 应用状态
+        let filterState = {
+            districts: [],
+            industries: []
+        };
+        let searchResults = [];
+        let currentKeywords = [];
+        let performanceMetrics = {
+            queryTime: 0,
+            cacheHitRate: 0,
+            resultCount: 0
+        };
+
+        // DOM 元素
+        const searchInput = document.getElementById('searchInput');
+        const searchBtn = document.getElementById('searchBtn');
+        const hotSearches = document.getElementById('hotSearches');
+        const filterSection = document.getElementById('filterSection');
+        const resultsSection = document.getElementById('resultsSection');
+        const emptyState = document.getElementById('emptyState');
+        const loadingState = document.getElementById('loadingState');
+        const selectedFiltersElement = document.getElementById('selectedFilters');
+        const quickSearchBtn = document.getElementById('quickSearchBtn');
+        const resetBtn = document.getElementById('resetBtn');
+
+        // 初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeEventListeners();
+            updateFilterCount();
+        });
+
+        // 事件监听器
+        function initializeEventListeners() {
+            // 搜索按钮
+            searchBtn.addEventListener('click', handleSearch);
+            searchInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    handleSearch();
+                }
+            });
+
+            // 热门搜索标签
+            hotSearches.addEventListener('click', function(e) {
+                if (e.target.classList.contains('hot-tag')) {
+                    searchInput.value = e.target.textContent;
+                    handleSearch();
+                }
+            });
+
+            // 筛选标签
+            document.addEventListener('click', function(e) {
+                if (e.target.classList.contains('filter-tag')) {
+                    toggleFilterTag(e.target);
+                }
+            });
+
+            // 快速搜索按钮
+            quickSearchBtn.addEventListener('click', handleQuickSearch);
+
+            // 重置按钮
+            resetBtn.addEventListener('click', resetFilters);
+
+            // 性能监控切换
+            document.getElementById('performanceToggle').addEventListener('click', togglePerformanceMonitor);
+
+            // 更多区域按钮
+            document.getElementById('moreDistricts').addEventListener('click', function() {
+                const hiddenDistricts = document.querySelectorAll('#districtTags .filter-tag[style*="display: none"]');
+                const isExpanded = this.textContent.includes('收起');
+                
+                if (isExpanded) {
+                    hiddenDistricts.forEach(tag => tag.style.display = 'none');
+                    this.innerHTML = '更多 ▼';
+                } else {
+                    hiddenDistricts.forEach(tag => tag.style.display = 'inline-block');
+                    this.innerHTML = '收起 ▲';
+                }
+            });
+
+            // 更多行业按钮
+            document.getElementById('moreIndustries').addEventListener('click', function() {
+                const hiddenIndustries = document.querySelectorAll('#industryTags .filter-tag[style*="display: none"]');
+                const isExpanded = this.textContent.includes('收起');
+                
+                if (isExpanded) {
+                    hiddenIndustries.forEach(tag => tag.style.display = 'none');
+                    this.innerHTML = '更多 ▼';
+                } else {
+                    hiddenIndustries.forEach(tag => tag.style.display = 'inline-block');
+                    this.innerHTML = '收起 ▲';
+                }
+            });
+
+            // 结果分类切换
+            document.addEventListener('click', function(e) {
+                if (e.target.classList.contains('results-tab')) {
+                    switchResultsTab(e.target);
+                }
+            });
+
+            // 排序选择
+            document.getElementById('sortSelect').addEventListener('change', function(e) {
+                sortResults(e.target.value);
+            });
+        }
+
+        // 处理搜索
+        function handleSearch() {
+            const query = searchInput.value.trim();
+            if (!query) return;
+
+            showLoading();
+            
+            // 模拟搜索延迟
+            setTimeout(() => {
+                executeSearch(query);
+            }, 500);
+        }
+
+        // 执行搜索
+        function executeSearch(query) {
+            const startTime = performance.now();
+            
+            // 分词处理
+            currentKeywords = segmentText(query);
+            
+            // 筛选和搜索
+            searchResults = mockPolicies.filter(policy => {
+                // 应用筛选条件
+                if (filterState.districts.length > 0) {
+                    if (!filterState.districts.includes(policy.district)) {
+                        return false;
+                    }
+                }
+                
+                if (filterState.industries.length > 0) {
+                    if (!filterState.industries.includes(policy.industry)) {
+                        return false;
+                    }
+                }
+                
+                // 关键词匹配（如果有关键词的话）
+                if (currentKeywords.length > 0) {
+                    const searchText = `${policy.title} ${policy.summary} ${policy.tags.join(' ')}`.toLowerCase();
+                    return currentKeywords.some(keyword => 
+                        searchText.includes(keyword.toLowerCase())
+                    );
+                }
+                
+                // 如果没有关键词，只要通过了筛选条件就返回true
+                return true;
+            });
+
+            // 计算性能指标
+            const queryTime = performance.now() - startTime;
+            performanceMetrics = {
+                queryTime: Math.round(queryTime),
+                cacheHitRate: Math.random() * 80 + 20,
+                resultCount: searchResults.length
+            };
+
+            hideLoading();
+            displayResults();
+            updatePerformanceMonitor();
+        }
+
+        // 改进的分词函数
+        function segmentText(text) {
+            if (!text || text.trim() === '') return [];
+            
+            const keywords = [];
+            const commonWords = [
+                '高新技术', '专精特新', '研发费用', '科技创新', '金融科技', 
+                '企业认定', '创新券', '人才引进', '数字经济', '绿色发展',
+                '税收优惠', '加计扣除', '直接补贴', '贷款贴息', '基金支持'
+            ];
+            
+            // 检查常用词汇
+            commonWords.forEach(word => {
+                if (text.includes(word)) {
+                    keywords.push(word);
+                }
+            });
+            
+            // 按空格和标点符号分割
+            const segments = text.split(/[\s，。、；：！？""''（）【】\[\]]+/).filter(s => s.length > 0);
+            
+            segments.forEach(segment => {
+                if (segment.length >= 2) {
+                    keywords.push(segment);
+                }
+            });
+            
+            // 如果没有找到关键词，使用原始文本
+            if (keywords.length === 0) {
+                keywords.push(text.trim());
+            }
+            
+            // 去重并返回
+            return [...new Set(keywords)];
+        }
+
+        // 切换筛选标签
+        function toggleFilterTag(tag) {
+            const type = tag.dataset.type;
+            const value = tag.dataset.value;
+            
+            if (tag.classList.contains('selected')) {
+                tag.classList.remove('selected');
+                if (type === 'district') {
+                    filterState.districts = filterState.districts.filter(d => d !== value);
+                } else if (type === 'industry') {
+                    filterState.industries = filterState.industries.filter(i => i !== value);
+                }
+            } else {
+                tag.classList.add('selected');
+                if (type === 'district') {
+                    filterState.districts.push(value);
+                } else if (type === 'industry') {
+                    filterState.industries.push(value);
+                }
+            }
+            
+            updateFilterCount();
+            updateSelectedFilters();
+        }
+
+        // 更新筛选条件计数
+        function updateFilterCount() {
+            const count = filterState.districts.length + filterState.industries.length;
+            document.getElementById('filterCount').textContent = `已选 ${count} 项`;
+            
+            if (count > 0) {
+                selectedFiltersElement.style.display = 'block';
+                document.getElementById('selectedCount').textContent = `${count} 个`;
+                quickSearchBtn.disabled = false;
+            } else {
+                selectedFiltersElement.style.display = 'none';
+                quickSearchBtn.disabled = true;
+            }
+        }
+
+        // 更新已选筛选条件显示
+        function updateSelectedFilters() {
+            const container = document.getElementById('selectedTags');
+            container.innerHTML = '';
+            
+            filterState.districts.forEach(district => {
+                const tag = createSelectedTag(district, 'district');
+                container.appendChild(tag);
+            });
+            
+            filterState.industries.forEach(industry => {
+                const tag = createSelectedTag(industry, 'industry');
+                container.appendChild(tag);
+            });
+        }
+
+        // 创建已选标签
+        function createSelectedTag(value, type) {
+            const tag = document.createElement('span');
+            tag.className = 'selected-tag';
+            tag.innerHTML = `
+                ${value}
+                <span class="close" onclick="removeSelectedFilter('${value}', '${type}')">×</span>
+            `;
+            return tag;
+        }
+
+        // 移除已选筛选条件
+        function removeSelectedFilter(value, type) {
+            if (type === 'district') {
+                filterState.districts = filterState.districts.filter(d => d !== value);
+                document.querySelector(`[data-type="district"][data-value="${value}"]`).classList.remove('selected');
+            } else if (type === 'industry') {
+                filterState.industries = filterState.industries.filter(i => i !== value);
+                document.querySelector(`[data-type="industry"][data-value="${value}"]`).classList.remove('selected');
+            }
+            
+            updateFilterCount();
+            updateSelectedFilters();
+        }
+
+        // 快速搜索
+        function handleQuickSearch() {
+            const query = searchInput.value.trim();
+            if (filterState.districts.length === 0 && filterState.industries.length === 0 && !query) {
+                alert('请至少选择一个筛选条件或输入搜索关键词');
+                return;
+            }
+            
+            showLoading();
+            setTimeout(() => {
+                executeSearch(query || '政策');
+            }, 300);
+        }
+
+        // 重置筛选
+        function resetFilters() {
+            filterState.districts = [];
+            filterState.industries = [];
+            
+            document.querySelectorAll('.filter-tag.selected').forEach(tag => {
+                tag.classList.remove('selected');
+            });
+            
+            searchInput.value = '';
+            currentKeywords = [];
+            searchResults = [];
+            
+            updateFilterCount();
+            updateSelectedFilters();
+            
+            // 隐藏搜索结果
+            resultsSection.style.display = 'none';
+            emptyState.style.display = 'block';
+        }
+
+        // 显示加载状态
+        function showLoading() {
+            loadingState.style.display = 'block';
+            emptyState.style.display = 'none';
+            resultsSection.style.display = 'none';
+        }
+
+        // 隐藏加载状态
+        function hideLoading() {
+            loadingState.style.display = 'none';
+        }
+
+        // 显示搜索结果
+        function displayResults() {
+            if (searchResults.length === 0) {
+                emptyState.style.display = 'block';
+                emptyState.innerHTML = `
+                    <div class="empty-icon">🔍</div>
+                    <div class="empty-text">未找到符合条件的政策</div>
+                    <div class="empty-subtext">
+                        ${filterState.districts.length > 0 || filterState.industries.length > 0 ? 
+                            '建议调整筛选条件或尝试其他关键词' : 
+                            '请输入关键词或选择筛选条件进行搜索'}
+                    </div>
+                `;
+                resultsSection.style.display = 'none';
+                return;
+            }
+            
+            emptyState.style.display = 'none';
+            resultsSection.style.display = 'block';
+            
+            updateResultsStats();
+            renderResultsList();
+            
+            // 显示搜索成功提示
+            if (searchResults.length > 0) {
+                showSuccessMessage(`找到 ${searchResults.length} 条相关政策，查询耗时 ${performanceMetrics.queryTime}ms`);
+            }
+        }
+        
+        // 显示成功消息
+        function showSuccessMessage(message) {
+            const toast = document.createElement('div');
+            toast.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                background: #52c41a;
+                color: white;
+                padding: 12px 20px;
+                border-radius: 6px;
+                box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+                z-index: 9999;
+                font-size: 14px;
+                animation: slideInRight 0.3s ease;
+            `;
+            toast.textContent = message;
+            document.body.appendChild(toast);
+            
+            setTimeout(() => {
+                toast.style.animation = 'slideOutRight 0.3s ease';
+                setTimeout(() => document.body.removeChild(toast), 300);
+            }, 3000);
+        }
+
+        // 更新结果统计
+        function updateResultsStats() {
+            const stats = {
+                all: searchResults.length,
+                policy: searchResults.filter(r => r.type === 'policy').length,
+                project: searchResults.filter(r => r.type === 'project').length,
+                enterprise: searchResults.filter(r => r.type === 'enterprise').length
+            };
+            
+            document.getElementById('allCount').textContent = stats.all;
+            document.getElementById('policyCount').textContent = stats.policy;
+            document.getElementById('projectCount').textContent = stats.project;
+            document.getElementById('enterpriseCount').textContent = stats.enterprise;
+            
+            document.getElementById('resultsStats').innerHTML = `
+                找到 <strong>${stats.all}</strong> 条相关结果
+                ${currentKeywords.length > 0 ? `关键词：${currentKeywords.map(k => `<span style="background: #e6f7ff; color: #1890ff; padding: 2px 4px; border-radius: 2px; font-size: 10px; margin-left: 4px;">${k}</span>`).join('')}` : ''}
+            `;
+        }
+
+        // 渲染结果列表
+        function renderResultsList() {
+            const container = document.getElementById('resultsList');
+            container.innerHTML = '';
+            
+            searchResults.forEach(result => {
+                const item = createResultItem(result);
+                container.appendChild(item);
+            });
+        }
+
+        // 创建结果项
+        function createResultItem(result) {
+            const item = document.createElement('div');
+            item.className = 'result-item';
+            
+            const highlightedTitle = highlightKeywords(result.title, currentKeywords);
+            const highlightedSummary = highlightKeywords(result.summary, currentKeywords);
+            
+            item.innerHTML = `
+                <div class="result-title">${highlightedTitle}</div>
+                <div class="result-meta">
+                    <span>📅 ${result.publishDate}</span>
+                    <span>🏢 ${result.department}</span>
+                    <span>📍 ${result.district}</span>
+                    <span>🏷️ ${result.level}</span>
+                </div>
+                <div class="result-summary">${highlightedSummary}</div>
+                <div class="result-tags">
+                    <span class="result-tag level">${result.level}</span>
+                    <span class="result-tag subsidy">${result.subsidyAmount}</span>
+                    ${result.tags.map(tag => `<span class="result-tag">${tag}</span>`).join('')}
+                </div>
+            `;
+            
+            return item;
+        }
+
+        // 高亮关键词
+        function highlightKeywords(text, keywords) {
+            let highlightedText = text;
+            keywords.forEach(keyword => {
+                const regex = new RegExp(`(${keyword})`, 'gi');
+                highlightedText = highlightedText.replace(regex, '<span class="highlight">$1</span>');
+            });
+            return highlightedText;
+        }
+
+        // 切换结果分类
+        function switchResultsTab(tab) {
+            document.querySelectorAll('.results-tab').forEach(t => t.classList.remove('active'));
+            tab.classList.add('active');
+            
+            const category = tab.dataset.category;
+            // 这里可以添加分类筛选逻辑
+        }
+
+        // 排序结果
+        function sortResults(sortBy) {
+            if (searchResults.length === 0) return;
+            
+            switch(sortBy) {
+                case 'date':
+                    searchResults.sort((a, b) => new Date(b.publishDate) - new Date(a.publishDate));
+                    break;
+                case 'subsidy':
+                    searchResults.sort((a, b) => {
+                        const getSubsidyValue = (policy) => {
+                            if (!policy.subsidyAmount) return 0;
+                            const match = policy.subsidyAmount.match(/(\d+)/);
+                            return match ? parseInt(match[1]) : 0;
+                        };
+                        return getSubsidyValue(b) - getSubsidyValue(a);
+                    });
+                    break;
+                case 'relevance':
+                default:
+                    // 按相关度排序（标题匹配优先）
+                    searchResults.sort((a, b) => {
+                        const aScore = calculateRelevanceScore(a);
+                        const bScore = calculateRelevanceScore(b);
+                        return bScore - aScore;
+                    });
+                    break;
+            }
+            
+            renderResultsList();
+        }
+        
+        // 计算相关度评分
+        function calculateRelevanceScore(policy) {
+            let score = 0;
+            
+            currentKeywords.forEach(keyword => {
+                const keywordLower = keyword.toLowerCase();
+                
+                // 标题匹配权重最高
+                if (policy.title.toLowerCase().includes(keywordLower)) {
+                    score += 10;
+                }
+                
+                // 摘要匹配权重中等
+                if (policy.summary.toLowerCase().includes(keywordLower)) {
+                    score += 5;
+                }
+                
+                // 标签匹配
+                policy.tags.forEach(tag => {
+                    if (tag.toLowerCase().includes(keywordLower)) {
+                        score += 3;
+                    }
+                });
+                
+                // 部门匹配
+                if (policy.department.toLowerCase().includes(keywordLower)) {
+                    score += 2;
+                }
+            });
+            
+            return score;
+        }
+
+        // 切换性能监控
+        function togglePerformanceMonitor() {
+            const monitor = document.getElementById('performanceMonitor');
+            const toggle = document.getElementById('performanceToggle');
+            
+            if (monitor.classList.contains('show')) {
+                monitor.classList.remove('show');
+                toggle.style.display = 'block';
+            } else {
+                monitor.classList.add('show');
+                toggle.style.display = 'none';
+                initPerformanceChart();
+            }
+        }
+
+        // 更新性能监控
+        function updatePerformanceMonitor() {
+            document.getElementById('queryTime').textContent = `${performanceMetrics.queryTime}ms`;
+            document.getElementById('cacheHitRate').textContent = `${Math.round(performanceMetrics.cacheHitRate)}%`;
+            document.getElementById('resultCount').textContent = performanceMetrics.resultCount;
+        }
+
+        // 初始化性能图表
+        function initPerformanceChart() {
+            const chartContainer = document.getElementById('performanceChart');
+            if (typeof echarts !== 'undefined') {
+                const chart = echarts.init(chartContainer);
+                const option = {
+                    title: {
+                        text: '性能趋势',
+                        textStyle: { fontSize: 12 }
+                    },
+                    tooltip: { trigger: 'axis' },
+                    xAxis: {
+                        type: 'category',
+                        data: ['1', '2', '3', '4', '5']
+                    },
+                    yAxis: { type: 'value' },
+                    series: [{
+                        name: '查询时间',
+                        type: 'line',
+                        data: [120, 80, 150, 90, performanceMetrics.queryTime],
+                        smooth: true,
+                        lineStyle: { color: '#1890ff' },
+                        areaStyle: { color: 'rgba(24,144,255,0.1)' }
+                    }]
+                };
+                chart.setOption(option);
+            }
+        }
+
+        // 导航标签切换
+        document.querySelectorAll('.nav-tab').forEach(tab => {
+            tab.addEventListener('click', function() {
+                document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+                this.classList.add('active');
+            });
+        });
+    </script>
+</body>
+</html>

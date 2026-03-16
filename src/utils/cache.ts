@@ -213,9 +213,6 @@ class CacheManager {
     const keysToDelete: string[] = [];
 
     const patternStr = isRegex ? pattern.toString() : (pattern as string);
-    console.log(
-      `[Cache Check] Searching for pattern: "${patternStr}" in ${this.cache.size} items`,
-    );
 
     for (const key of this.cache.keys()) {
       const matches = isRegex
@@ -231,13 +228,9 @@ class CacheManager {
       if (this.cache.delete(key)) {
         this.currentSize--;
         deletedCount++;
-        console.log(`[Cache Delete] Removed: ${key}`);
       }
     });
 
-    if (deletedCount === 0) {
-      console.warn(`[Cache Warning] No items matched pattern: "${patternStr}"`);
-    }
 
     return deletedCount;
   }

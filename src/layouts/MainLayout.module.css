@@ -4,7 +4,15 @@
   background: #fff;
   border-right: 1px solid #f0f0f0;
   box-shadow: 2px 0 8px rgba(0, 0, 0, 0.15);
-  transition: all 0.3s ease;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+}
+
+.sidebar :global(.ant-layout-sider-children) {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  position: relative;
 }
 
 .logo {
@@ -13,11 +21,48 @@
   align-items: center;
   justify-content: center;
   border-bottom: 1px solid #f0f0f0;
-  background: linear-gradient(135deg, #6366F1 0%, #8B5CF6 100%);
+  background: linear-gradient(135deg, #1890ff 0%, #096dd9 100%);
   color: white;
   font-weight: bold;
   font-size: 18px;
   letter-spacing: 1px;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  overflow: hidden;
+}
+
+/* 折叠按钮 */
+.collapseButton {
+  position: absolute;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  z-index: 10;
+}
+
+.collapseIcon {
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(24, 144, 255, 0.1);
+  border-radius: 50%;
+  color: #1890ff;
+  font-size: 16px;
+  font-weight: bold;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.collapseButton:hover .collapseIcon {
+  background: rgba(24, 144, 255, 0.2);
+  transform: scale(1.1);
 }
 
 .menu {
@@ -29,30 +74,45 @@
 .menu :global(.ant-menu-item) {
   margin: 4px 8px;
   border-radius: 8px;
-  transition: all 0.3s ease;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   position: relative;
   overflow: hidden;
+  height: 40px;
+  line-height: 40px;
+}
+
+.menu :global(.ant-menu-item .anticon) {
+  margin-right: 12px !important;
+  font-size: 16px;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .menu :global(.ant-menu-item:hover) {
-  background: linear-gradient(135deg, rgba(99, 102, 241, 0.1) 0%, rgba(139, 92, 246, 0.1) 100%);
-  transform: translateX(4px);
+  background: rgba(24, 144, 255, 0.08);
+  color: #1890ff;
 }
 
 .menu :global(.ant-menu-item-selected) {
-  background: linear-gradient(135deg, rgba(99, 102, 241, 0.15) 0%, rgba(139, 92, 246, 0.15) 100%);
-  border-right: 3px solid #6366F1;
+  background: linear-gradient(135deg, #1890ff 0%, #096dd9 100%) !important;
+  color: #fff !important;
   font-weight: 600;
+  box-shadow: 0 2px 8px rgba(24, 144, 255, 0.3);
 }
 
-.menu :global(.ant-menu-item-selected::before) {
+.menu :global(.ant-menu-item-selected .anticon) {
+  color: #fff !important;
+  transform: scale(1.1);
+}
+
+.menu :global(.ant-menu-item-selected::after) {
   content: '';
   position: absolute;
   left: 0;
   top: 0;
   bottom: 0;
   width: 4px;
-  background: linear-gradient(135deg, #6366F1 0%, #8B5CF6 100%);
+  background: #fff;
+  opacity: 0.8;
 }
 
 /* 子菜单样式 */
@@ -63,70 +123,95 @@
 
 .menu :global(.ant-menu-submenu-title) {
   border-radius: 8px;
-  transition: all 0.3s ease;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   margin: 0;
   padding: 0 16px;
+  height: 40px;
+  line-height: 40px;
+}
+
+.menu :global(.ant-menu-submenu-title .anticon) {
+  margin-right: 12px !important;
+  font-size: 16px;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .menu :global(.ant-menu-submenu-title:hover) {
-  background: linear-gradient(135deg, rgba(99, 102, 241, 0.08) 0%, rgba(139, 92, 246, 0.08) 100%);
-  transform: translateX(2px);
+  background: rgba(24, 144, 255, 0.08);
+  color: #1890ff;
 }
 
 .menu :global(.ant-menu-submenu-open > .ant-menu-submenu-title) {
-  background: linear-gradient(135deg, rgba(99, 102, 241, 0.12) 0%, rgba(139, 92, 246, 0.12) 100%);
+  background: rgba(24, 144, 255, 0.12);
+  color: #1890ff;
   font-weight: 600;
 }
 
-/* 子菜单内容 */
+.menu :global(.ant-menu-submenu-open > .ant-menu-submenu-title .anticon) {
+  color: #1890ff;
+  transform: rotate(0deg);
+}
+
+/* 子菜单内容 - 添加平滑高度过渡动画 */
 .menu :global(.ant-menu-submenu-inline > .ant-menu) {
-  background: rgba(99, 102, 241, 0.02);
+  background: rgba(24, 144, 255, 0.02);
   border-radius: 0 0 8px 8px;
   margin-top: 4px;
+  transition: height 0.3s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
+/* 二级菜单项 - 缩进16px */
 .menu :global(.ant-menu-submenu .ant-menu-item) {
-  margin: 2px 16px 2px 24px;
-  padding-left: 24px;
+  margin: 2px 8px 2px 8px;
+  padding-left: 16px !important;
   position: relative;
+  height: 36px;
+  line-height: 36px;
+  color: #8c8c8c;
 }
 
-.menu :global(.ant-menu-submenu .ant-menu-item::before) {
-  content: '';
-  position: absolute;
-  left: 8px;
-  top: 50%;
-  transform: translateY(-50%);
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background: #d1d5db;
-  transition: all 0.3s ease;
+.menu :global(.ant-menu-submenu .ant-menu-item .anticon) {
+  margin-right: 12px !important;
+  font-size: 14px;
+  color: #8c8c8c;
 }
 
-.menu :global(.ant-menu-submenu .ant-menu-item-selected::before) {
-  background: #6366F1;
-  transform: translateY(-50%) scale(1.2);
+/* 二级菜单选中态 - 品牌蓝背景+白色文字 */
+.menu :global(.ant-menu-submenu .ant-menu-item-selected) {
+  background: linear-gradient(135deg, #1890ff 0%, #096dd9 100%) !important;
+  color: #fff !important;
+  font-weight: 600;
+  box-shadow: 0 2px 6px rgba(24, 144, 255, 0.25);
 }
 
-.menu :global(.ant-menu-submenu .ant-menu-item:hover::before) {
-  background: #8B5CF6;
-  transform: translateY(-50%) scale(1.1);
+.menu :global(.ant-menu-submenu .ant-menu-item-selected .anticon) {
+  color: #fff !important;
 }
 
-/* 图标样式 */
+.menu :global(.ant-menu-submenu .ant-menu-item:hover) {
+  background: rgba(24, 144, 255, 0.08);
+  color: #1890ff;
+}
+
+/* 三级菜单项 - 缩进32px */
+.menu :global(.ant-menu-submenu .ant-menu-submenu .ant-menu-item) {
+  padding-left: 32px !important;
+}
+
+/* 图标样式 - 统一线性风格 */
 .menu :global(.anticon) {
   font-size: 16px;
-  transition: all 0.3s ease;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  vertical-align: middle;
 }
 
-.menu :global(.ant-menu-item-selected .anticon) {
-  color: #6366F1;
-  transform: scale(1.1);
+/* 展开/收起箭头动画 */
+.menu :global(.ant-menu-submenu-arrow) {
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-.menu :global(.ant-menu-submenu-open .anticon) {
-  color: #6366F1;
+.menu :global(.ant-menu-submenu-open .ant-menu-submenu-arrow) {
+  transform: rotate(180deg);
 }
 
 /* 头部样式 */
@@ -237,18 +322,27 @@
   border-radius: 2px 0 0 2px;
 }
 
-/* 菜单折叠状态 */
+/* 菜单折叠状态 - 保持图标一致性 */
 .menu :global(.ant-menu-inline-collapsed .ant-menu-item) {
-  padding: 0 16px;
+  padding: 0 calc(50% - 16px / 2);
   text-align: center;
 }
 
 .menu :global(.ant-menu-inline-collapsed .ant-menu-submenu-title) {
-  padding: 0 16px;
+  padding: 0 calc(50% - 16px / 2);
   text-align: center;
 }
 
 .menu :global(.ant-menu-inline-collapsed .anticon) {
   font-size: 18px;
-  margin: 0;
+  margin: 0 !important;
+}
+
+/* 折叠状态下的选中态 */
+.menu :global(.ant-menu-inline-collapsed .ant-menu-item-selected) {
+  background: linear-gradient(135deg, #1890ff 0%, #096dd9 100%) !important;
+}
+
+.menu :global(.ant-menu-inline-collapsed .ant-menu-item-selected .anticon) {
+  color: #fff !important;
 }

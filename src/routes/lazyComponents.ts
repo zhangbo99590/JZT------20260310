@@ -34,10 +34,14 @@ export const CompanyManagement = lazy(
 );
 
 // 政策中心页面
-// 路由配置更新时间: 2026-01-14
-export const PolicyDetail = lazy(() => import("../pages/policy/PolicyDetail"));
+// 路由配置更新时间: 2026-03-10
+// PolicyDetail已被EnhancedPolicyDetail替代并删除
+export const EnhancedPolicyDetail = lazy(() => import("../pages/policy/EnhancedPolicyDetail"));
 export const AIPolicySearchV2 = lazy(
   () => import("../pages/policy/AIPolicySearch"),
+);
+export const EnhancedPolicySearch = lazy(
+  () => import("../pages/policy/EnhancedPolicySearch"),
 );
 export const PolicyApprovedList = lazy(
   () => import("../pages/policy/PolicyApprovedList"),

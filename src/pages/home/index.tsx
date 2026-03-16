@@ -17,7 +17,6 @@ import {
   TrendChartSection,
   RecentActivitiesSection,
   ImportantRemindersSection,
-  WeatherCalendarSection,
   SmartDashboardSection,
   PersonalizedRecommendationSection,
   QuickToolsSection,
@@ -137,53 +136,10 @@ const Home: React.FC = () => {
           </Space>
         </div>
 
-        {/* 轮播图区域 */}
+        {/* 政策申报动态轮播图 */}
         <SimpleErrorBoundary>
           <BannerSection loading={loading} />
         </SimpleErrorBoundary>
-
-        {/* 数据概览区域 */}
-        <SimpleErrorBoundary>
-          <DataOverviewSection dataOverview={homeData.dataOverview} loading={loading} />
-        </SimpleErrorBoundary>
-
-        {/* 天气与日历区域 */}
-        {(settings.showWeather || settings.showCalendar) && (
-          <>
-            <SimpleErrorBoundary>
-              <WeatherCalendarSection />
-            </SimpleErrorBoundary>
-            <Divider style={{ margin: settings.compactMode ? "16px 0" : "24px 0" }} />
-          </>
-        )}
-
-        {/* 智能数据看板 */}
-        {settings.showSmartDashboard && (
-          <SimpleErrorBoundary>
-            <SmartDashboardSection loading={loading} />
-          </SimpleErrorBoundary>
-        )}
-
-        {/* 主要内容区域 */}
-        <Row gutter={gutter} style={{ marginBottom: settings.compactMode ? "16px" : "24px" }}>
-          {/* 核心功能快捷入口 */}
-          <Col xs={24} lg={12}>
-            <SimpleErrorBoundary>
-              <QuickActionsSection
-                quickActions={homeData.quickActions}
-                onNavigate={handleNavigate}
-                loading={loading}
-              />
-            </SimpleErrorBoundary>
-          </Col>
-
-          {/* 政策申报趋势图 */}
-          <Col xs={24} lg={12}>
-            <SimpleErrorBoundary>
-              <TrendChartSection loading={loading} />
-            </SimpleErrorBoundary>
-          </Col>
-        </Row>
 
         {/* 个性化推荐区域 */}
         <SimpleErrorBoundary>

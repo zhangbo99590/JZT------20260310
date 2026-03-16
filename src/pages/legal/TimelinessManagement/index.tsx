@@ -536,19 +536,6 @@ const TimelinessManagement: React.FC = () => {
                   marginBottom: 8,
                 }}
               >
-                <Text>数据同步进度</Text>
-                <Text>85%</Text>
-              </div>
-              <Progress percent={85} status="active" />
-            </div>
-            <div style={{ marginBottom: 16 }}>
-              <div
-                style={{
-                  display: "flex",
-                  justifyContent: "space-between",
-                  marginBottom: 8,
-                }}
-              >
                 <Text>预警规则运行</Text>
                 <Badge status="success" text="正常" />
               </div>

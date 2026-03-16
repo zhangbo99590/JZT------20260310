@@ -1,6 +1,6 @@
-import React, { Suspense, useMemo, useCallback, useState, useEffect } from "react";
+import React, { Suspense, useMemo, useCallback, useState, useEffect, useRef } from "react";
 import { Routes, useLocation, useNavigate } from "react-router-dom";
-import { Layout, Menu, Dropdown, Avatar, Space, Typography } from "antd";
+import { Layout, Menu, Dropdown, Avatar, Space, Typography, Tooltip } from "antd";
 import { UserOutlined, LogoutOutlined } from "@ant-design/icons";
 import type { MenuProps } from "antd";
 import LoadingFallback from "../components/common/LoadingFallback";
@@ -10,6 +10,7 @@ import {
   getMenuItems,
   getDefaultOpenKeys,
   getSelectedKeys,
+  parentMenuPaths,
 } from "../config/menuConfig";
 import { RouteHistory } from "../utils/navigationUtils";
 import styles from "./MainLayout.module.css";
@@ -70,13 +71,46 @@ const MainLayout: React.FC = () => {
 
   const roleType = useMemo(() => user?.roleType, [user]);
 
-  const dynamicMenuItems = useMemo(() => getMenuItems(roleType), [roleType]);
-
   const defaultOpenKeys = useMemo(
     () => getDefaultOpenKeys(location.pathname),
     [location.pathname],
   );
   const [openKeys, setOpenKeys] = useState<string[]>(defaultOpenKeys);
+  const openKeysRef = useRef<string[]>(defaultOpenKeys);
+  
+  // 同步 openKeys 到 ref
+  useEffect(() => {
+    openKeysRef.current = openKeys;
+  }, [openKeys]);
+  const [collapsed, setCollapsed] = useState(false);
+
+  // 为菜单项添加tooltip支持
+  const dynamicMenuItems = useMemo(() => {
+    const items = getMenuItems(roleType);
+    
+    // 在折叠状态下，为每个菜单项添加tooltip
+    const addTooltipToItems = (menuItems: any[]): any[] => {
+      return menuItems?.map(item => {
+        if (!item) return item;
+        
+        const newItem = { ...item };
+        
+        // 为一级菜单和子菜单添加tooltip
+        if (collapsed) {
+          newItem.title = item.label;
+        }
+        
+        // 递归处理子菜单
+        if (item.children) {
+          newItem.children = addTooltipToItems(item.children);
+        }
+        
+        return newItem;
+      });
+    };
+    
+    return addTooltipToItems(items);
+  }, [roleType, collapsed]);
 
   /**
    * 当前选中的菜单键值
@@ -87,11 +121,32 @@ const MainLayout: React.FC = () => {
   );
 
   /**
-   * 监听路由变化，更新菜单展开状态
+   * 监听路由变化，智能更新菜单展开状态
+   * 优化：点击子菜单时保持父菜单展开，避免菜单状态被重置
    */
   useEffect(() => {
     const newOpenKeys = getDefaultOpenKeys(location.pathname);
-    setOpenKeys(newOpenKeys);
+    const currentOpenKeys = openKeysRef.current;
+    
+    // 如果新的展开键为空（如首页），不做处理
+    if (newOpenKeys.length === 0) {
+      // 记录路由历史
+      const routeHistory = RouteHistory.getInstance();
+      routeHistory.addRoute(location.pathname + location.search);
+      return;
+    }
+    
+    // 检查当前路由对应的父菜单是否已经展开
+    const isAlreadyOpen = newOpenKeys.every(key => currentOpenKeys.includes(key));
+    
+    if (!isAlreadyOpen) {
+      // 如果父菜单未展开，则添加到展开列表（保持其他已展开的菜单）
+      setOpenKeys(prev => {
+        const combined = [...new Set([...prev, ...newOpenKeys])];
+        return combined;
+      });
+    }
+    // 如果已经展开，则不做任何修改，保持当前状态
     
     // 记录路由历史
     const routeHistory = RouteHistory.getInstance();
@@ -103,9 +158,16 @@ const MainLayout: React.FC = () => {
    */
   useEffect(() => {
     const handlePopState = () => {
-      // 强制重新计算菜单状态
+      // 浏览器前进后退时，智能更新菜单状态
       const newOpenKeys = getDefaultOpenKeys(window.location.pathname);
-      setOpenKeys(newOpenKeys);
+      
+      if (newOpenKeys.length > 0) {
+        // 合并新的展开键，保持其他已展开的菜单
+        setOpenKeys(prev => {
+          const combined = [...new Set([...prev, ...newOpenKeys])];
+          return combined;
+        });
+      }
     };
 
     const handleBeforeUnload = () => {
@@ -129,13 +191,20 @@ const MainLayout: React.FC = () => {
    * @param key - 点击的菜单项键值
    *
    * @description
-   * 导航到对应的路由路径。如果是首页，则收起所有展开的菜单。
+   * 仅在点击二级子菜单时导航，点击一级菜单不跳转。
+   * 通过判断菜单项是否有子菜单来决定是否导航。
    */
   const handleMenuClick = useCallback(
-    ({ key }: { key: string }) => {
-      navigate(key);
-      if (key === "/") {
-        setOpenKeys([]);
+    ({ key, keyPath }: { key: string; keyPath: string[] }) => {
+      // 如果是一级菜单（keyPath长度为1且不是首页），不跳转
+      const isParentMenu = parentMenuPaths.includes(key);
+      
+      if (!isParentMenu) {
+        // 只有二级菜单或首页才跳转
+        navigate(key);
+        if (key === "/") {
+          setOpenKeys([]);
+        }
       }
     },
     [navigate],
@@ -147,12 +216,12 @@ const MainLayout: React.FC = () => {
    * @param keys - 展开的菜单键值数组
    *
    * @description
-   * 实现单一菜单展开模式，同时只能展开一个父级菜单。
-   * 当点击新的父菜单时，收起之前展开的菜单。
+   * 支持多个菜单同时展开，用户可以同时查看多个模块的子菜单。
+   * 点击已展开的菜单会收起，点击未展开的菜单会展开，其他菜单保持状态不变。
    */
   const handleOpenChange = useCallback((keys: string[]) => {
-    const latestOpenKey = keys[keys.length - 1];
-    setOpenKeys(latestOpenKey ? [latestOpenKey] : []);
+    // 允许多个菜单同时展开
+    setOpenKeys(keys);
   }, []);
 
   /**
@@ -185,31 +254,74 @@ const MainLayout: React.FC = () => {
     [handleLogout, navigate],
   );
 
+  const topNavItems = useMemo(() => [
+    { key: "/", label: "首页" },
+  ], []);
+
+  /**
+   * 顶部导航点击处理
+   */
+  const handleTopNavClick = useCallback(
+    ({ key }: { key: string }) => {
+      navigate(key);
+    },
+    [navigate],
+  );
+
   return (
     <Layout style={{ minHeight: "100vh" }}>
       <Sider
         width={256}
+        collapsible
+        collapsed={collapsed}
+        onCollapse={setCollapsed}
         className={styles.sidebar}
+        trigger={null}
       >
-        <div className={styles.logo}>
-          璟智通
+        <div className={styles.logo} style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
+          {/* 品牌标识 */}
+          <div style={{ width: 32, height: 32, background: '#1890ff', borderRadius: 4, display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', fontWeight: 'bold', fontSize: 18 }}>璟</div>
+          {!collapsed && <span style={{ fontSize: 18, fontWeight: 600, color: '#fff' }}>璟智通</span>}
         </div>
 
         <Menu
           mode="inline"
           selectedKeys={selectedKeys}
-          openKeys={openKeys}
+          openKeys={collapsed ? [] : openKeys}
           onOpenChange={handleOpenChange}
           onClick={handleMenuClick}
           items={dynamicMenuItems}
           className={styles.menu}
+          inlineCollapsed={collapsed}
         />
+        
+        <div 
+          className={styles.collapseButton}
+          onClick={() => setCollapsed(!collapsed)}
+        >
+          <Tooltip title={collapsed ? "展开菜单" : "收起菜单"} placement="right">
+            <div className={styles.collapseIcon}>
+              {collapsed ? "»" : "«"}
+            </div>
+          </Tooltip>
+        </div>
       </Sider>
 
       <Layout>
-        <Header className={styles.header}>
+        <Header className={styles.header} style={{ display: 'flex', alignItems: 'center', padding: '0 24px', background: '#fff', boxShadow: '0 1px 4px rgba(0,21,41,0.08)', zIndex: 1 }}>
+          {/* 顶部全局导航 */}
+          <div style={{ flex: 1, display: 'flex', alignItems: 'center' }}>
+            <Menu
+              mode="horizontal"
+              selectedKeys={selectedKeys}
+              items={topNavItems}
+              onClick={handleTopNavClick}
+              style={{ borderBottom: 'none', flex: 1, minWidth: 400 }}
+            />
+          </div>
+
           <Dropdown menu={{ items: userMenuItems }} placement="bottomRight">
-            <Space className={styles.userDropdown}>
+            <Space className={styles.userDropdown} style={{ cursor: 'pointer' }}>
               <Avatar 
                 src={avatar} 
                 icon={<UserOutlined />} 

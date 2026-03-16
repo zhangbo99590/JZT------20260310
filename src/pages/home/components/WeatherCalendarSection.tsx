@@ -1,32 +1,25 @@
 /**
- * 天气与日历组件
+ * 今日日程组件
  * 创建时间: 2026-02-26
- * 功能: 显示实时天气信息和工作日历
+ * 更新时间: 2026-03-04
+ * 功能: 显示今日日程和申报提醒，支持折叠展开
  */
 
 import React, { useState, useEffect } from 'react';
-import { Card, Row, Col, Typography, Badge, List, Button, Modal, Form, Input, DatePicker, TimePicker, Select } from 'antd';
+import { Card, Row, Col, Typography, Badge, List, Button, Modal, Form, Input, DatePicker, TimePicker, Select, Collapse, message } from 'antd';
 import { 
-  CloudOutlined, 
   CalendarOutlined, 
   PlusOutlined,
   ClockCircleOutlined,
-  EnvironmentOutlined,
-  ThunderboltOutlined
+  ThunderboltOutlined,
+  DownOutlined,
+  UpOutlined
 } from '@ant-design/icons';
 import dayjs from 'dayjs';
 
 const { Text, Title } = Typography;
 const { Option } = Select;
-
-interface WeatherData {
-  temperature: number;
-  condition: string;
-  humidity: number;
-  windSpeed: number;
-  city: string;
-  icon: string;
-}
+const { Panel } = Collapse;
 
 interface CalendarEvent {
   id: number;
@@ -34,67 +27,40 @@ interface CalendarEvent {
   time: string;
   type: 'meeting' | 'deadline' | 'reminder';
   priority: 'high' | 'medium' | 'low';
+  relatedPolicy?: string;
 }
 
 export const WeatherCalendarSection: React.FC = () => {
-  const [weather, setWeather] = useState<WeatherData>({
-    temperature: 22,
-    condition: '晴朗',
-    humidity: 65,
-    windSpeed: 12,
-    city: '北京',
-    icon: '☀️'
-  });
-
   const [events, setEvents] = useState<CalendarEvent[]>([
     {
       id: 1,
       title: '技术创新补贴申报截止',
       time: '14:00',
       type: 'deadline',
-      priority: 'high'
+      priority: 'high',
+      relatedPolicy: '2026年技术创新补贴项目'
     },
     {
       id: 2,
       title: '政策解读会议',
       time: '16:30',
       type: 'meeting',
-      priority: 'medium'
+      priority: 'medium',
+      relatedPolicy: '高新技术企业认定'
     },
     {
       id: 3,
       title: '财务材料准备提醒',
       time: '09:00',
       type: 'reminder',
-      priority: 'low'
+      priority: 'low',
+      relatedPolicy: '研发费用加计扣除'
     }
   ]);
 
   const [isModalVisible, setIsModalVisible] = useState(false);
+  const [isExpanded, setIsExpanded] = useState(true);
   const [form] = Form.useForm();
-
-  // 模拟获取天气数据
-  useEffect(() => {
-    const fetchWeather = () => {
-      // 模拟天气数据更新
-      const conditions = ['晴朗', '多云', '小雨', '阴天'];
-      const icons = ['☀️', '⛅', '🌧️', '☁️'];
-      const randomIndex = Math.floor(Math.random() * conditions.length);
-      
-      setWeather(prev => ({
-        ...prev,
-        temperature: 18 + Math.floor(Math.random() * 15),
-        condition: conditions[randomIndex],
-        icon: icons[randomIndex],
-        humidity: 50 + Math.floor(Math.random() * 30),
-        windSpeed: 5 + Math.floor(Math.random() * 20)
-      }));
-    };
-
-    fetchWeather();
-    const interval = setInterval(fetchWeather, 300000); // 5分钟更新一次
-    return () => clearInterval(interval);
-  }, []);
 
   const getEventColor = (type: string, priority: string) => {
     if (priority === 'high') return '#ff4d4f';
@@ -118,137 +84,116 @@ export const WeatherCalendarSection: React.FC = () => {
         title: values.title,
         time: values.time.format('HH:mm'),
         type: values.type,
-        priority: values.priority
+        priority: values.priority,
+        relatedPolicy: values.relatedPolicy
       };
-      setEvents(prev => [...prev, newEvent]);
+      setEvents(prev => [...prev, newEvent].sort((a, b) => a.time.localeCompare(b.time)));
       setIsModalVisible(false);
       form.resetFields();
+      message.success('日程添加成功！');
     });
   };
 
   return (
-    <Row gutter={[16, 16]}>
-      {/* 天气信息卡片 */}
-      <Col xs={24} md={12}>
-        <Card
-          title={
-            <div style={{ display: 'flex', alignItems: 'center' }}>
-              <CloudOutlined style={{ color: '#1890ff', marginRight: '8px' }} />
-              实时天气
-            </div>
-          }
-          style={{ height: '280px' }}
-        >
-          <div style={{ textAlign: 'center', padding: '20px 0' }}>
-            <div style={{ fontSize: '48px', marginBottom: '16px' }}>
-              {weather.icon}
-            </div>
-            <Title level={2} style={{ margin: '0 0 8px 0', color: '#1890ff' }}>
-              {weather.temperature}°C
-            </Title>
-            <Text style={{ fontSize: '16px', color: '#666' }}>
-              {weather.condition}
-            </Text>
-            <div style={{ marginTop: '20px' }}>
-              <Row gutter={16}>
-                <Col span={8} style={{ textAlign: 'center' }}>
-                  <div>
-                    <EnvironmentOutlined style={{ color: '#52c41a' }} />
-                    <div style={{ fontSize: '12px', color: '#999', marginTop: '4px' }}>
-                      {weather.city}
-                    </div>
-                  </div>
-                </Col>
-                <Col span={8} style={{ textAlign: 'center' }}>
-                  <div>
-                    <Text strong>{weather.humidity}%</Text>
-                    <div style={{ fontSize: '12px', color: '#999', marginTop: '4px' }}>
-                      湿度
-                    </div>
-                  </div>
-                </Col>
-                <Col span={8} style={{ textAlign: 'center' }}>
-                  <div>
-                    <Text strong>{weather.windSpeed}km/h</Text>
-                    <div style={{ fontSize: '12px', color: '#999', marginTop: '4px' }}>
-                      风速
-                    </div>
-                  </div>
-                </Col>
-              </Row>
-            </div>
-          </div>
-        </Card>
-      </Col>
+    <Card
+      className="hover-card"
+      style={{ marginBottom: '24px' }}
+    >
+      <div 
+        style={{ 
+          display: 'flex', 
+          alignItems: 'center', 
+          justifyContent: 'space-between',
+          cursor: 'pointer',
+          marginBottom: isExpanded ? '16px' : '0'
+        }}
+        onClick={() => setIsExpanded(!isExpanded)}
+      >
+        <div style={{ display: 'flex', alignItems: 'center' }}>
+          <CalendarOutlined style={{ color: '#fa8c16', marginRight: '8px', fontSize: '18px' }} />
+          <Title level={4} style={{ margin: 0 }}>
+            今日日程
+          </Title>
+          <Badge 
+            count={events.length} 
+            style={{ backgroundColor: '#fa8c16', marginLeft: '12px' }}
+          />
+        </div>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+          <Button 
+            type="primary" 
+            size="small" 
+            icon={<PlusOutlined />}
+            onClick={(e) => {
+              e.stopPropagation();
+              setIsModalVisible(true);
+            }}
+          >
+            添加日程
+          </Button>
+          {isExpanded ? <UpOutlined /> : <DownOutlined />}
+        </div>
+      </div>
 
-      {/* 今日日程卡片 */}
-      <Col xs={24} md={12}>
-        <Card
-          title={
-            <div style={{ display: 'flex', alignItems: 'center' }}>
-              <CalendarOutlined style={{ color: '#fa8c16', marginRight: '8px' }} />
-              今日日程
-            </div>
-          }
-          extra={
-            <Button 
-              type="primary" 
-              size="small" 
-              icon={<PlusOutlined />}
-              onClick={() => setIsModalVisible(true)}
-            >
-              添加
-            </Button>
-          }
-          style={{ height: '280px' }}
-        >
-          <div style={{ height: '180px', overflowY: 'auto' }}>
-            <List
-              dataSource={events}
-              renderItem={(event) => (
-                <List.Item style={{ padding: '8px 0', borderBottom: '1px solid #f0f0f0' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', width: '100%' }}>
-                    <Badge 
-                      color={getEventColor(event.type, event.priority)} 
-                      style={{ marginRight: '8px' }}
-                    />
-                    <div style={{ flex: 1 }}>
-                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                        <Text strong style={{ fontSize: '13px' }}>
-                          {event.title}
-                        </Text>
-                        <Text type="secondary" style={{ fontSize: '12px' }}>
-                          {event.time}
-                        </Text>
-                      </div>
-                      <div style={{ marginTop: '2px' }}>
-                        {getEventIcon(event.type)}
-                        <Text type="secondary" style={{ fontSize: '11px', marginLeft: '4px' }}>
-                          {event.type === 'meeting' ? '会议' : 
-                           event.type === 'deadline' ? '截止' : '提醒'}
-                        </Text>
-                      </div>
-                    </div>
-                  </div>
-                </List.Item>
-              )}
-            />
-          </div>
-          <div style={{ textAlign: 'center', marginTop: '12px', paddingTop: '12px', borderTop: '1px solid #f0f0f0' }}>
+      {isExpanded && (
+        <>
+          <div style={{ marginBottom: '12px' }}>
             <Text type="secondary" style={{ fontSize: '12px' }}>
               {dayjs().format('YYYY年MM月DD日 dddd')}
             </Text>
           </div>
-        </Card>
-      </Col>
+          <List
+            dataSource={events}
+            renderItem={(event) => (
+              <List.Item style={{ padding: '12px 0', borderBottom: '1px solid #f0f0f0' }}>
+                <div style={{ display: 'flex', alignItems: 'flex-start', width: '100%' }}>
+                  <Badge 
+                    color={getEventColor(event.type, event.priority)} 
+                    style={{ marginRight: '12px', marginTop: '4px' }}
+                  />
+                  <div style={{ flex: 1 }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '4px' }}>
+                      <Text strong style={{ fontSize: '14px' }}>
+                        {event.title}
+                      </Text>
+                      <Text type="secondary" style={{ fontSize: '13px' }}>
+                        {event.time}
+                      </Text>
+                    </div>
+                    {event.relatedPolicy && (
+                      <div style={{ marginBottom: '4px' }}>
+                        <Text type="secondary" style={{ fontSize: '12px' }}>
+                          关联政策：{event.relatedPolicy}
+                        </Text>
+                      </div>
+                    )}
+                    <div>
+                      {getEventIcon(event.type)}
+                      <Text type="secondary" style={{ fontSize: '12px', marginLeft: '4px' }}>
+                        {event.type === 'meeting' ? '会议' : 
+                         event.type === 'deadline' ? '截止日期' : '提醒'}
+                      </Text>
+                    </div>
+                  </div>
+                </div>
+              </List.Item>
+            )}
+          />
+        </>
+      )}
 
       {/* 添加日程弹窗 */}
       <Modal
         title="添加日程"
         open={isModalVisible}
         onOk={handleAddEvent}
-        onCancel={() => setIsModalVisible(false)}
+        onCancel={() => {
+          setIsModalVisible(false);
+          form.resetFields();
+        }}
         width={500}
+        okText="确定"
+        cancelText="取消"
       >
         <Form form={form} layout="vertical">
           <Form.Item
@@ -258,11 +203,17 @@ export const WeatherCalendarSection: React.FC = () => {
           >
             <Input placeholder="请输入事件标题" />
           </Form.Item>
+          <Form.Item
+            name="relatedPolicy"
+            label="关联政策项目"
+          >
+            <Input placeholder="请输入关联的政策项目（可选）" />
+          </Form.Item>
           <Row gutter={16}>
             <Col span={12}>
               <Form.Item
                 name="time"
-                label="时间"
+                label="提醒时间"
                 rules={[{ required: true, message: '请选择时间' }]}
               >
                 <TimePicker style={{ width: '100%' }} format="HH:mm" />
@@ -295,6 +246,6 @@ export const WeatherCalendarSection: React.FC = () => {
           </Form.Item>
         </Form>
       </Modal>
-    </Row>
+    </Card>
   );
 };

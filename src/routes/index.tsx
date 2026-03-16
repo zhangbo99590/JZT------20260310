@@ -7,6 +7,7 @@ import { Route, Navigate } from "react-router-dom";
 import * as Pages from "./lazyComponents";
 /**
  * 政策中心路由配置
+ * 更新时间: 2026-03-10 - 新增增强版政策搜索页面
  */
 export const policyRoutes = (
   <>
@@ -15,7 +16,10 @@ export const policyRoutes = (
       element={<Navigate to="/policy-center/main" replace />}
     />
     <Route path="/policy-center/main" element={<Pages.AIPolicySearchV2 />} />
-    <Route path="/policy-center/detail/:id" element={<Pages.PolicyDetail />} />
+    <Route path="/policy/search" element={<Pages.EnhancedPolicySearch />} />
+    <Route path="/policy/ai-search" element={<Pages.AIPolicySearchV2 />} />
+    <Route path="/policy-center/detail/:id" element={<Pages.EnhancedPolicyDetail />} />
+    <Route path="/policy/detail/:id" element={<Pages.EnhancedPolicyDetail />} />
     <Route
       path="/policy-center/approved-list"
       element={<Pages.PolicyApprovedList />}

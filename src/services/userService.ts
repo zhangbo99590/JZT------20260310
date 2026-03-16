@@ -102,13 +102,6 @@ export const userService = {
 
     // 手动映射字段以匹配 User 接口
     if (response && response.list) {
-      console.log("[UserList Raw Data Sample]", response.list[0]);
-      console.log(
-        "[UserList joinTime Sample]",
-        (response.list[0] as any)?.joinTime,
-        "-> dayjs:",
-        dayjs((response.list[0] as any)?.joinTime).format("YYYY/M/D HH:mm:ss"),
-      );
       response.list = response.list.map((item: any) => {
         // 尝试从本地存储获取当前用户的登录时间
         let lastLoginTime = item.lastLoginTime || "";
@@ -119,10 +112,6 @@ export const userService = {
             // 只有当接口未返回有效时间时才使用本地存储的时间
             if (!lastLoginTime && storedTime) {
               lastLoginTime = storedTime;
-              console.log(
-                "[UserList] Injected local login time for current user:",
-                lastLoginTime,
-              );
             }
           }
         } catch (e) {

@@ -16,7 +16,7 @@ import {
   message,
 } from "antd";
 import { useNavigate } from "react-router-dom";
-import { generateApplicationId } from "../../utils/sharedUtils";
+import { generateApplicationId } from "../../utils/commonUtils";
 import { saveApplicationData } from "../../utils/applicationStorage";
 
 // 通用的融资选项类型

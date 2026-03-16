@@ -4,15 +4,7 @@
  */
 
 import { handleError } from "../utils/errorHandler";
-
-/**
- * 模拟API延迟
- * @param ms 延迟毫秒数
- * @returns Promise
- */
-function simulateDelay(ms: number = 300): Promise<void> {
-  return new Promise((resolve) => setTimeout(resolve, ms));
-}
+import { simulateDelay } from "../utils/commonUtils";
 
 /**
  * 创建带延迟的API调用

@@ -17,6 +17,7 @@ import {
   message,
   Modal,
   Breadcrumb,
+  Tooltip,
 } from "antd";
 import {
   SendOutlined,
@@ -508,18 +509,6 @@ const AILawyer: React.FC = () => {
                         我可以为您解答法律疑问、分析案件风险、提供专业建议。请直接在下方输入您的问题。
                       </p>
 
-                      <div style={{ marginBottom: "32px" }}>
-                        <Radio.Group
-                          value={consultMode}
-                          onChange={(e) => setConsultMode(e.target.value)}
-                          optionType="button"
-                          buttonStyle="solid"
-                        >
-                          <Radio.Button value="normal">普通咨询</Radio.Button>
-                          <Radio.Button value="deep">深度分析</Radio.Button>
-                        </Radio.Group>
-                      </div>
-
                       <div style={{ textAlign: "left" }}>
                         <div
                           style={{
@@ -685,8 +674,12 @@ const AILawyer: React.FC = () => {
                           onChange={(e) => setConsultMode(e.target.value)}
                           size="small"
                         >
-                          <Radio value="normal">普通</Radio>
-                          <Radio value="deep">深度</Radio>
+                          <Tooltip title="快速解答基础法律问题">
+                            <Radio value="normal">普通</Radio>
+                          </Tooltip>
+                          <Tooltip title="结合企业场景提供专业法律建议">
+                            <Radio value="deep">深度</Radio>
+                          </Tooltip>
                         </Radio.Group>
                       </Space>
                       <Button

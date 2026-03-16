@@ -24,11 +24,11 @@ export const breadcrumbConfig: BreadcrumbConfig = {
   "/policy-center": [{ title: "政策中心" }],
   "/policy-center/main": [
     { title: "政策中心", path: "/policy-center" },
-    { title: "政策查询" },
+    { title: "智慧政策" },
   ],
   "/policy-center/detail": [
     { title: "政策中心", path: "/policy-center" },
-    { title: "政策查询", path: "/policy-center/main" },
+    { title: "智慧政策", path: "/policy-center/main" },
     { title: "政策详情" },
   ],
   "/policy-center/approved-list": [
@@ -36,24 +36,24 @@ export const breadcrumbConfig: BreadcrumbConfig = {
     { title: "获批名单" },
   ],
 
-  // 申报管理模块 (新)
+  // 申报管理模块（已迁移至政策中心下）- 2026-03-04
   "/application": [
-    { title: "申报管理" },
-    { title: "项目列表" },
+    { title: "政策中心", path: "/policy-center" },
+    { title: "我的申报" },
   ],
   "/application/detail": [
-    { title: "申报管理", path: "/application" },
-    { title: "项目列表", path: "/application" },
+    { title: "政策中心", path: "/policy-center" },
+    { title: "我的申报", path: "/application" },
     { title: "申报详情" },
   ],
   "/application/apply": [
-    { title: "申报管理", path: "/application" },
-    { title: "项目列表", path: "/application" },
+    { title: "政策中心", path: "/policy-center" },
+    { title: "我的申报", path: "/application" },
     { title: "申报向导" },
   ],
   "/application/success": [
-    { title: "申报管理", path: "/application" },
-    { title: "项目列表", path: "/application" },
+    { title: "政策中心", path: "/policy-center" },
+    { title: "我的申报", path: "/application" },
     { title: "提交成功" },
   ],
 

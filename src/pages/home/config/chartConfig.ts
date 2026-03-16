@@ -56,7 +56,7 @@ export const getTrendChartOption = () => {
 /**
  * 智能看板-申报趋势图配置
  */
-export const getSmartTrendOption = (data: any[]) => {
+export const getSmartTrendOption = (data: any[], onPointClick?: (params: any) => void) => {
   return {
     tooltip: {
       trigger: 'axis',
@@ -65,6 +65,18 @@ export const getSmartTrendOption = (data: any[]) => {
         label: {
           backgroundColor: '#6a7985'
         }
+      },
+      formatter: (params: any) => {
+        const dataIndex = params[0].dataIndex;
+        const monthData = data[dataIndex];
+        let res = `<div style="padding: 8px;">`;
+        res += `<div style="font-weight: bold; margin-bottom: 8px;">${monthData.month}</div>`;
+        res += `<div style="margin-bottom: 4px;">申报数量: <span style="color: #1890ff; font-weight: bold;">${monthData.applications}</span></div>`;
+        res += `<div style="margin-bottom: 4px;">成功数量: <span style="color: #52c41a; font-weight: bold;">${monthData.success}</span></div>`;
+        res += `<div style="margin-bottom: 4px;">成功率: <span style="color: #722ed1; font-weight: bold;">${((monthData.success / monthData.applications) * 100).toFixed(1)}%</span></div>`;
+        res += `<div style="color: #999; font-size: 12px; margin-top: 8px;">点击查看该月申报记录</div>`;
+        res += `</div>`;
+        return res;
       }
     },
     legend: {

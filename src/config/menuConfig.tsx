@@ -103,27 +103,15 @@ export function getMenuItems(roleType?: string): MenuProps["items"] {
           icon: <BookOutlined />,
           label: "智慧政策",
         },
-      ],
-    },
-    {
-      key: "/application",
-      icon: <FileTextOutlined />,
-      label: "申报管理",
-      children: [
         {
           key: "/application?view=list",
           icon: <FormOutlined />,
-          label: "项目列表",
+          label: "申报管理",
         },
         {
           key: "/application?view=status",
           icon: <ContainerOutlined />,
           label: "我的申报",
-        },
-        {
-          key: "/application?view=statistics",
-          icon: <PieChartOutlined />,
-          label: "数据统计",
         },
       ],
     },
@@ -212,15 +200,15 @@ export const routeMenuMap: Record<string, string> = {
   // 首页路由映射
   "/": "/",
 
-  // 政策中心模块路由映射
+  // 政策中心模块路由映射（包含迁移后的申报管理子模块）
   "/policy-center": "/policy-center/main",
   "/policy-center/main": "/policy-center/main", // 政策查询主页面
   "/policy-center/detail": "/policy-center/main", // 政策详情页面
   "/policy-center/approved-list": "/policy-center/main", // 已通过政策列表
   "/policy-center/my-applications": "/application?view=status", // 我的申请
 
-  // 新申报管理模块路由映射 - 2026-02-26
-  "/application": "/application?view=list", // 申报管理主页面
+  // 申报管理模块路由映射（已迁移至政策中心下）- 2026-03-03
+  "/application": "/application?view=list", // 项目列表页面
   "/application/detail": "/application?view=status", // 申报详情页面
   "/application/apply": "/application?view=list", // 申报申请页面
   "/application/success": "/application?view=status", // 申报成功页面
@@ -268,7 +256,6 @@ export const routeMenuMap: Record<string, string> = {
  */
 export const parentMenuPaths = [
   "/policy-center",
-  "/application",
   "/legal-support",
   "/industry/service-match",
   "/supply-chain-finance",
@@ -369,8 +356,8 @@ export function getSelectedKeys(pathname: string): string[] {
   
   // 模块级别的回退匹配
   const moduleMatches = [
+    { prefix: "/application", defaultKey: "/application?view=list" }, // 申报管理已迁移至政策中心，但路由保持不变
     { prefix: "/policy-center", defaultKey: "/policy-center/main" },
-    { prefix: "/application", defaultKey: "/application?view=list" },
     { prefix: "/legal-support", defaultKey: "/legal-support/ai-lawyer" },
     { prefix: "/industry/service-match", defaultKey: "/industry/service-match/workbench" },
     { prefix: "/supply-chain-finance", defaultKey: "/supply-chain-finance/financing-diagnosis" },

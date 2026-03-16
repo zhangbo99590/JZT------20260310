@@ -180,7 +180,7 @@ const AIPolicyModal: React.FC<AIPolicyModalProps> = ({ visible, onClose, context
       footer={null}
       width={800}
       style={{ top: 50 }}
-      bodyStyle={{ padding: '24px', maxHeight: '600px', overflowY: 'auto' }}
+      styles={{ body: { padding: '24px', maxHeight: '600px', overflowY: 'auto' } }}
     >
       <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
         {/* 欢迎信息 */}

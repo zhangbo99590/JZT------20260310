@@ -44,14 +44,6 @@ const ComparisonModal: React.FC<ComparisonModalProps> = ({ open, onCancel, items
       key: `item_${index}`,
       width: 250,
       render: (val: any, record: any) => {
-          if (record.type === 'match') {
-              return (
-                <div style={{ textAlign: 'center' }}>
-                    <Progress type="circle" percent={val} width={60} strokeColor={val >= 80 ? '#52c41a' : '#1890ff'} />
-                    <div style={{ marginTop: 8, fontSize: 12 }}>匹配度</div>
-                </div>
-              );
-          }
           if (record.type === 'tags') {
               return (
                   <Space size={[0, 8]} wrap>
@@ -70,12 +62,6 @@ const ComparisonModal: React.FC<ComparisonModalProps> = ({ open, onCancel, items
   ];
 
   const dataSource = [
-    {
-      key: 'match',
-      dimension: '匹配评估',
-      type: 'match',
-      ...items.reduce((acc, item, idx) => ({ ...acc, [`item_${idx}`]: item.matchDegree }), {})
-    },
     {
       key: 'region',
       dimension: '所在地区',

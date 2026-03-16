@@ -546,9 +546,34 @@ const RegulationQuery: React.FC = () => {
   };
   */
 
+  // 图表点击事件处理
+  const handleChartClick = (params: any) => {
+    if (params.name) {
+      const domain = params.name;
+      setFilterCriteria((prev) => ({
+        ...prev,
+        scenario: domain,
+        keyword: domain,
+      }));
+      setSearchKeyword(domain);
+      message.success(`已筛选"${domain}"领域的法规`);
+    }
+  };
+
   // 图表配置 - 重点合规领域分布
   const complianceChartOption: EChartsOption = {
-    tooltip: { trigger: "axis", axisPointer: { type: "shadow" } },
+    tooltip: { 
+      trigger: "axis", 
+      axisPointer: { type: "shadow" },
+      formatter: (params: any) => {
+        const data = params[0];
+        return `<div style="padding: 8px;">
+          <div style="font-weight: bold; margin-bottom: 4px;">${data.name}</div>
+          <div>法规数量: <span style="color: #1890ff; font-weight: bold;">${data.value}</span></div>
+          <div style="color: #999; font-size: 12px; margin-top: 4px;">点击查看该领域法规</div>
+        </div>`;
+      }
+    },
     grid: {
       top: "5%",
       bottom: "5%",
@@ -582,6 +607,21 @@ const RegulationQuery: React.FC = () => {
               { offset: 0, color: "#8ec5fc" },
               { offset: 1, color: "#e0c3fc" },
             ],
+          },
+        },
+        emphasis: {
+          itemStyle: {
+            color: {
+              type: "linear",
+              x: 0,
+              y: 0,
+              x2: 1,
+              y2: 0,
+              colorStops: [
+                { offset: 0, color: "#1890ff" },
+                { offset: 1, color: "#722ed1" },
+              ],
+            },
           },
         },
         barWidth: 20,
@@ -867,35 +907,8 @@ const RegulationQuery: React.FC = () => {
         <Row gutter={24}>
           {/* 左侧筛选区已移除，内容区全宽显示 */}
           <Col span={24}>
-            {/* 4. 智能合规看板 */}
-            <Row gutter={16} style={{ marginBottom: 16 }}>
-              <Col span={24}>
-                <Card
-                  title={
-                    <Space>
-                      <PieChartOutlined style={{ color: "#1890ff" }} />
-                      <span>重点合规领域分布</span>
-                    </Space>
-                  }
-                  style={{
-                    height: "100%",
-                    borderRadius: 8,
-                    boxShadow: "0 2px 8px rgba(0,0,0,0.05)",
-                  }}
-                  bodyStyle={{ padding: "10px 24px" }}
-                >
-                  <div style={{ height: 180 }}>
-                    <SafeECharts
-                      option={complianceChartOption}
-                      style={{ height: "100%", width: "100%" }}
-                    />
-                  </div>
-                </Card>
-              </Col>
-            </Row>
-
             {/* 5. 法规列表区 */}
-            <Card bodyStyle={{ padding: 0 }}>
+            <Card styles={{ body: { padding: 0 } }}>
               {/* List Header / Toolbar */}
               <div
                 style={{
