@@ -46,7 +46,7 @@ class CacheManager {
   constructor(
     defaultTTL: number = 5 * 60 * 1000, // 默认5分钟
     maxSize: number = 100, // 最大缓存条目数
-    persistKey: string = 'app_cache'
+    persistKey: string = "app_cache",
   ) {
     this.cache = new Map();
     this.defaultTTL = defaultTTL;
@@ -60,28 +60,33 @@ class CacheManager {
    * 从localStorage加载缓存
    */
   private loadFromStorage(): void {
-    if (typeof localStorage === 'undefined') return;
-    
+    if (typeof localStorage === "undefined") return;
+
     try {
       const stored = localStorage.getItem(this.persistKey);
       if (!stored) return;
-      
+
       const data = JSON.parse(stored);
       // 验证数据格式
-      if (!data || typeof data !== 'object') return;
-      
+      if (!data || typeof data !== "object") return;
+
       Object.entries(data).forEach(([key, item]: [string, any]) => {
         // 验证缓存项格式
-        if (item && typeof item === 'object' && 'data' in item && 'timestamp' in item) {
+        if (
+          item &&
+          typeof item === "object" &&
+          "data" in item &&
+          "timestamp" in item
+        ) {
           this.cache.set(key, item);
           this.currentSize++;
         }
       });
-      
+
       // 加载后立即清理过期项
       this.cleanup();
     } catch (error) {
-      console.warn('Failed to load cache from storage:', error);
+      console.warn("Failed to load cache from storage:", error);
     }
   }
 
@@ -89,8 +94,8 @@ class CacheManager {
    * 保存缓存到localStorage
    */
   private saveToStorage(): void {
-    if (typeof localStorage === 'undefined') return;
-    
+    if (typeof localStorage === "undefined") return;
+
     try {
       const data: Record<string, any> = {};
       this.cache.forEach((value, key) => {
@@ -98,7 +103,7 @@ class CacheManager {
       });
       localStorage.setItem(this.persistKey, JSON.stringify(data));
     } catch (error) {
-      console.warn('Failed to save cache to storage:', error);
+      console.warn("Failed to save cache to storage:", error);
     }
   }
 
@@ -130,9 +135,8 @@ class CacheManager {
    */
   set<T>(key: string, data: T, options?: CacheOptions | number): void {
     // 兼容旧API，允许直接传入过期时间
-    const opts: CacheOptions = typeof options === 'number' 
-      ? { ttl: options } 
-      : options || {};
+    const opts: CacheOptions =
+      typeof options === "number" ? { ttl: options } : options || {};
 
     const expiresIn = opts.ttl || this.defaultTTL;
 
@@ -168,7 +172,7 @@ class CacheManager {
    */
   get<T>(key: string): T | null {
     const item = this.cache.get(key);
-    
+
     if (!item) {
       this.misses++;
       return null;
@@ -203,6 +207,41 @@ class CacheManager {
     return deleted;
   }
 
+  deletePattern(pattern: string | RegExp): number {
+    let deletedCount = 0;
+    const isRegex = pattern instanceof RegExp;
+    const keysToDelete: string[] = [];
+
+    const patternStr = isRegex ? pattern.toString() : (pattern as string);
+    console.log(
+      `[Cache Check] Searching for pattern: "${patternStr}" in ${this.cache.size} items`,
+    );
+
+    for (const key of this.cache.keys()) {
+      const matches = isRegex
+        ? (pattern as RegExp).test(key)
+        : key.includes(pattern as string);
+
+      if (matches) {
+        keysToDelete.push(key);
+      }
+    }
+
+    keysToDelete.forEach((key) => {
+      if (this.cache.delete(key)) {
+        this.currentSize--;
+        deletedCount++;
+        console.log(`[Cache Delete] Removed: ${key}`);
+      }
+    });
+
+    if (deletedCount === 0) {
+      console.warn(`[Cache Warning] No items matched pattern: "${patternStr}"`);
+    }
+
+    return deletedCount;
+  }
+
   /**
    * 清空所有缓存
    */
@@ -211,7 +250,7 @@ class CacheManager {
     this.currentSize = 0;
     this.hits = 0;
     this.misses = 0;
-    if (typeof localStorage !== 'undefined') {
+    if (typeof localStorage !== "undefined") {
       localStorage.removeItem(this.persistKey);
     }
   }
@@ -238,7 +277,7 @@ class CacheManager {
   cleanup(): number {
     const now = Date.now();
     let cleanedCount = 0;
-    
+
     for (const [key, item] of this.cache.entries()) {
       if (now - item.timestamp > item.expiresIn) {
         this.cache.delete(key);
@@ -246,7 +285,7 @@ class CacheManager {
         cleanedCount++;
       }
     }
-    
+
     return cleanedCount;
   }
 
@@ -254,22 +293,25 @@ class CacheManager {
    * 获取缓存统计信息
    */
   getStats() {
-    const hitRate = this.hits + this.misses > 0 
-      ? (this.hits / (this.hits + this.misses)) * 100 
-      : 0;
-      
+    const hitRate =
+      this.hits + this.misses > 0
+        ? (this.hits / (this.hits + this.misses)) * 100
+        : 0;
+
     return {
       size: this.currentSize,
       maxSize: this.maxSize,
       hits: this.hits,
       misses: this.misses,
-      hitRate: hitRate.toFixed(2) + '%',
+      hitRate: hitRate,
       items: Array.from(this.cache.entries()).map(([key, item]) => ({
         key,
         accessCount: item.accessCount,
-        age: Math.round((Date.now() - item.timestamp) / 1000) + 's',
-        ttl: Math.round(item.expiresIn / 1000) + 's',
-        expiresIn: Math.round((item.timestamp + item.expiresIn - Date.now()) / 1000) + 's',
+        age: Math.round((Date.now() - item.timestamp) / 1000) + "s",
+        ttl: Math.round(item.expiresIn / 1000) + "s",
+        expiresIn:
+          Math.round((item.timestamp + item.expiresIn - Date.now()) / 1000) +
+          "s",
       })),
     };
   }
@@ -279,7 +321,11 @@ class CacheManager {
    * @param keys 要预热的键数组
    * @param fetchFn 获取数据的函数
    */
-  async warmup<T>(keys: string[], fetchFn: (key: string) => Promise<T>, options?: CacheOptions): Promise<void> {
+  async warmup<T>(
+    keys: string[],
+    fetchFn: (key: string) => Promise<T>,
+    options?: CacheOptions,
+  ): Promise<void> {
     const promises = keys.map(async (key) => {
       if (!this.has(key)) {
         try {
@@ -298,10 +344,13 @@ class CacheManager {
 export const cache = new CacheManager();
 
 // 定期清理过期缓存（每10分钟）
-if (typeof window !== 'undefined') {
-  setInterval(() => {
-    cache.cleanup();
-  }, 10 * 60 * 1000);
+if (typeof window !== "undefined") {
+  setInterval(
+    () => {
+      cache.cleanup();
+    },
+    10 * 60 * 1000,
+  );
 }
 
 /**
@@ -315,13 +364,13 @@ export function withCache<T extends (...args: any[]) => Promise<any>>(
     ttl?: number;
     persist?: boolean;
     forceRefresh?: boolean;
-  } = {}
+  } = {},
 ): T {
   const { keyGenerator, ttl, persist, forceRefresh } = options;
 
   return (async (...args: Parameters<T>) => {
     // 生成缓存键
-    const cacheKey = keyGenerator 
+    const cacheKey = keyGenerator
       ? keyGenerator(...args)
       : `${fn.name}_${JSON.stringify(args)}`;
 
@@ -347,7 +396,10 @@ export function withCache<T extends (...args: any[]) => Promise<any>>(
       if (!forceRefresh) {
         const cachedData = cache.get(cacheKey);
         if (cachedData !== null) {
-          console.warn(`Error fetching fresh data, using cached data for ${cacheKey}`, error);
+          console.warn(
+            `Error fetching fresh data, using cached data for ${cacheKey}`,
+            error,
+          );
           return cachedData;
         }
       }
@@ -355,5 +407,3 @@ export function withCache<T extends (...args: any[]) => Promise<any>>(
     }
   }) as T;
 }
-
-export default cache;

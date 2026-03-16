@@ -1,16 +1,47 @@
+/**
+ * 全局样式文件
+ * 
+ * @file index.css
+ * @desc 应用的全局样式配置，引入 Tailwind CSS 并设置基础样式
+ * @author 系统开发
+ * @since 2026-02-09
+ * @version 1.0.0
+ * 
+ * --- 功能说明 ---
+ * 1. 引入 Tailwind CSS 的基础、组件和工具类
+ * 2. 设置 body 元素的基础样式
+ * 3. 设置 root 容器的基础样式
+ * 
+ * --- 样式配置 ---
+ * - 字体：使用系统字体栈，优先使用 Apple 系统字体
+ * - 字体平滑：启用抗锯齿和灰度平滑
+ * - 背景色：统一使用 #f5f7fa 浅灰背景
+ * - 高度：root 容器占满整个视口
+ * 
+ * --- Tailwind 指令 ---
+ * - @tailwind base: 引入 Tailwind 基础样式
+ * - @tailwind components: 引入 Tailwind 组件样式
+ * - @tailwind utilities: 引入 Tailwind 工具类
+ * 
+ * @note 此文件在 main.tsx 中被优先加载
+ * @warning 避免在此文件中添加过于具体的样式，优先使用 Tailwind 工具类
+ */
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 body {
   margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
+  font-family:
+    -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen", "Ubuntu",
+    "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  background: #f5f7fa;
 }
 
 #root {
   height: 100vh;
+  background: #f5f7fa;
 }

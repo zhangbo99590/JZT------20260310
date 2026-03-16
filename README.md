@@ -1,4 +1,4 @@
-# 企规宝管理系统
+# 璟智通管理系统
 
 一个基于 React + TypeScript + Ant Design 的企业规范管理系统。
 
@@ -34,7 +34,7 @@ npm install
 npm run dev
 ```
 
-访问 http://localhost:5173
+访问 <http://localhost:5173>
 
 ### 生产构建
 
@@ -48,7 +48,7 @@ npm run build
 npm run serve
 ```
 
-访问 http://localhost:4173
+访问 <http://localhost:4173>
 
 ## 部署
 
@@ -70,7 +70,7 @@ npm run serve
 
 ## 项目结构
 
-```
+```text
 src/
 ├── components/     # 公共组件
 ├── hooks/         # 自定义 Hooks

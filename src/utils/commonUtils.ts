@@ -1,12 +1,5 @@
 /**
  * 通用工具函数
- * 包含项目中常用的工具函数，避免重复代码
- */
-
-/**
- * 格式化文件大小
- * @param bytes 字节数
- * @returns 格式化后的文件大小字符串
  */
 export const formatFileSize = (bytes: number): string => {
   if (bytes === 0) return '0 B';

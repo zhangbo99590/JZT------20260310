@@ -1,0 +1,254 @@
+/* MainLayout 样式模块 */
+
+.sidebar {
+  background: #fff;
+  border-right: 1px solid #f0f0f0;
+  box-shadow: 2px 0 8px rgba(0, 0, 0, 0.15);
+  transition: all 0.3s ease;
+}
+
+.logo {
+  height: 64px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-bottom: 1px solid #f0f0f0;
+  background: linear-gradient(135deg, #6366F1 0%, #8B5CF6 100%);
+  color: white;
+  font-weight: bold;
+  font-size: 18px;
+  letter-spacing: 1px;
+}
+
+.menu {
+  border-right: none;
+  background: transparent;
+}
+
+/* 菜单项样式 */
+.menu :global(.ant-menu-item) {
+  margin: 4px 8px;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.menu :global(.ant-menu-item:hover) {
+  background: linear-gradient(135deg, rgba(99, 102, 241, 0.1) 0%, rgba(139, 92, 246, 0.1) 100%);
+  transform: translateX(4px);
+}
+
+.menu :global(.ant-menu-item-selected) {
+  background: linear-gradient(135deg, rgba(99, 102, 241, 0.15) 0%, rgba(139, 92, 246, 0.15) 100%);
+  border-right: 3px solid #6366F1;
+  font-weight: 600;
+}
+
+.menu :global(.ant-menu-item-selected::before) {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 4px;
+  background: linear-gradient(135deg, #6366F1 0%, #8B5CF6 100%);
+}
+
+/* 子菜单样式 */
+.menu :global(.ant-menu-submenu) {
+  margin: 4px 8px;
+  border-radius: 8px;
+}
+
+.menu :global(.ant-menu-submenu-title) {
+  border-radius: 8px;
+  transition: all 0.3s ease;
+  margin: 0;
+  padding: 0 16px;
+}
+
+.menu :global(.ant-menu-submenu-title:hover) {
+  background: linear-gradient(135deg, rgba(99, 102, 241, 0.08) 0%, rgba(139, 92, 246, 0.08) 100%);
+  transform: translateX(2px);
+}
+
+.menu :global(.ant-menu-submenu-open > .ant-menu-submenu-title) {
+  background: linear-gradient(135deg, rgba(99, 102, 241, 0.12) 0%, rgba(139, 92, 246, 0.12) 100%);
+  font-weight: 600;
+}
+
+/* 子菜单内容 */
+.menu :global(.ant-menu-submenu-inline > .ant-menu) {
+  background: rgba(99, 102, 241, 0.02);
+  border-radius: 0 0 8px 8px;
+  margin-top: 4px;
+}
+
+.menu :global(.ant-menu-submenu .ant-menu-item) {
+  margin: 2px 16px 2px 24px;
+  padding-left: 24px;
+  position: relative;
+}
+
+.menu :global(.ant-menu-submenu .ant-menu-item::before) {
+  content: '';
+  position: absolute;
+  left: 8px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #d1d5db;
+  transition: all 0.3s ease;
+}
+
+.menu :global(.ant-menu-submenu .ant-menu-item-selected::before) {
+  background: #6366F1;
+  transform: translateY(-50%) scale(1.2);
+}
+
+.menu :global(.ant-menu-submenu .ant-menu-item:hover::before) {
+  background: #8B5CF6;
+  transform: translateY(-50%) scale(1.1);
+}
+
+/* 图标样式 */
+.menu :global(.anticon) {
+  font-size: 16px;
+  transition: all 0.3s ease;
+}
+
+.menu :global(.ant-menu-item-selected .anticon) {
+  color: #6366F1;
+  transform: scale(1.1);
+}
+
+.menu :global(.ant-menu-submenu-open .anticon) {
+  color: #6366F1;
+}
+
+/* 头部样式 */
+.header {
+  background: #fff;
+  padding: 0 24px;
+  border-bottom: 1px solid #f0f0f0;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+}
+
+.userDropdown {
+  cursor: pointer;
+  padding: 8px 12px;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+}
+
+.userDropdown:hover {
+  background: rgba(99, 102, 241, 0.08);
+}
+
+.userAvatar {
+  margin-right: 8px;
+  border: 2px solid #e5e7eb;
+  transition: all 0.3s ease;
+}
+
+.userDropdown:hover .userAvatar {
+  border-color: #6366F1;
+}
+
+/* 内容区域 */
+.content {
+  padding: 24px;
+  margin: 0;
+  min-height: 280px;
+  background: #fafbfc;
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+  .sidebar {
+    position: fixed;
+    z-index: 1000;
+    height: 100vh;
+    transform: translateX(-100%);
+  }
+  
+  .sidebar.open {
+    transform: translateX(0);
+  }
+  
+  .menu :global(.ant-menu-item:hover) {
+    transform: none;
+  }
+  
+  .menu :global(.ant-menu-submenu-title:hover) {
+    transform: none;
+  }
+}
+
+/* 滚动条样式 */
+.sidebar ::-webkit-scrollbar {
+  width: 4px;
+}
+
+.sidebar ::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.sidebar ::-webkit-scrollbar-thumb {
+  background: rgba(99, 102, 241, 0.2);
+  border-radius: 2px;
+}
+
+.sidebar ::-webkit-scrollbar-thumb:hover {
+  background: rgba(99, 102, 241, 0.4);
+}
+
+/* 动画效果 */
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.menu :global(.ant-menu-item),
+.menu :global(.ant-menu-submenu) {
+  animation: slideIn 0.3s ease-out;
+}
+
+/* 活动指示器 */
+.activeIndicator {
+  position: absolute;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  width: 3px;
+  background: linear-gradient(135deg, #6366F1 0%, #8B5CF6 100%);
+  border-radius: 2px 0 0 2px;
+}
+
+/* 菜单折叠状态 */
+.menu :global(.ant-menu-inline-collapsed .ant-menu-item) {
+  padding: 0 16px;
+  text-align: center;
+}
+
+.menu :global(.ant-menu-inline-collapsed .ant-menu-submenu-title) {
+  padding: 0 16px;
+  text-align: center;
+}
+
+.menu :global(.ant-menu-inline-collapsed .anticon) {
+  font-size: 18px;
+  margin: 0;
+}

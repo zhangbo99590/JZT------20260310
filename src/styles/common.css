@@ -7,13 +7,13 @@
   --primary-hover: #40a9ff;
   --primary-active: #096dd9;
   --primary-light: #e6f7ff;
-  
+
   /* 辅助色 */
   --success-color: #52c41a;
   --warning-color: #faad14;
   --error-color: #ff4d4f;
   --info-color: #1890ff;
-  
+
   /* 中性色 */
   --text-primary: #262626;
   --text-secondary: #8c8c8c;
@@ -22,17 +22,17 @@
   --border-light: #f0f0f0;
   --background-light: #fafafa;
   --background-white: #ffffff;
-  
+
   /* 阴影 */
   --shadow-light: 0 2px 8px rgba(0, 0, 0, 0.06);
   --shadow-medium: 0 4px 12px rgba(0, 0, 0, 0.1);
   --shadow-heavy: 0 8px 24px rgba(0, 0, 0, 0.12);
-  
+
   /* 圆角 */
   --border-radius-sm: 4px;
   --border-radius-md: 6px;
   --border-radius-lg: 8px;
-  
+
   /* 间距 */
   --spacing-xs: 4px;
   --spacing-sm: 8px;
@@ -93,7 +93,11 @@
 
 /* 按钮样式增强 */
 .btn-primary-enhanced {
-  background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-hover) 100%);
+  background: linear-gradient(
+    135deg,
+    var(--primary-color) 0%,
+    var(--primary-hover) 100%
+  );
   border: none;
   border-radius: var(--border-radius-md);
   box-shadow: var(--shadow-light);
@@ -101,7 +105,11 @@
 }
 
 .btn-primary-enhanced:hover {
-  background: linear-gradient(135deg, var(--primary-hover) 0%, var(--primary-active) 100%);
+  background: linear-gradient(
+    135deg,
+    var(--primary-hover) 0%,
+    var(--primary-active) 100%
+  );
   box-shadow: var(--shadow-medium);
   transform: translateY(-1px);
 }
@@ -170,13 +178,17 @@
 }
 
 .stats-card::before {
-  content: '';
+  content: "";
   position: absolute;
   top: 0;
   left: 0;
   right: 0;
   height: 4px;
-  background: linear-gradient(90deg, var(--primary-color), var(--primary-hover));
+  background: linear-gradient(
+    90deg,
+    var(--primary-color),
+    var(--primary-hover)
+  );
 }
 
 .stats-card:hover {
@@ -248,14 +260,22 @@
   width: 40px;
   height: 40px;
   border-radius: 50%;
-  background: linear-gradient(135deg, var(--primary-light) 0%, rgba(24, 144, 255, 0.1) 100%);
+  background: linear-gradient(
+    135deg,
+    var(--primary-light) 0%,
+    rgba(24, 144, 255, 0.1) 100%
+  );
   color: var(--primary-color);
   font-size: 18px;
   transition: all 0.3s ease;
 }
 
 .icon-enhanced:hover {
-  background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-hover) 100%);
+  background: linear-gradient(
+    135deg,
+    var(--primary-color) 0%,
+    var(--primary-hover) 100%
+  );
   color: var(--background-white);
   transform: scale(1.1);
 }
@@ -311,13 +331,13 @@
   .page-container {
     padding: var(--spacing-md);
   }
-  
+
   .page-header {
     flex-direction: column;
     align-items: flex-start;
     gap: var(--spacing-md);
   }
-  
+
   .stats-card {
     margin-bottom: var(--spacing-md);
   }
@@ -381,12 +401,12 @@
     background: white;
     box-shadow: none;
   }
-  
+
   .professional-card {
     box-shadow: none;
     border: 1px solid #ccc;
   }
-  
+
   .btn-primary-enhanced,
   .btn-secondary-enhanced {
     display: none;
@@ -404,11 +424,11 @@
   .page-container {
     padding: var(--spacing-xl);
   }
-  
+
   .professional-card {
     margin-bottom: var(--spacing-xl);
   }
-  
+
   .main-content-responsive {
     margin: var(--spacing-xl) !important;
   }
@@ -419,15 +439,15 @@
   .page-container {
     padding: var(--spacing-lg);
   }
-  
+
   .professional-card {
     margin-bottom: var(--spacing-lg);
   }
-  
+
   .main-content-responsive {
     margin: var(--spacing-lg) !important;
   }
-  
+
   /* 调整表格在中等屏幕的显示 */
   .ant-table-wrapper {
     overflow-x: auto;
@@ -439,27 +459,27 @@
   .page-container {
     padding: var(--spacing-md);
   }
-  
+
   .professional-card {
     margin-bottom: var(--spacing-md);
     padding: var(--spacing-md);
   }
-  
+
   .main-content-responsive {
     margin: var(--spacing-md) !important;
   }
-  
+
   /* 按钮组在小屏幕上垂直排列 */
   .ant-btn-group {
     display: flex;
     flex-direction: column;
     gap: var(--spacing-sm);
   }
-  
+
   .ant-btn-group .ant-btn {
     width: 100%;
   }
-  
+
   /* 顶部导航在小屏幕上的优化 */
   .ant-layout-header {
     padding: 0 var(--spacing-md) !important;
@@ -471,43 +491,43 @@
   .page-container {
     padding: var(--spacing-sm);
   }
-  
+
   .professional-card {
     margin-bottom: var(--spacing-sm);
     padding: var(--spacing-sm);
   }
-  
+
   .main-content-responsive {
     margin: var(--spacing-sm) !important;
   }
-  
+
   /* 表单在超小屏幕上的优化 */
   .ant-form-item-label {
     text-align: left !important;
   }
-  
+
   .ant-col {
     width: 100% !important;
     max-width: 100% !important;
   }
-  
+
   /* 按钮在超小屏幕上全宽显示 */
   .ant-btn {
     width: 100%;
     margin-bottom: var(--spacing-xs);
   }
-  
+
   /* 表格在超小屏幕上的优化 */
   .ant-table-wrapper {
     overflow-x: auto;
   }
-  
+
   .ant-table-thead > tr > th,
   .ant-table-tbody > tr > td {
     padding: var(--spacing-xs) var(--spacing-sm);
     font-size: 12px;
   }
-  
+
   /* 顶部导航在超小屏幕上的优化 */
   .ant-layout-header {
     padding: 0 var(--spacing-sm) !important;

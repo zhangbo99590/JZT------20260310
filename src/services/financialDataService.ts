@@ -3,8 +3,8 @@
  * 负责财务数据的管理、验证、清除和日志记录
  */
 
-import { generateUUID } from '../utils/commonUtils';
-import { StorageUtils } from '../utils/storage';
+import { generateUUID } from "../utils/commonUtils";
+import { StorageUtils } from "../utils/storage";
 
 export interface FinancialData {
   annualRevenue: number;
@@ -18,7 +18,7 @@ export interface FinancialData {
 export interface OperationLog {
   id: string;
   timestamp: string;
-  operation: 'create' | 'update' | 'delete' | 'clear';
+  operation: "create" | "update" | "delete" | "clear";
   field: string;
   oldValue: any;
   newValue: any;
@@ -28,7 +28,7 @@ export interface OperationLog {
 
 class FinancialDataService {
   private logs: OperationLog[] = [];
-  private storageKey = 'financial_data_logs';
+  private storageKey = "financial_data_logs";
 
   constructor() {
     this.loadLogs();
@@ -52,12 +52,12 @@ class FinancialDataService {
    * 记录操作日志
    */
   logOperation(
-    operation: 'create' | 'update' | 'delete' | 'clear',
+    operation: "create" | "update" | "delete" | "clear",
     field: string,
     oldValue: any,
     newValue: any,
     description: string,
-    operator: string = '系统用户'
+    operator: string = "系统用户"
   ): void {
     const log: OperationLog = {
       id: generateUUID(),
@@ -67,11 +67,11 @@ class FinancialDataService {
       oldValue,
       newValue,
       operator,
-      description
+      description,
     };
 
     this.logs.unshift(log);
-    
+
     // 只保留最近1000条日志
     if (this.logs.length > 1000) {
       this.logs = this.logs.slice(0, 1000);
@@ -96,9 +96,20 @@ class FinancialDataService {
   }
 
   /**
+   * 删除指定操作日志
+   */
+  deleteOperationLog(logId: string): void {
+    this.logs = this.logs.filter((log) => log.id !== logId);
+    this.saveLogs();
+  }
+
+  /**
    * 计算资产负债率
    */
-  calculateAssetLiabilityRatio(totalLiabilities: number, totalAssets: number): number {
+  calculateAssetLiabilityRatio(
+    totalLiabilities: number,
+    totalAssets: number
+  ): number {
     if (totalAssets <= 0) return 0;
     return Number(((totalLiabilities / totalAssets) * 100).toFixed(2));
   }
@@ -116,47 +127,50 @@ class FinancialDataService {
 
     // 验证数值范围
     if (data.annualRevenue !== undefined && data.annualRevenue < 0) {
-      errors.push('年销售收入不能为负数');
+      errors.push("年销售收入不能为负数");
     }
 
     if (data.rdExpense !== undefined && data.rdExpense < 0) {
-      errors.push('研发费用不能为负数');
+      errors.push("研发费用不能为负数");
     }
 
     if (data.netProfit !== undefined && data.netProfit < -1000000) {
-      warnings.push('净利润为大额负数，请确认数据准确性');
+      warnings.push("净利润为大额负数，请确认数据准确性");
     }
 
     if (data.totalAssets !== undefined && data.totalAssets < 0) {
-      errors.push('总资产不能为负数');
+      errors.push("总资产不能为负数");
     }
 
     if (data.totalLiabilities !== undefined && data.totalLiabilities < 0) {
-      errors.push('总负债不能为负数');
+      errors.push("总负债不能为负数");
     }
 
     // 验证逻辑关系
     if (data.totalAssets !== undefined && data.totalLiabilities !== undefined) {
       if (data.totalLiabilities > data.totalAssets) {
-        warnings.push('总负债超过总资产，企业可能存在资不抵债风险');
+        warnings.push("总负债超过总资产，企业可能存在资不抵债风险");
       }
     }
 
     if (data.rdExpense !== undefined && data.annualRevenue !== undefined) {
       if (data.rdExpense > data.annualRevenue) {
-        warnings.push('研发费用超过年销售收入，请确认数据准确性');
+        warnings.push("研发费用超过年销售收入，请确认数据准确性");
       }
     }
 
     // 资产负债率建议
-    if (data.assetLiabilityRatio !== undefined && data.assetLiabilityRatio > 70) {
-      warnings.push('资产负债率较高(>70%)，建议关注企业财务风险');
+    if (
+      data.assetLiabilityRatio !== undefined &&
+      data.assetLiabilityRatio > 70
+    ) {
+      warnings.push("资产负债率较高(>70%)，建议关注企业财务风险");
     }
 
     return {
       valid: errors.length === 0,
       errors,
-      warnings
+      warnings,
     };
   }
 
@@ -168,16 +182,16 @@ class FinancialDataService {
 
     // 记录清除操作
     this.logOperation(
-      'clear',
-      'rdExpense',
+      "clear",
+      "rdExpense",
       { rdExpense: oldRdExpense },
       { rdExpense: 0 },
-      '清除研发费用数据'
+      "清除研发费用数据"
     );
 
     return {
       ...currentData,
-      rdExpense: 0
+      rdExpense: 0,
     };
   }
 
@@ -186,11 +200,11 @@ class FinancialDataService {
    */
   clearAllFinancialData(currentData: FinancialData): FinancialData {
     this.logOperation(
-      'clear',
-      'all_financial_data',
+      "clear",
+      "all_financial_data",
       currentData,
       this.getEmptyFinancialData(),
-      '清除所有财务数据'
+      "清除所有财务数据"
     );
 
     return this.getEmptyFinancialData();
@@ -206,7 +220,7 @@ class FinancialDataService {
       netProfit: 0,
       totalAssets: 0,
       totalLiabilities: 0,
-      assetLiabilityRatio: 0
+      assetLiabilityRatio: 0,
     };
   }
 
@@ -215,20 +229,22 @@ class FinancialDataService {
    */
   saveFinancialData(data: FinancialData, applicationId?: string): boolean {
     try {
-      const key = applicationId ? `financial_data_${applicationId}` : 'financial_data_current';
+      const key = applicationId
+        ? `financial_data_${applicationId}`
+        : "financial_data_current";
       StorageUtils.setItem(key, data);
-      
+
       this.logOperation(
-        'update',
-        'financial_data',
+        "update",
+        "financial_data",
         null,
         data,
-        `保存财务数据${applicationId ? ` (申报ID: ${applicationId})` : ''}`
+        `保存财务数据${applicationId ? ` (申报ID: ${applicationId})` : ""}`
       );
 
       return true;
     } catch (error) {
-      console.error('保存财务数据失败:', error);
+      console.error("保存财务数据失败:", error);
       return false;
     }
   }
@@ -238,16 +254,18 @@ class FinancialDataService {
    */
   loadFinancialData(applicationId?: string): FinancialData | null {
     try {
-      const key = applicationId ? `financial_data_${applicationId}` : 'financial_data_current';
+      const key = applicationId
+        ? `financial_data_${applicationId}`
+        : "financial_data_current";
       const data = StorageUtils.getItem(key, null);
-      
+
       if (data) {
         return data;
       }
-      
+
       return null;
     } catch (error) {
-      console.error('加载财务数据失败:', error);
+      console.error("加载财务数据失败:", error);
       return null;
     }
   }
@@ -257,10 +275,14 @@ class FinancialDataService {
    */
   getFinancialDataHistory(field: string, limit: number = 10): OperationLog[] {
     return this.logs
-      .filter(log => log.field === field || log.field === 'financial_data' || log.field === 'all_financial_data')
+      .filter(
+        (log) =>
+          log.field === field ||
+          log.field === "financial_data" ||
+          log.field === "all_financial_data"
+      )
       .slice(0, limit);
   }
-
 
   /**
    * 导出操作日志
@@ -278,17 +300,17 @@ class FinancialDataService {
     filledFields: string[];
   } {
     const fields = [
-      { key: 'annualRevenue', name: '年销售收入' },
-      { key: 'rdExpense', name: '研发费用' },
-      { key: 'netProfit', name: '净利润' },
-      { key: 'totalAssets', name: '总资产' },
-      { key: 'totalLiabilities', name: '总负债' }
+      { key: "annualRevenue", name: "年销售收入" },
+      { key: "rdExpense", name: "研发费用" },
+      { key: "netProfit", name: "净利润" },
+      { key: "totalAssets", name: "总资产" },
+      { key: "totalLiabilities", name: "总负债" },
     ];
 
     const filledFields: string[] = [];
     const missingFields: string[] = [];
 
-    fields.forEach(field => {
+    fields.forEach((field) => {
       if (data[field.key as keyof FinancialData] > 0) {
         filledFields.push(field.name);
       } else {
@@ -301,7 +323,7 @@ class FinancialDataService {
     return {
       completeness: Number(completeness.toFixed(2)),
       missingFields,
-      filledFields
+      filledFields,
     };
   }
 }

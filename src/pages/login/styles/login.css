@@ -1,0 +1,269 @@
+/**
+ * Login页面样式文件
+ * 创建时间: 2026-01-13 
+ * 功能: 登录页面专用样式
+ */
+
+.login-container {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #1890ff 0%, #096dd9 100%);
+}
+
+.login-box {
+  display: flex;
+  width: 900px;
+  min-height: 520px;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  overflow: hidden;
+}
+
+.login-left {
+  width: 360px;
+  background: linear-gradient(135deg, #1890ff 0%, #096dd9 100%);
+  padding: 50px 40px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  color: #fff;
+}
+
+.login-left h1 {
+  font-size: 32px;
+  margin-bottom: 20px;
+  font-weight: 500;
+}
+
+.login-left p {
+  font-size: 14px;
+  line-height: 1.8;
+  opacity: 0.9;
+}
+
+.login-left .features {
+  margin-top: 40px;
+}
+
+.login-left .feature-item {
+  display: flex;
+  align-items: center;
+  margin-bottom: 16px;
+  font-size: 14px;
+}
+
+.login-left .feature-item::before {
+  content: ">";
+  width: 20px;
+  height: 20px;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 12px;
+  font-size: 12px;
+}
+
+.login-right {
+  flex: 1;
+  padding: 50px;
+  display: flex;
+  flex-direction: column;
+}
+
+.login-header {
+  margin-bottom: 30px;
+}
+
+.login-header h2 {
+  font-size: 24px;
+  color: #262626;
+  font-weight: 500;
+  margin-bottom: 8px;
+}
+
+.login-header p {
+  font-size: 14px;
+  color: #8c8c8c;
+}
+
+.forgot-pwd {
+  text-align: right;
+  margin-top: -10px;
+  margin-bottom: 16px;
+}
+
+.forgot-pwd a {
+  font-size: 13px;
+  color: #1890ff;
+  text-decoration: none;
+}
+
+.forgot-pwd a:hover {
+  text-decoration: underline;
+}
+
+.login-footer {
+  margin-top: 24px;
+  text-align: center;
+  font-size: 14px;
+  color: #666;
+}
+
+.login-footer a {
+  color: #1890ff;
+  text-decoration: none;
+}
+
+.login-footer a:hover {
+  text-decoration: underline;
+}
+
+.login-right .ant-tabs-nav {
+  margin-bottom: 24px;
+}
+
+.login-right .ant-tabs-tab {
+  padding: 12px 20px;
+}
+
+/* 输入框样式调整 */
+.login-right .ant-input-affix-wrapper,
+.login-right .ant-input {
+  height: 38px;
+  display: flex;
+  align-items: center;
+  line-height: 38px;
+}
+
+/* 确保输入框内的图标和文字垂直居中对齐 */
+.login-right .ant-input-prefix {
+  display: flex;
+  align-items: center;
+  margin-right: 8px;
+}
+
+.login-right .ant-input-suffix {
+  display: flex;
+  align-items: center;
+  margin-left: 8px;
+}
+
+.login-right .ant-input-prefix .anticon,
+.login-right .ant-input-suffix .anticon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* 确保输入文字垂直居中 */
+.login-right .ant-input-affix-wrapper .ant-input {
+  flex: 1;
+  height: auto;
+  line-height: normal;
+  padding: 0;
+  border: none;
+  background: transparent;
+}
+
+/* 测试账号卡片样式 */
+.test-accounts-card {
+  margin-top: 30px;
+  padding: 20px;
+  background: #f5f5f5;
+  border-radius: 8px;
+  border: 1px solid #e8e8e8;
+}
+
+.test-accounts-card h3 {
+  font-size: 16px;
+  font-weight: 500;
+  color: #262626;
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+}
+
+.test-accounts-card h3::before {
+  content: "🔑";
+  margin-right: 8px;
+  font-size: 14px;
+}
+
+.test-accounts-list {
+  margin-bottom: 16px;
+}
+
+.test-account-item {
+  background: #fff;
+  padding: 14px;
+  border-radius: 6px;
+  margin-bottom: 10px;
+  border-left: 3px solid #1890ff;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+}
+
+.test-account-item:last-child {
+  margin-bottom: 0;
+}
+
+.account-title {
+  font-size: 14px;
+  font-weight: 500;
+  color: #262626;
+  margin-bottom: 8px;
+}
+
+.account-info {
+  font-size: 13px;
+  color: #595959;
+  line-height: 1.5;
+}
+
+.account-info div {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.test-account-note {
+  font-size: 13px;
+  color: #8c8c8c;
+  padding-top: 12px;
+  border-top: 1px solid #e8e8e8;
+  margin-top: 16px;
+}
+
+.test-account-note strong {
+  color: #1890ff;
+  font-weight: 500;
+  margin-left: 4px;
+}
+
+/* 响应式调整 */
+@media (max-width: 992px) {
+  .login-box {
+    flex-direction: column;
+    width: 400px;
+    min-height: auto;
+  }
+
+  .login-left {
+    width: 100%;
+    padding: 30px 24px;
+    text-align: center;
+  }
+
+  .login-right {
+    padding: 30px 24px;
+  }
+
+  .test-accounts-card {
+    margin-top: 24px;
+    padding: 16px;
+  }
+}

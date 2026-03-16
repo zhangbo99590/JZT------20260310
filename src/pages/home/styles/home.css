@@ -1,0 +1,78 @@
+/* 首页样式 */
+
+/* 卡片悬停效果 */
+.hover-card {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.hover-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.08);
+}
+
+/* 渐变背景卡片 */
+.gradient-card {
+  position: relative;
+  overflow: hidden;
+  border: none !important;
+}
+
+.gradient-card::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  background: linear-gradient(135deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0) 100%);
+  pointer-events: none;
+}
+
+/* 数字增长动画 */
+.stat-value {
+  font-feature-settings: "tnum";
+  font-variant-numeric: tabular-nums;
+}
+
+/* 列表项悬停效果 */
+.activity-item-hover {
+  transition: background-color 0.3s;
+  border-radius: 8px;
+  padding: 12px !important;
+}
+
+.activity-item-hover:hover {
+  background-color: rgba(0, 0, 0, 0.02);
+}
+
+/* 快捷入口图标容器 */
+.quick-action-icon {
+  transition: transform 0.3s ease;
+}
+
+.hover-card:hover .quick-action-icon {
+  transform: scale(1.1);
+}
+
+/* 页面头部 */
+.page-header-welcome {
+  background: linear-gradient(90deg, #1890ff 0%, #69c0ff 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  display: inline-block;
+}
+
+/* 自定义滚动条 */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: #ccc;
+  border-radius: 3px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}

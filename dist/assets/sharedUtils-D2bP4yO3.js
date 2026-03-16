@@ -1,0 +1,1 @@
+function r(){return"FA"+Date.now().toString().slice(-8)}function n(t){return t>=90?"#52c41a":t>=80?"#1890ff":t>=70?"#faad14":"#ff4d4f"}function e(t){return t>=90?{color:"green",text:"极度推荐"}:t>=80?{color:"blue",text:`匹配度 ${t}%`}:t>=70?{color:"orange",text:`匹配度 ${t}%`}:{color:"red",text:`匹配度 ${t}%`}}export{n as a,r as b,e as g};

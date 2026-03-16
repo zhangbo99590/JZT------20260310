@@ -1,0 +1,1 @@
+import{r as n}from"./vendor-react-_t2cPZO_.js";const w=(e=60)=>{const[t,o]=n.useState(0);return n.useEffect(()=>{if(t>0){const s=setTimeout(()=>o(t-1),1e3);return()=>clearTimeout(s)}},[t]),{countdown:t,startCountdown:()=>{o(e)},resetCountdown:()=>{o(0)},isCountingDown:t>0}};export{w as u};

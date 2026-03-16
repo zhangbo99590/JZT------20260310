@@ -1,22 +1,34 @@
 // 产业大厅类型定义
 
 // 发布类型
-export type PublicationType = 'supply' | 'demand';
+export type PublicationType = "supply" | "demand";
 
 // 供给类型
-export type SupplyType = 'product' | 'service' | 'capacity' | 'technology';
+export type SupplyType = "product" | "service" | "capacity" | "technology";
 
 // 需求类型
-export type DemandType = 'purchase' | 'cooperation' | 'technology' | 'capacity';
+export type DemandType = "purchase" | "cooperation" | "technology" | "capacity";
 
 // 发布状态
-export type PublicationStatus = 'pending' | 'active' | 'offline' | 'expired';
+export type PublicationStatus =
+  | "pending"
+  | "active"
+  | "offline"
+  | "expired"
+  | "rejected"
+  | "draft"
+  | "auditing";
 
 // 可见范围
-export type VisibilityScope = 'public' | 'industry' | 'enterprise';
+export type VisibilityScope = "public" | "industry" | "enterprise";
 
 // 对接状态
-export type ConnectionStatus = 'pending' | 'accepted' | 'rejected' | 'negotiating' | 'completed';
+export type ConnectionStatus =
+  | "pending"
+  | "accepted"
+  | "rejected"
+  | "negotiating"
+  | "completed";
 
 // 产品供给
 export interface ProductSupply {
@@ -125,6 +137,7 @@ export interface PublicationBase {
   subType: SupplyType | DemandType;
   description: string;
   status: PublicationStatus;
+  rejectReason?: string; // 审核不通过原因
   publisherId: string;
   publisherName: string;
   publisherAvatar?: string;
@@ -145,8 +158,8 @@ export interface PublicationBase {
   isCertified?: boolean; // 企业认证
   successRate?: number; // 对接成功率 0-100
   budget?: number; // 预算/价格
-  budgetUnit?: '元' | '万'; // 单位
-  
+  budgetUnit?: "元" | "万"; // 单位
+
   // 详情页面扩展字段
   basicDetails?: {
     materialCode?: string; // 物料编码
@@ -157,7 +170,8 @@ export interface PublicationBase {
     paymentMethod?: string; // 付款方式
     deliveryTime?: string; // 交付时间
     qualityRequirement?: string; // 质量要求
-    technicalSpecs?: { // 技术规格
+    technicalSpecs?: {
+      // 技术规格
       [key: string]: any;
     };
   };
@@ -165,16 +179,28 @@ export interface PublicationBase {
 
 // 供给发布
 export interface SupplyPublication extends PublicationBase {
-  type: 'supply';
+  type: "supply";
   subType: SupplyType;
-  details?: (ProductSupply | ServiceSupply | CapacitySupply | TechnologySupply) & Partial<ProductSupply>;
+  details?: (
+    | ProductSupply
+    | ServiceSupply
+    | CapacitySupply
+    | TechnologySupply
+  ) &
+    Partial<ProductSupply>;
 }
 
 // 需求发布
 export interface DemandPublication extends PublicationBase {
-  type: 'demand';
+  type: "demand";
   subType: DemandType;
-  details?: (PurchaseRequirement | CooperationRequirement | TechnologyRequirement | CapacityRequirement) & Partial<ProductSupply>;
+  details?: (
+    | PurchaseRequirement
+    | CooperationRequirement
+    | TechnologyRequirement
+    | CapacityRequirement
+  ) &
+    Partial<ProductSupply>;
 }
 
 // 发布联合类型
@@ -208,7 +234,7 @@ export interface ChatMessage {
   senderId: string;
   senderName: string;
   content: string;
-  type: 'text' | 'file' | 'image';
+  type: "text" | "file" | "image";
   fileUrl?: string;
   fileName?: string;
   timestamp: string;
@@ -241,6 +267,8 @@ export interface IndustryStats {
 export interface PublicationFilter {
   type?: PublicationType;
   subType?: SupplyType | DemandType;
+  status?: PublicationStatus;
+  publisherId?: string;
   keyword?: string;
   region?: string;
   industry?: string;
@@ -253,6 +281,10 @@ export interface PublicationFilter {
     start?: string;
     end?: string;
   };
+  publishedWithinDays?: number;
+  expiringWithinDays?: number;
+  budgetRange?: string;
+  quality?: string;
 }
 
 // 新建发布表单

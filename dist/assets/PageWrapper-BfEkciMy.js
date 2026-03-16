@@ -1,0 +1,1 @@
+import{j as e}from"./index-Bs377QRc.js";const x=({children:r,module:t,className:p,style:s})=>e.jsx("div",{className:p,style:{background:"#f5f5f5",minHeight:"100vh",...s},children:e.jsx("div",{style:{padding:"0 24px 24px 24px"},children:r})});export{x as P};

@@ -1,15 +1,9 @@
 /**
  * 统一存储工具
- * 提供本地存储操作的统一接口，同时支持类和Hook两种使用方式
  */
-
 import { useState, useEffect, useCallback } from 'react';
 import { safeJsonParse } from './commonUtils';
 
-/**
- * 本地存储工具类
- * 提供静态方法操作localStorage
- */
 export class StorageUtils {
   /**
    * 设置localStorage值
@@ -226,144 +220,6 @@ export function useLocalStorage<T>(
 
   return [storedValue, setValue, removeValue];
 }
-/**
- * 专用的应用数据存储管理器
- */
-export class AppStorageManager {
-  private static readonly PREFIX = 'qiguibao_';
-
-  /**
-   * 获取带前缀的键名
-   */
-  private static getKey(key: string): string {
-    return `${this.PREFIX}${key}`;
-  }
-
-  /**
-   * 保存用户信息
-   */
-  static saveUserInfo(userInfo: any): boolean {
-    return StorageUtils.setItem(this.getKey('user_info'), userInfo);
-  }
-
-  /**
-   * 获取用户信息
-   */
-  static getUserInfo(defaultValue: any = null): any {
-    return StorageUtils.getItem(this.getKey('user_info'), defaultValue);
-  }
-
-  /**
-   * 保存搜索历史
-   */
-  static saveSearchHistory(history: any[]): boolean {
-    // 限制历史记录数量
-    const limitedHistory = history.slice(0, 100);
-    return StorageUtils.setItem(this.getKey('search_history'), limitedHistory);
-  }
-
-  /**
-   * 获取搜索历史
-   */
-  static getSearchHistory(): any[] {
-    return StorageUtils.getItem(this.getKey('search_history'), []);
-  }
-
-  /**
-   * 添加搜索历史项
-   */
-  static addSearchHistoryItem(item: any): boolean {
-    const history = this.getSearchHistory();
-    // 去重并添加到开头
-    const filteredHistory = history.filter(h => h.id !== item.id);
-    filteredHistory.unshift(item);
-    return this.saveSearchHistory(filteredHistory);
-  }
-
-  /**
-   * 清除搜索历史
-   */
-  static clearSearchHistory(): boolean {
-    return StorageUtils.removeItem(this.getKey('search_history'));
-  }
-
-  /**
-   * 保存应用设置
-   */
-  static saveAppSettings(settings: any): boolean {
-    return StorageUtils.setItem(this.getKey('app_settings'), settings);
-  }
-
-  /**
-   * 获取应用设置
-   */
-  static getAppSettings(defaultSettings: any = {}): any {
-    return StorageUtils.getItem(this.getKey('app_settings'), defaultSettings);
-  }
-
-  /**
-   * 保存草稿数据
-   */
-  static saveDraft(draftId: string, data: any): boolean {
-    return StorageUtils.setItem(this.getKey(`draft_${draftId}`), {
-      ...data,
-      saveTime: new Date().toISOString()
-    });
-  }
-
-  /**
-   * 获取草稿数据
-   */
-  static getDraft(draftId: string): any {
-    return StorageUtils.getItem(this.getKey(`draft_${draftId}`), null);
-  }
-
-  /**
-   * 删除草稿数据
-   */
-  static removeDraft(draftId: string): boolean {
-    return StorageUtils.removeItem(this.getKey(`draft_${draftId}`));
-  }
-
-  /**
-   * 获取所有草稿
-   */
-  static getAllDrafts(): Record<string, any> {
-    const draftKeys = StorageUtils.getKeysByPrefix(this.getKey('draft_'));
-    const drafts: Record<string, any> = {};
-    
-    draftKeys.forEach(key => {
-      const draftId = key.replace(this.getKey('draft_'), '');
-      drafts[draftId] = StorageUtils.getItem(key, null);
-    });
-    
-    return drafts;
-  }
-
-  /**
-   * 清理过期数据
-   */
-  static cleanupExpiredData(expirationDays: number = 30): string[] {
-    const appKeys = StorageUtils.getKeysByPrefix(this.PREFIX);
-    const removedKeys: string[] = [];
-    const expirationTime = Date.now() - (expirationDays * 24 * 60 * 60 * 1000);
-
-    appKeys.forEach(key => {
-      try {
-        const data = StorageUtils.getItem(key, null);
-        if (data && data.saveTime) {
-          const saveTime = new Date(data.saveTime).getTime();
-          if (saveTime < expirationTime) {
-            if (StorageUtils.removeItem(key)) {
-              removedKeys.push(key);
-            }
-          }
-        }
-      } catch (error) {
-        console.warn(`Failed to check expiration for key "${key}":`, error);
-      }
-    });
-
-    return removedKeys;
-  }
-}
+// Note: AppStorageManager class removed to eliminate redundancy
+// Use the specialized applicationStorage utility for application data
+// Use StorageUtils directly for general storage operations
