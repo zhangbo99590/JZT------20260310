@@ -11,6 +11,11 @@ const MOCK_POLICIES = Array.from({ length: 65 }).map((_, i) => {
   const districts = ['海淀区', '朝阳区', '丰台区', '西城区', '东城区', '石景山区', '通州区', '昌平区', '大兴区', '顺义区'];
   const policyTypes = ['高新技术企业认定', '中小企业发展', '科技创新支持', '人才引进', '产业升级', '绿色发展', '数字化转型'];
   const departments = ['北京市科委', '北京市发改委', '北京市经信局', '北京市人社局', '北京市财政局'];
+  const allIndustries = [
+    '城乡建设', '环境保护', '科技创新', '教育培训', '文化创意', '金融服务', 
+    '医疗健康', '农业农村', '交通运输', '旅游休闲', '能源电力', '先进制造', 
+    '生物医药', '人工智能', '集成电路', '新材料', '新能源', '高端装备'
+  ];
   
   const district = districts[i % districts.length];
   const policyType = policyTypes[i % policyTypes.length];
@@ -21,7 +26,7 @@ const MOCK_POLICIES = Array.from({ length: 65 }).map((_, i) => {
     title: `${district}关于支持${policyType}的实施办法（202${6-i%3}版）`,
     department: `${district}${dept}`,
     date: `202${6-i%2}-0${(i%9)+1}-15`,
-    industry: i % 2 === 0 ? ['科技创新', '电子信息'] : ['文化创意', '现代服务'],
+    industry: [allIndustries[i % allIndustries.length], allIndustries[(i + 5) % allIndustries.length]],
     status: (i % 5 === 0 ? 'closed' : (i % 3 === 0 ? 'upcoming' : 'active')) as 'active' | 'upcoming' | 'closed',
     type: i % 2 === 0 ? '认定' : '补贴',
     content: `为进一步优化${district}营商环境，促进${policyType}发展，根据国家及本市有关规定，结合${district}实际情况，制定本措施，旨在推动企业创新发展，提升核心竞争力...`

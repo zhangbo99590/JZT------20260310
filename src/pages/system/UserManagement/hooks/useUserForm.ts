@@ -50,11 +50,21 @@ export function useUserForm(
   const handleEdit = (record: User) => {
     setEditingUser(record);
 
-    // 角色映射：取第一个角色名称
+    // 角色映射：将后端的 roleName 或 roleId 映射回表单能识别的值
+    let roleValue = "user";
+    const roleName = record.roles?.[0]?.roleName;
+    const roleId = record.roles?.[0]?.roleId;
+
+    if (roleName === "超级管理员" || roleId === 0) {
+      roleValue = "super_admin";
+    } else if (roleName === "企业管理员" || roleName === "管理员" || roleId === 1) {
+      roleValue = "enterprise_admin";
+    }
+
     const mappedRecord = {
       username: record.username || "",
       email: record.email || "",
-      roles: record.roles?.[0]?.roleName || "user", // 取第一个角色
+      roles: roleValue,
       status: record.status || "0",
     };
 

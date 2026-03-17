@@ -10,7 +10,7 @@
 
 import React, { useState, useCallback, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
-import { Breadcrumb, Result, Button } from "antd";
+import { Result, Button } from "antd";
 import {
   SearchBar,
   UserTable,
@@ -125,19 +125,6 @@ const UserManagement: React.FC = () => {
 
   return (
     <div style={{ background: "transparent" }}>
-      {/* 面包屑导航 */}
-      <Breadcrumb
-        style={{ marginBottom: "16px" }}
-        items={[
-          {
-            title: "系统管理",
-          },
-          {
-            title: "用户管理",
-          },
-        ]}
-      />
-
       {/* 搜索栏 */}
       <SearchBar
         searchText={searchText}
