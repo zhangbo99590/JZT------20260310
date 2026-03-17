@@ -57,7 +57,11 @@ export function useUserForm(
 
     if (roleName === "超级管理员" || roleId === 0) {
       roleValue = "super_admin";
-    } else if (roleName === "企业管理员" || roleName === "管理员" || roleId === 1) {
+    } else if (
+      roleName === "企业管理员" ||
+      roleName === "管理员" ||
+      roleId === 1
+    ) {
       roleValue = "enterprise_admin";
     }
 

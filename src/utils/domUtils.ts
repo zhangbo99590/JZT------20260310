@@ -1,5 +1,4 @@
-
-import ReactDOM from 'react-dom';
+import ReactDOM from "react-dom";
 
 /**
  * 元素删除结果接口
@@ -26,25 +25,25 @@ export interface DeleteOptions {
 
 /**
  * 安全删除 DOM 元素的通用函数
- * 
+ *
  * @param selector 选择器字符串或元素对象
  * @param options 删除选项
  * @returns 删除结果或 Promise<DeleteResult>
  */
 export function removeElement(
-  selector: string | HTMLElement, 
-  options: DeleteOptions = {}
+  selector: string | HTMLElement,
+  options: DeleteOptions = {},
 ): DeleteResult | Promise<DeleteResult> {
-  const { 
-    sync = true, 
-    beforeDelete, 
+  const {
+    sync = true,
+    beforeDelete,
     afterDelete,
-    unmountReactRoot = false
+    unmountReactRoot = false,
   } = options;
 
   // 查找元素
   let element: HTMLElement | null = null;
-  if (typeof selector === 'string') {
+  if (typeof selector === "string") {
     element = document.querySelector(selector);
   } else {
     element = selector;
@@ -55,7 +54,7 @@ export function removeElement(
     if (!element) {
       return {
         success: false,
-        message: '元素不存在'
+        message: "元素不存在",
       };
     }
 
@@ -63,7 +62,7 @@ export function removeElement(
     if (!document.body.contains(element)) {
       return {
         success: false,
-        message: '元素不在文档中'
+        message: "元素不在文档中",
       };
     }
 
@@ -74,8 +73,8 @@ export function removeElement(
         if (!shouldProceed) {
           return {
             success: false,
-            message: '删除操作被 beforeDelete 钩子取消',
-            element
+            message: "删除操作被 beforeDelete 钩子取消",
+            element,
           };
         }
       }
@@ -111,14 +110,14 @@ export function removeElement(
 
       return {
         success: true,
-        message: '元素删除成功',
-        element: clone // 返回被移除的元素（克隆体）
+        message: "元素删除成功",
+        element: clone, // 返回被移除的元素（克隆体）
       };
     } catch (error) {
       return {
         success: false,
         message: `删除过程发生错误: ${error instanceof Error ? error.message : String(error)}`,
-        element
+        element,
       };
     }
   };
@@ -128,23 +127,27 @@ export function removeElement(
     // 同步模式下，beforeDelete 必须是同步的，否则会抛出错误或行为不符合预期
     // 这里为了简化实现，如果用户在同步模式下传入了返回 Promise 的 beforeDelete，
     // 我们无法等待它，所以建议异步操作使用 sync: false
-    
+
     // 简单的同步执行包装（注意：这不支持异步的 beforeDelete）
     // 注意：如果 beforeDelete 是异步函数，在同步模式下无法等待其结果
 
     if (!element) {
-      return { success: false, message: '元素不存在' };
+      return { success: false, message: "元素不存在" };
     }
 
     if (!document.body.contains(element)) {
-      return { success: false, message: '元素不在文档中' };
+      return { success: false, message: "元素不在文档中" };
     }
 
     // 同步执行删除前检查
     if (beforeDelete) {
       const result = beforeDelete();
       if (result === false) {
-        return { success: false, message: '删除操作被 beforeDelete 钩子取消', element };
+        return {
+          success: false,
+          message: "删除操作被 beforeDelete 钩子取消",
+          element,
+        };
       }
       // 如果 result 是 Promise，这里无法等待，继续执行
     }
@@ -164,20 +167,20 @@ export function removeElement(
         const clone = element.cloneNode(true) as HTMLElement;
         parent.replaceChild(clone, element);
         clone.remove();
-        
+
         if (afterDelete) afterDelete();
-        
-        return { success: true, message: '元素删除成功', element: clone };
+
+        return { success: true, message: "元素删除成功", element: clone };
       } else {
         element.remove();
         if (afterDelete) afterDelete();
-        return { success: true, message: '元素删除成功', element };
+        return { success: true, message: "元素删除成功", element };
       }
     } catch (error) {
-      return { 
-        success: false, 
-        message: `删除过程发生错误: ${error instanceof Error ? error.message : String(error)}`, 
-        element 
+      return {
+        success: false,
+        message: `删除过程发生错误: ${error instanceof Error ? error.message : String(error)}`,
+        element,
       };
     }
   } else {

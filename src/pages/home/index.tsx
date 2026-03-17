@@ -22,11 +22,20 @@ import {
   EnterpriseGuideSection,
 } from "./components/index";
 import { useHomeData } from "./hooks/useHomeData";
-import { ErrorBoundary, SimpleErrorBoundary } from "../../components/common/ErrorBoundary";
+import {
+  ErrorBoundary,
+  SimpleErrorBoundary,
+} from "../../components/common/ErrorBoundary";
 import { HomePageSkeleton } from "../../components/common/SkeletonLoader";
 import { RefreshButton } from "../../components/common/RefreshButton";
-import { PersonalizationPanel, usePersonalizationSettings } from "../../components/common/PersonalizationPanel";
-import { useKeyboardShortcuts, getHomePageShortcuts } from "../../hooks/useKeyboardShortcuts";
+import {
+  PersonalizationPanel,
+  usePersonalizationSettings,
+} from "../../components/common/PersonalizationPanel";
+import {
+  useKeyboardShortcuts,
+  getHomePageShortcuts,
+} from "../../hooks/useKeyboardShortcuts";
 import "./styles/home.css";
 
 /**
@@ -74,7 +83,7 @@ const Home: React.FC = () => {
    * 切换设置面板
    */
   const toggleSettingsPanel = useCallback(() => {
-    setSettingsPanelVisible(prev => !prev);
+    setSettingsPanelVisible((prev) => !prev);
   }, []);
 
   /**
@@ -83,14 +92,18 @@ const Home: React.FC = () => {
   const showShortcutsHelp = useCallback(() => {
     message.info({
       content: (
-        <div style={{ textAlign: 'left' }}>
-          <strong>键盘快捷键：</strong><br />
-          F5 / Ctrl+R: 刷新数据<br />
-          Ctrl+,: 打开设置面板<br />
-          Shift+?: 显示帮助<br />
+        <div style={{ textAlign: "left" }}>
+          <strong>键盘快捷键：</strong>
+          <br />
+          F5 / Ctrl+R: 刷新数据
+          <br />
+          Ctrl+,: 打开设置面板
+          <br />
+          Shift+?: 显示帮助
+          <br />
         </div>
       ),
-      duration: 5
+      duration: 5,
     });
   }, []);
 
@@ -98,7 +111,7 @@ const Home: React.FC = () => {
   const shortcuts = getHomePageShortcuts({
     refresh: handleRefresh,
     toggleSettings: toggleSettingsPanel,
-    showHelp: showShortcutsHelp
+    showHelp: showShortcutsHelp,
   });
 
   useKeyboardShortcuts({ shortcuts });
@@ -108,25 +121,31 @@ const Home: React.FC = () => {
   //   return <HomePageSkeleton />;
   // }
 
-  const gutter = settings.compactMode ? [8, 8] : [settings.cardSpacing, settings.cardSpacing];
+  const gutter = settings.compactMode
+    ? [8, 8]
+    : [settings.cardSpacing, settings.cardSpacing];
 
   return (
     <ErrorBoundary>
-      <div style={{ 
-        background: "transparent", 
-        padding: settings.compactMode ? "12px 0" : "0",
-        minHeight: "100vh"
-      }}>
+      <div
+        style={{
+          background: "transparent",
+          padding: settings.compactMode ? "12px 0" : "0",
+          minHeight: "100vh",
+        }}
+      >
         {/* 页面头部 */}
-        <div style={{ 
-          display: 'flex', 
-          justifyContent: 'space-between', 
-          alignItems: 'flex-start',
-          marginBottom: settings.compactMode ? "16px" : "24px"
-        }}>
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "flex-start",
+            marginBottom: settings.compactMode ? "16px" : "24px",
+          }}
+        >
           <PageHeader username={username} />
           <Space>
-            <RefreshButton 
+            <RefreshButton
               onRefresh={handleRefresh}
               loading={loading}
               autoRefresh={settings.autoRefresh}
@@ -151,7 +170,9 @@ const Home: React.FC = () => {
           <PersonalizedRecommendationSection />
         </SimpleErrorBoundary>
 
-        <Divider style={{ margin: settings.compactMode ? "16px 0" : "24px 0" }} />
+        <Divider
+          style={{ margin: settings.compactMode ? "16px 0" : "24px 0" }}
+        />
 
         {/* 快捷工具区域 */}
         {settings.showQuickTools && (
@@ -159,7 +180,9 @@ const Home: React.FC = () => {
             <SimpleErrorBoundary>
               <QuickToolsSection />
             </SimpleErrorBoundary>
-            <Divider style={{ margin: settings.compactMode ? "16px 0" : "24px 0" }} />
+            <Divider
+              style={{ margin: settings.compactMode ? "16px 0" : "24px 0" }}
+            />
           </>
         )}
 
@@ -185,13 +208,13 @@ const Home: React.FC = () => {
           style={{ right: 24 }}
           icon={<SettingOutlined />}
         >
-          <FloatButton 
-            icon={<SettingOutlined />} 
+          <FloatButton
+            icon={<SettingOutlined />}
             tooltip="个性化设置"
             onClick={toggleSettingsPanel}
           />
-          <FloatButton 
-            icon={<QuestionCircleOutlined />} 
+          <FloatButton
+            icon={<QuestionCircleOutlined />}
             tooltip="快捷键帮助"
             onClick={showShortcutsHelp}
           />

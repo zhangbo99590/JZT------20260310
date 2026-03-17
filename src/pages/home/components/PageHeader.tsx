@@ -26,13 +26,19 @@ export const PageHeader: React.FC<PageHeaderProps> = ({ username }) => {
 
   return (
     <div style={{ marginBottom: "24px" }}>
-      <Title level={2} style={{ margin: 0, color: "#1890ff" }} className="page-header-welcome">
+      <Title
+        level={2}
+        style={{ margin: 0, color: "#1890ff" }}
+        className="page-header-welcome"
+      >
         中小企业政策申报管理系统
       </Title>
       <div style={{ marginTop: "8px" }}>
         <Text type="secondary" style={{ fontSize: "16px" }}>
           欢迎回来，<Text strong>{username}</Text>！
-          {currentDate && <Text type="secondary">今天是 {currentDate}，祝您工作愉快。</Text>}
+          {currentDate && (
+            <Text type="secondary">今天是 {currentDate}，祝您工作愉快。</Text>
+          )}
         </Text>
       </div>
     </div>

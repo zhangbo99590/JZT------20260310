@@ -881,7 +881,9 @@ const ProfileEditModal: React.FC<ProfileEditModalProps> = ({
             <Select
               mode="tags"
               value={editForm.behaviorTags}
-              onChange={(value) => onFormChange({ ...editForm, behaviorTags: value })}
+              onChange={(value) =>
+                onFormChange({ ...editForm, behaviorTags: value })
+              }
               placeholder="输入或选择行为标签"
               style={{ width: "100%", marginTop: "4px" }}
             >
@@ -892,7 +894,9 @@ const ProfileEditModal: React.FC<ProfileEditModalProps> = ({
           ) : (
             <div style={{ marginTop: "4px" }}>
               {companyProfile.behaviorTags?.map((t, i) => (
-                <Tag key={i} color="geekblue">{t}</Tag>
+                <Tag key={i} color="geekblue">
+                  {t}
+                </Tag>
               )) || <Text type="secondary">暂无行为标签</Text>}
             </div>
           )}
@@ -903,7 +907,9 @@ const ProfileEditModal: React.FC<ProfileEditModalProps> = ({
             <Select
               mode="tags"
               value={editForm.businessStatus}
-              onChange={(value) => onFormChange({ ...editForm, businessStatus: value })}
+              onChange={(value) =>
+                onFormChange({ ...editForm, businessStatus: value })
+              }
               placeholder="输入或选择业务状态"
               style={{ width: "100%", marginTop: "4px" }}
             >
@@ -915,7 +921,9 @@ const ProfileEditModal: React.FC<ProfileEditModalProps> = ({
           ) : (
             <div style={{ marginTop: "4px" }}>
               {companyProfile.businessStatus?.map((t, i) => (
-                <Tag key={i} color="purple">{t}</Tag>
+                <Tag key={i} color="purple">
+                  {t}
+                </Tag>
               )) || <Text type="secondary">暂无业务状态</Text>}
             </div>
           )}
@@ -931,17 +939,21 @@ const ProfileEditModal: React.FC<ProfileEditModalProps> = ({
             <Select
               mode="tags"
               value={editForm.tags?.l1}
-              onChange={(value) => onFormChange({ 
-                ...editForm, 
-                tags: { ...editForm.tags!, l1: value } 
-              })}
+              onChange={(value) =>
+                onFormChange({
+                  ...editForm,
+                  tags: { ...editForm.tags!, l1: value },
+                })
+              }
               placeholder="输入基础标签"
               style={{ width: "100%", marginTop: "4px" }}
             />
           ) : (
             <div style={{ marginTop: "4px" }}>
               {companyProfile.tags?.l1?.map((t, i) => (
-                <Tag key={i} color="cyan">{t}</Tag>
+                <Tag key={i} color="cyan">
+                  {t}
+                </Tag>
               )) || <Text type="secondary">暂无基础标签</Text>}
             </div>
           )}
@@ -952,17 +964,21 @@ const ProfileEditModal: React.FC<ProfileEditModalProps> = ({
             <Select
               mode="tags"
               value={editForm.tags?.l2}
-              onChange={(value) => onFormChange({ 
-                ...editForm, 
-                tags: { ...editForm.tags!, l2: value } 
-              })}
+              onChange={(value) =>
+                onFormChange({
+                  ...editForm,
+                  tags: { ...editForm.tags!, l2: value },
+                })
+              }
               placeholder="输入资质标签"
               style={{ width: "100%", marginTop: "4px" }}
             />
           ) : (
             <div style={{ marginTop: "4px" }}>
               {companyProfile.tags?.l2?.map((t, i) => (
-                <Tag key={i} color="volcano">{t}</Tag>
+                <Tag key={i} color="volcano">
+                  {t}
+                </Tag>
               )) || <Text type="secondary">暂无资质标签</Text>}
             </div>
           )}
@@ -973,17 +989,21 @@ const ProfileEditModal: React.FC<ProfileEditModalProps> = ({
             <Select
               mode="tags"
               value={editForm.tags?.l3}
-              onChange={(value) => onFormChange({ 
-                ...editForm, 
-                tags: { ...editForm.tags!, l3: value } 
-              })}
+              onChange={(value) =>
+                onFormChange({
+                  ...editForm,
+                  tags: { ...editForm.tags!, l3: value },
+                })
+              }
               placeholder="输入意向标签"
               style={{ width: "100%", marginTop: "4px" }}
             />
           ) : (
             <div style={{ marginTop: "4px" }}>
               {companyProfile.tags?.l3?.map((t, i) => (
-                <Tag key={i} color="magenta">{t}</Tag>
+                <Tag key={i} color="magenta">
+                  {t}
+                </Tag>
               )) || <Text type="secondary">暂无意向标签</Text>}
             </div>
           )}
@@ -1010,7 +1030,7 @@ const ProfileEditModal: React.FC<ProfileEditModalProps> = ({
         buttons.push(
           <Button key="prev" onClick={() => onStepChange(currentStep - 1)}>
             上一步
-          </Button>
+          </Button>,
         );
       }
       if (currentStep < 3) {
@@ -1021,13 +1041,13 @@ const ProfileEditModal: React.FC<ProfileEditModalProps> = ({
             onClick={() => onStepChange(currentStep + 1)}
           >
             下一步
-          </Button>
+          </Button>,
         );
       } else {
         buttons.push(
           <Button key="save" type="primary" loading={loading} onClick={onSave}>
             保存
-          </Button>
+          </Button>,
         );
       }
       return buttons;
@@ -1080,7 +1100,7 @@ const ProfileEditModal: React.FC<ProfileEditModalProps> = ({
 
         {/* 步骤3：资质信息 */}
         {(!editMode || currentStep === 2) && renderQualificationStep()}
-        
+
         {/* 步骤4：动态标签 */}
         {(!editMode || currentStep === 3) && renderTagsStep()}
 

@@ -75,7 +75,7 @@ export interface CompanyProfile {
   // 动态画像 (新增)
   behaviorTags?: string[]; // 行为标签
   businessStatus?: string[]; // 业务状态
-  
+
   // 标签体系 (新增)
   tags?: {
     l1: string[]; // 基础标签

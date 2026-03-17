@@ -40,7 +40,7 @@ export function generatePDFReport(): void {
 function getReportHTML(
   currentDate: string,
   reportId: string,
-  generateTime: string
+  generateTime: string,
 ): string {
   return `
     <div style="font-family: 'Microsoft YaHei', 'SimSun', Arial, sans-serif; margin: 20px; line-height: 1.6; color: #333;">

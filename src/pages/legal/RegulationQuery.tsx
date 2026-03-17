@@ -562,8 +562,8 @@ const RegulationQuery: React.FC = () => {
 
   // 图表配置 - 重点合规领域分布
   const complianceChartOption: EChartsOption = {
-    tooltip: { 
-      trigger: "axis", 
+    tooltip: {
+      trigger: "axis",
       axisPointer: { type: "shadow" },
       formatter: (params: any) => {
         const data = params[0];
@@ -572,7 +572,7 @@ const RegulationQuery: React.FC = () => {
           <div>法规数量: <span style="color: #1890ff; font-weight: bold;">${data.value}</span></div>
           <div style="color: #999; font-size: 12px; margin-top: 4px;">点击查看该领域法规</div>
         </div>`;
-      }
+      },
     },
     grid: {
       top: "5%",

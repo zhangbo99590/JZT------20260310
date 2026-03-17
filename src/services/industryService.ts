@@ -28,7 +28,7 @@ import { createApiCall } from "./apiUtils";
  */
 // 内部实现函数
 async function _getPublications(
-  filter?: PublicationFilter
+  filter?: PublicationFilter,
 ): Promise<Publication[]> {
   const searchOptions: SearchOptions<Publication> = {
     filters: {},
@@ -56,7 +56,7 @@ async function _getPublications(
         customFilters.push((item) => item.rating && item.rating >= 4.5);
       } else if (filter.quality === "silver") {
         customFilters.push(
-          (item) => item.rating && item.rating >= 3.5 && item.rating < 4.5
+          (item) => item.rating && item.rating >= 3.5 && item.rating < 4.5,
         );
       }
     }
@@ -168,7 +168,7 @@ export const createPublication = createApiCall(
 
     return newPublication;
   },
-  500
+  500,
 );
 
 /**
@@ -180,7 +180,7 @@ export const updatePublication = createApiCall(
     if (!publication) throw new Error("发布不存在");
     return { ...publication, ...updates } as Publication;
   },
-  400
+  400,
 );
 
 /**
@@ -189,7 +189,7 @@ export const updatePublication = createApiCall(
  */
 export const checkDuplicatePublication = async (
   title: string,
-  type: PublicationType
+  type: PublicationType,
 ): Promise<boolean> => {
   const oneDayAgo = dayjs().subtract(1, "day");
 
@@ -199,7 +199,7 @@ export const checkDuplicatePublication = async (
       p.title === title &&
       p.type === type &&
       dayjs(p.publishTime).isAfter(oneDayAgo) &&
-      p.publisherId === "current-user-id" // 假设当前用户
+      p.publisherId === "current-user-id", // 假设当前用户
   );
 
   return hasDuplicateInMemory;
@@ -221,7 +221,7 @@ export const getRecommendedSuppliers = createApiCall(
         // 2. 标签匹配
         if (supplier.tags && publication.tags) {
           const matchedTags = supplier.tags.filter((tag) =>
-            publication.tags?.includes(tag)
+            publication.tags?.includes(tag),
           );
           score += matchedTags.length * 10;
         }
@@ -243,7 +243,7 @@ export const getRecommendedSuppliers = createApiCall(
       .sort((a, b) => b.score - a.score)
       .slice(0, 5)
       .map((item) => item.supplier);
-  }
+  },
 );
 
 /**
@@ -259,7 +259,7 @@ export const deletePublication = createApiCall(
 
     // 清除相关缓存
     cache.clear();
-  }
+  },
 );
 
 /**
@@ -274,7 +274,7 @@ export const offlinePublication = createApiCall(
     }
 
     cache.clear();
-  }
+  },
 );
 
 /**
@@ -290,7 +290,7 @@ export const onlinePublication = createApiCall(
 
     // 清除相关缓存
     cache.clear();
-  }
+  },
 );
 
 /**
@@ -310,7 +310,7 @@ export const refreshPublication = createApiCall(
     cache.clear();
 
     return publication;
-  }
+  },
 );
 
 /**
@@ -326,7 +326,7 @@ export const getMyPublications = createApiCall(
     }
 
     return result;
-  }
+  },
 );
 
 /**
@@ -340,12 +340,12 @@ export const getConnections = createApiCall(
       // 使用通用过滤工具进行字段过滤
       result = filterByFields(
         result,
-        filter as Partial<Record<keyof Connection, any>>
+        filter as Partial<Record<keyof Connection, any>>,
       );
     }
 
     return result;
-  }
+  },
 );
 
 /**
@@ -355,7 +355,7 @@ export const createConnection = createApiCall(
   async (
     publicationId: string,
     message: string,
-    applicationId?: string
+    applicationId?: string,
   ): Promise<Connection> => {
     const publication = mockPublications.find((p) => p.id === publicationId);
     if (!publication) throw new Error("发布不存在");
@@ -383,7 +383,7 @@ export const createConnection = createApiCall(
 
     return newConnection;
   },
-  400
+  400,
 );
 
 /**
@@ -399,7 +399,7 @@ export const updateConnectionStatus = createApiCall(
       status,
       updateTime: dayjs().format("YYYY-MM-DD HH:mm:ss"),
     };
-  }
+  },
 );
 
 /**
@@ -421,7 +421,7 @@ export const getIndustryStats = withCache(_getIndustryStats, {
 export const getRecommendedPublications = createApiCall(
   async (limit: number = 6): Promise<Publication[]> => {
     return mockPublications.slice(0, limit);
-  }
+  },
 );
 
 /**
@@ -431,7 +431,7 @@ export const calculateMatchScore = createApiCall(
   async (_publicationId: string, _userId: string): Promise<number> => {
     return Math.floor(Math.random() * 30) + 70; // 70-100
   },
-  200
+  200,
 );
 
 /**

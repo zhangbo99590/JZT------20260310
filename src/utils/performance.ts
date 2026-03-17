@@ -11,7 +11,7 @@
  */
 export function debounce<T extends (...args: any[]) => any>(
   fn: T,
-  delay: number = 300
+  delay: number = 300,
 ): (...args: Parameters<T>) => void {
   let timeoutId: NodeJS.Timeout | null = null;
 
@@ -35,7 +35,7 @@ export function debounce<T extends (...args: any[]) => any>(
  */
 export function throttle<T extends (...args: any[]) => any>(
   fn: T,
-  limit: number = 300
+  limit: number = 300,
 ): (...args: Parameters<T>) => void {
   let inThrottle: boolean = false;
 
@@ -58,7 +58,7 @@ export function measurePerformance(label: string) {
   return function <T extends (...args: any[]) => any>(
     target: any,
     propertyKey: string,
-    descriptor: PropertyDescriptor
+    descriptor: PropertyDescriptor,
   ) {
     const originalMethod = descriptor.value;
 
@@ -71,7 +71,10 @@ export function measurePerformance(label: string) {
         return result;
       } catch (error) {
         const end = performance.now();
-        console.error(`[Performance Error] ${label}: ${(end - start).toFixed(2)}ms`, error);
+        console.error(
+          `[Performance Error] ${label}: ${(end - start).toFixed(2)}ms`,
+          error,
+        );
         throw error;
       }
     };
@@ -87,7 +90,7 @@ export function measurePerformance(label: string) {
  */
 export function batchProcess<T>(
   fn: (items: T[]) => void,
-  delay: number = 100
+  delay: number = 100,
 ): (item: T) => void {
   let items: T[] = [];
   let timeoutId: NodeJS.Timeout | null = null;
@@ -114,7 +117,7 @@ export function batchProcess<T>(
  */
 export function lazyLoadImage(
   imageUrl: string,
-  placeholder?: string
+  placeholder?: string,
 ): Promise<string> {
   return new Promise((resolve, reject) => {
     const img = new Image();
@@ -130,10 +133,7 @@ export function lazyLoadImage(
 class RequestDeduplicator {
   private pendingRequests: Map<string, Promise<any>> = new Map();
 
-  async deduplicate<T>(
-    key: string,
-    requestFn: () => Promise<T>
-  ): Promise<T> {
+  async deduplicate<T>(key: string, requestFn: () => Promise<T>): Promise<T> {
     // 如果已有相同的请求在进行中，直接返回该请求的Promise
     if (this.pendingRequests.has(key)) {
       return this.pendingRequests.get(key) as Promise<T>;
@@ -277,16 +277,16 @@ export class AsyncQueue {
  */
 export function preloadResources(urls: string[]): Promise<void[]> {
   return Promise.all(
-    urls.map(url => {
+    urls.map((url) => {
       return new Promise<void>((resolve, reject) => {
-        const link = document.createElement('link');
-        link.rel = 'preload';
-        link.as = 'fetch';
+        const link = document.createElement("link");
+        link.rel = "preload";
+        link.as = "fetch";
         link.href = url;
         link.onload = () => resolve();
         link.onerror = () => reject(new Error(`Failed to preload: ${url}`));
         document.head.appendChild(link);
       });
-    })
+    }),
   );
 }

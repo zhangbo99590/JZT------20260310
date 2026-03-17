@@ -1,16 +1,16 @@
 /**
  * @vitest-environment jsdom
  */
-import { render, screen, waitFor } from '@testing-library/react';
-import { describe, it, expect, vi } from 'vitest';
-import { MemoryRouter } from 'react-router-dom';
-import Home from '../index';
-import { defaultHomeData } from '../config/homeDataConfig';
+import { render, screen, waitFor } from "@testing-library/react";
+import { describe, it, expect, vi } from "vitest";
+import { MemoryRouter } from "react-router-dom";
+import Home from "../index";
+import { defaultHomeData } from "../config/homeDataConfig";
 
 // Mock matchMedia
-Object.defineProperty(window, 'matchMedia', {
+Object.defineProperty(window, "matchMedia", {
   writable: true,
-  value: vi.fn().mockImplementation(query => ({
+  value: vi.fn().mockImplementation((query) => ({
     matches: false,
     media: query,
     onchange: null,
@@ -23,12 +23,12 @@ Object.defineProperty(window, 'matchMedia', {
 });
 
 // Mock ECharts to avoid canvas issues in test environment
-vi.mock('echarts-for-react', () => ({
+vi.mock("echarts-for-react", () => ({
   default: () => <div data-testid="echarts-mock">ECharts Graph</div>,
 }));
 
 // Mock useHomeData
-vi.mock('../hooks/useHomeData', () => ({
+vi.mock("../hooks/useHomeData", () => ({
   useHomeData: () => ({
     loading: false,
     error: null,
@@ -37,12 +37,12 @@ vi.mock('../hooks/useHomeData', () => ({
   }),
 }));
 
-describe('Home Page', () => {
-  it('renders welcome message correctly', async () => {
+describe("Home Page", () => {
+  it("renders welcome message correctly", async () => {
     render(
       <MemoryRouter>
         <Home />
-      </MemoryRouter>
+      </MemoryRouter>,
     );
 
     // Check for main title
@@ -52,11 +52,11 @@ describe('Home Page', () => {
     expect(screen.getByText(/Admin/i)).not.toBeNull();
   });
 
-  it('renders key sections', () => {
+  it("renders key sections", () => {
     render(
       <MemoryRouter>
         <Home />
-      </MemoryRouter>
+      </MemoryRouter>,
     );
 
     // Check for Data Overview
@@ -66,26 +66,28 @@ describe('Home Page', () => {
     // Check for Quick Actions
     const policyCenterElements = screen.getAllByText(/政策中心/i);
     expect(policyCenterElements.length).toBeGreaterThan(0);
-    
+
     expect(screen.getAllByText(/申报管理/i).length).toBeGreaterThan(0);
 
     // Check for Recent Activities
     expect(screen.getAllByText(/最近活动/i).length).toBeGreaterThan(0);
   });
 
-  it('navigates to policy center when quick action is clicked', () => {
+  it("navigates to policy center when quick action is clicked", () => {
     const { container } = render(
       <MemoryRouter>
         <Home />
-      </MemoryRouter>
+      </MemoryRouter>,
     );
 
     const policyCenterElements = screen.getAllByText(/政策中心/i);
     // Find the one that is likely the card title in QuickActions
-    const policyCenterCard = policyCenterElements.find(el => el.closest('.ant-card'));
+    const policyCenterCard = policyCenterElements.find((el) =>
+      el.closest(".ant-card"),
+    );
     expect(policyCenterCard).not.toBeNull();
-    
-    // Note: Actual navigation testing requires more setup with Router, 
+
+    // Note: Actual navigation testing requires more setup with Router,
     // but here we verify the element is interactive and present.
   });
 });

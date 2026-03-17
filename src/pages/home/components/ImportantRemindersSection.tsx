@@ -78,8 +78,6 @@ export const ImportantRemindersSection: React.FC<
           ))}
         </Space>
       </Card>
-
-
     </>
   );
 };

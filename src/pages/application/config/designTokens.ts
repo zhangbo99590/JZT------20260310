@@ -1,44 +1,44 @@
 export const DESIGN_TOKENS = {
   colors: {
-    primary: '#6366F1',
-    secondary: '#8B5CF6',
-    accent: '#06B6D4',
-    background: '#FAFBFC',
-    cardBackground: '#FFFFFF',
-    border: '#E2E8F0',
-    error: '#EF4444',
-    success: '#10B981',
-    warning: '#F59E0B',
+    primary: "#6366F1",
+    secondary: "#8B5CF6",
+    accent: "#06B6D4",
+    background: "#FAFBFC",
+    cardBackground: "#FFFFFF",
+    border: "#E2E8F0",
+    error: "#EF4444",
+    success: "#10B981",
+    warning: "#F59E0B",
     gradient: {
-      primary: 'linear-gradient(135deg, #6366F1 0%, #8B5CF6 100%)',
-      secondary: 'linear-gradient(135deg, #06B6D4 0%, #3B82F6 100%)',
-      success: 'linear-gradient(135deg, #10B981 0%, #059669 100%)'
+      primary: "linear-gradient(135deg, #6366F1 0%, #8B5CF6 100%)",
+      secondary: "linear-gradient(135deg, #06B6D4 0%, #3B82F6 100%)",
+      success: "linear-gradient(135deg, #10B981 0%, #059669 100%)",
     },
     text: {
-      primary: '#1E293B',
-      secondary: '#64748B',
-      disabled: '#94A3B8',
-      white: '#FFFFFF'
+      primary: "#1E293B",
+      secondary: "#64748B",
+      disabled: "#94A3B8",
+      white: "#FFFFFF",
     },
     tag: {
-      tech: { bg: '#EEF2FF', text: '#6366F1', border: '#C7D2FE' },
-      region: { bg: '#ECFDF5', text: '#10B981', border: '#A7F3D0' },
-      funding: { bg: '#FFFBEB', text: '#F59E0B', border: '#FDE68A' },
-      status: { bg: '#F0F9FF', text: '#0EA5E9', border: '#BAE6FD' }
-    }
+      tech: { bg: "#EEF2FF", text: "#6366F1", border: "#C7D2FE" },
+      region: { bg: "#ECFDF5", text: "#10B981", border: "#A7F3D0" },
+      funding: { bg: "#FFFBEB", text: "#F59E0B", border: "#FDE68A" },
+      status: { bg: "#F0F9FF", text: "#0EA5E9", border: "#BAE6FD" },
+    },
   },
   spacing: {
     xs: 8,
     sm: 16,
     md: 24,
     lg: 32,
-    xl: 48
+    xl: 48,
   },
   borderRadius: {
     sm: 8,
     md: 12,
     lg: 16,
-    xl: 20
+    xl: 20,
   },
   fontSize: {
     xs: 12,
@@ -46,12 +46,12 @@ export const DESIGN_TOKENS = {
     md: 16,
     lg: 18,
     xl: 20,
-    xxl: 28
+    xxl: 28,
   },
   shadow: {
-    sm: '0 1px 2px 0 rgba(0, 0, 0, 0.05)',
-    md: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)',
-    lg: '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)',
-    xl: '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)'
-  }
+    sm: "0 1px 2px 0 rgba(0, 0, 0, 0.05)",
+    md: "0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)",
+    lg: "0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)",
+    xl: "0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)",
+  },
 };

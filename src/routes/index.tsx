@@ -18,7 +18,10 @@ export const policyRoutes = (
     <Route path="/policy-center/main" element={<Pages.AIPolicySearchV2 />} />
     <Route path="/policy/search" element={<Pages.EnhancedPolicySearch />} />
     <Route path="/policy/ai-search" element={<Pages.AIPolicySearchV2 />} />
-    <Route path="/policy-center/detail/:id" element={<Pages.EnhancedPolicyDetail />} />
+    <Route
+      path="/policy-center/detail/:id"
+      element={<Pages.EnhancedPolicyDetail />}
+    />
     <Route path="/policy/detail/:id" element={<Pages.EnhancedPolicyDetail />} />
     <Route
       path="/policy-center/approved-list"
@@ -37,9 +40,18 @@ export const policyRoutes = (
 export const newApplicationRoutes = (
   <>
     <Route path="/application" element={<Pages.NewApplicationManagement />} />
-    <Route path="/application/detail/:id" element={<Pages.ApplicationPolicyDetail />} />
-    <Route path="/application/apply/:id" element={<Pages.ApplicationApplyWizard />} />
-    <Route path="/application/success/:id" element={<Pages.ApplicationApplySuccess />} />
+    <Route
+      path="/application/detail/:id"
+      element={<Pages.ApplicationPolicyDetail />}
+    />
+    <Route
+      path="/application/apply/:id"
+      element={<Pages.ApplicationApplyWizard />}
+    />
+    <Route
+      path="/application/success/:id"
+      element={<Pages.ApplicationApplySuccess />}
+    />
   </>
 );
 

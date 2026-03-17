@@ -4,7 +4,7 @@
  * 功能: 抽屉式交互，左侧分组导航+右侧选项列表，支持搜索、多选、详情查看
  */
 
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo } from "react";
 import {
   Drawer,
   Input,
@@ -21,8 +21,8 @@ import {
   Empty,
   Typography,
   Collapse,
-  Alert
-} from 'antd';
+  Alert,
+} from "antd";
 import {
   SearchOutlined,
   CloseOutlined,
@@ -33,10 +33,13 @@ import {
   ExperimentOutlined,
   FireOutlined,
   CheckCircleOutlined,
-  DeleteOutlined
-} from '@ant-design/icons';
-import { QUALIFICATION_DATA } from './QualificationSelector';
-import type { QualificationType, QualificationGroup } from './QualificationSelector';
+  DeleteOutlined,
+} from "@ant-design/icons";
+import { QUALIFICATION_DATA } from "./QualificationSelector";
+import type {
+  QualificationType,
+  QualificationGroup,
+} from "./QualificationSelector";
 
 const { Text, Title, Paragraph } = Typography;
 const { Panel } = Collapse;
@@ -52,10 +55,10 @@ const QualificationDrawer: React.FC<QualificationDrawerProps> = ({
   visible,
   value = [],
   onClose,
-  onConfirm
+  onConfirm,
 }) => {
-  const [selectedGroup, setSelectedGroup] = useState<string>('high_frequency');
-  const [searchText, setSearchText] = useState('');
+  const [selectedGroup, setSelectedGroup] = useState<string>("high_frequency");
+  const [searchText, setSearchText] = useState("");
   const [tempSelected, setTempSelected] = useState<string[]>(value);
   const [expandedDetailId, setExpandedDetailId] = useState<string | null>(null);
 
@@ -63,56 +66,65 @@ const QualificationDrawer: React.FC<QualificationDrawerProps> = ({
   React.useEffect(() => {
     if (visible) {
       setTempSelected(value);
-      setSearchText('');
+      setSearchText("");
       setExpandedDetailId(null);
     }
   }, [visible, value]);
 
   // 获取所有资质的扁平列表
   const allQualifications = useMemo(() => {
-    return QUALIFICATION_DATA.flatMap(group =>
-      group.qualifications.map(q => ({ ...q, groupKey: group.key, groupColor: group.color }))
+    return QUALIFICATION_DATA.flatMap((group) =>
+      group.qualifications.map((q) => ({
+        ...q,
+        groupKey: group.key,
+        groupColor: group.color,
+      })),
     );
   }, []);
 
   // 高频资质
   const highFrequencyQualifications = useMemo(() => {
-    return allQualifications.filter(q => q.isHighFrequency);
+    return allQualifications.filter((q) => q.isHighFrequency);
   }, [allQualifications]);
 
   // 搜索过滤
   const filteredQualifications = useMemo(() => {
-    if (selectedGroup === 'high_frequency') {
+    if (selectedGroup === "high_frequency") {
       if (!searchText) return highFrequencyQualifications;
       const lowerSearch = searchText.toLowerCase();
-      return highFrequencyQualifications.filter(q =>
-        q.label.toLowerCase().includes(lowerSearch) ||
-        q.pinyin?.includes(lowerSearch) ||
-        q.description.toLowerCase().includes(lowerSearch)
+      return highFrequencyQualifications.filter(
+        (q) =>
+          q.label.toLowerCase().includes(lowerSearch) ||
+          q.pinyin?.includes(lowerSearch) ||
+          q.description.toLowerCase().includes(lowerSearch),
       );
     }
 
-    const group = QUALIFICATION_DATA.find(g => g.key === selectedGroup);
+    const group = QUALIFICATION_DATA.find((g) => g.key === selectedGroup);
     if (!group) return [];
 
-    if (!searchText) return group.qualifications.map(q => ({ ...q, groupKey: group.key, groupColor: group.color }));
+    if (!searchText)
+      return group.qualifications.map((q) => ({
+        ...q,
+        groupKey: group.key,
+        groupColor: group.color,
+      }));
 
     const lowerSearch = searchText.toLowerCase();
     return group.qualifications
-      .filter(q =>
-        q.label.toLowerCase().includes(lowerSearch) ||
-        q.pinyin?.includes(lowerSearch) ||
-        q.description.toLowerCase().includes(lowerSearch)
+      .filter(
+        (q) =>
+          q.label.toLowerCase().includes(lowerSearch) ||
+          q.pinyin?.includes(lowerSearch) ||
+          q.description.toLowerCase().includes(lowerSearch),
       )
-      .map(q => ({ ...q, groupKey: group.key, groupColor: group.color }));
+      .map((q) => ({ ...q, groupKey: group.key, groupColor: group.color }));
   }, [selectedGroup, searchText, highFrequencyQualifications]);
 
   // 处理选择/取消选择
   const handleToggleSelect = (value: string) => {
-    setTempSelected(prev =>
-      prev.includes(value)
-        ? prev.filter(v => v !== value)
-        : [...prev, value]
+    setTempSelected((prev) =>
+      prev.includes(value) ? prev.filter((v) => v !== value) : [...prev, value],
     );
   };
 
@@ -135,55 +147,59 @@ const QualificationDrawer: React.FC<QualificationDrawerProps> = ({
 
   // 获取资质详细信息
   const getQualificationById = (id: string) => {
-    return allQualifications.find(q => q.value === id);
+    return allQualifications.find((q) => q.value === id);
   };
 
   // 渲染左侧分组导航
   const renderGroupNav = () => {
     const groups = [
       {
-        key: 'high_frequency',
-        label: '高频资质（推荐）',
+        key: "high_frequency",
+        label: "高频资质（推荐）",
         icon: <FireOutlined />,
-        color: '#faad14',
-        count: highFrequencyQualifications.length
+        color: "#faad14",
+        count: highFrequencyQualifications.length,
       },
-      ...QUALIFICATION_DATA.map(g => ({
+      ...QUALIFICATION_DATA.map((g) => ({
         key: g.key,
         label: g.label,
         icon: g.icon,
         color: g.color,
-        count: g.qualifications.length
-      }))
+        count: g.qualifications.length,
+      })),
     ];
 
     return (
-      <div style={{ height: '100%', overflowY: 'auto' }}>
-        {groups.map(group => {
+      <div style={{ height: "100%", overflowY: "auto" }}>
+        {groups.map((group) => {
           const isActive = selectedGroup === group.key;
           return (
             <div
               key={group.key}
               onClick={() => setSelectedGroup(group.key)}
               style={{
-                padding: '16px',
-                cursor: 'pointer',
-                background: isActive ? '#e6f7ff' : 'transparent',
-                borderLeft: isActive ? '3px solid #1890ff' : '3px solid transparent',
-                transition: 'all 0.3s',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'space-between'
+                padding: "16px",
+                cursor: "pointer",
+                background: isActive ? "#e6f7ff" : "transparent",
+                borderLeft: isActive
+                  ? "3px solid #1890ff"
+                  : "3px solid transparent",
+                transition: "all 0.3s",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "space-between",
               }}
-              onMouseEnter={e => {
-                if (!isActive) e.currentTarget.style.background = '#fafafa';
+              onMouseEnter={(e) => {
+                if (!isActive) e.currentTarget.style.background = "#fafafa";
               }}
-              onMouseLeave={e => {
-                if (!isActive) e.currentTarget.style.background = 'transparent';
+              onMouseLeave={(e) => {
+                if (!isActive) e.currentTarget.style.background = "transparent";
               }}
             >
               <Space>
-                <span style={{ color: group.color, fontSize: 16 }}>{group.icon}</span>
+                <span style={{ color: group.color, fontSize: 16 }}>
+                  {group.icon}
+                </span>
                 <Text strong={isActive} style={{ fontSize: 14 }}>
                   {group.label}
                 </Text>
@@ -191,7 +207,7 @@ const QualificationDrawer: React.FC<QualificationDrawerProps> = ({
               <Badge
                 count={group.count}
                 style={{
-                  backgroundColor: isActive ? '#1890ff' : '#d9d9d9'
+                  backgroundColor: isActive ? "#1890ff" : "#d9d9d9",
                 }}
               />
             </div>
@@ -202,15 +218,17 @@ const QualificationDrawer: React.FC<QualificationDrawerProps> = ({
   };
 
   // 渲染资质选项卡片
-  const renderQualificationCard = (qualification: QualificationType & { groupColor: string }) => {
+  const renderQualificationCard = (
+    qualification: QualificationType & { groupColor: string },
+  ) => {
     const isSelected = tempSelected.includes(qualification.value);
     const isDetailExpanded = expandedDetailId === qualification.value;
 
     const levelConfig = {
-      national: { color: '#ff4d4f', text: '国家级' },
-      local: { color: '#1890ff', text: '地方级' },
-      industry: { color: '#52c41a', text: '行业级' },
-      innovation: { color: '#722ed1', text: '平台级' }
+      national: { color: "#ff4d4f", text: "国家级" },
+      local: { color: "#1890ff", text: "地方级" },
+      industry: { color: "#52c41a", text: "行业级" },
+      innovation: { color: "#722ed1", text: "平台级" },
     };
 
     const config = levelConfig[qualification.level];
@@ -221,15 +239,15 @@ const QualificationDrawer: React.FC<QualificationDrawerProps> = ({
         size="small"
         style={{
           marginBottom: 12,
-          border: isSelected ? '2px solid #1890ff' : '1px solid #e8e8e8',
-          background: isSelected ? '#f0f8ff' : '#fff',
-          cursor: 'pointer',
-          transition: 'all 0.3s'
+          border: isSelected ? "2px solid #1890ff" : "1px solid #e8e8e8",
+          background: isSelected ? "#f0f8ff" : "#fff",
+          cursor: "pointer",
+          transition: "all 0.3s",
         }}
-        bodyStyle={{ padding: '12px 16px' }}
+        bodyStyle={{ padding: "12px 16px" }}
         hoverable
       >
-        <div style={{ display: 'flex', alignItems: 'flex-start', gap: 12 }}>
+        <div style={{ display: "flex", alignItems: "flex-start", gap: 12 }}>
           {/* 复选框 */}
           <Checkbox
             checked={isSelected}
@@ -238,8 +256,17 @@ const QualificationDrawer: React.FC<QualificationDrawerProps> = ({
           />
 
           {/* 资质信息 */}
-          <div style={{ flex: 1 }} onClick={() => handleToggleSelect(qualification.value)}>
-            <Space style={{ marginBottom: 8, width: '100%', justifyContent: 'space-between' }}>
+          <div
+            style={{ flex: 1 }}
+            onClick={() => handleToggleSelect(qualification.value)}
+          >
+            <Space
+              style={{
+                marginBottom: 8,
+                width: "100%",
+                justifyContent: "space-between",
+              }}
+            >
               <Text strong style={{ fontSize: 15 }}>
                 {qualification.label}
               </Text>
@@ -247,7 +274,7 @@ const QualificationDrawer: React.FC<QualificationDrawerProps> = ({
             </Space>
 
             <Paragraph
-              style={{ margin: 0, color: '#666', fontSize: 13 }}
+              style={{ margin: 0, color: "#666", fontSize: 13 }}
               ellipsis={{ rows: 2 }}
             >
               {qualification.description}
@@ -261,16 +288,18 @@ const QualificationDrawer: React.FC<QualificationDrawerProps> = ({
           </div>
 
           {/* 详情按钮 */}
-          <Tooltip title={isDetailExpanded ? '收起详情' : '查看详情'}>
+          <Tooltip title={isDetailExpanded ? "收起详情" : "查看详情"}>
             <Button
               type="text"
               icon={<InfoCircleOutlined />}
-              onClick={e => {
+              onClick={(e) => {
                 e.stopPropagation();
-                setExpandedDetailId(isDetailExpanded ? null : qualification.value);
+                setExpandedDetailId(
+                  isDetailExpanded ? null : qualification.value,
+                );
               }}
               style={{
-                color: isDetailExpanded ? '#1890ff' : '#999'
+                color: isDetailExpanded ? "#1890ff" : "#999",
               }}
             />
           </Tooltip>
@@ -282,43 +311,70 @@ const QualificationDrawer: React.FC<QualificationDrawerProps> = ({
             style={{
               marginTop: 12,
               paddingTop: 12,
-              borderTop: '1px solid #e8e8e8'
+              borderTop: "1px solid #e8e8e8",
             }}
-            onClick={e => e.stopPropagation()}
+            onClick={(e) => e.stopPropagation()}
           >
-            <Space direction="vertical" size={12} style={{ width: '100%' }}>
+            <Space direction="vertical" size={12} style={{ width: "100%" }}>
               {/* 适用行业 */}
               <div>
-                <Text strong style={{ color: '#1890ff', marginBottom: 4, display: 'block' }}>
+                <Text
+                  strong
+                  style={{
+                    color: "#1890ff",
+                    marginBottom: 4,
+                    display: "block",
+                  }}
+                >
                   适用行业
                 </Text>
                 <Space wrap>
                   {qualification.applicableIndustries.map((industry, idx) => (
-                    <Tag key={idx} color="blue">{industry}</Tag>
+                    <Tag key={idx} color="blue">
+                      {industry}
+                    </Tag>
                   ))}
                 </Space>
               </div>
 
               {/* 申报条件 */}
               <div>
-                <Text strong style={{ color: '#52c41a', marginBottom: 4, display: 'block' }}>
+                <Text
+                  strong
+                  style={{
+                    color: "#52c41a",
+                    marginBottom: 4,
+                    display: "block",
+                  }}
+                >
                   申报条件
                 </Text>
-                <ul style={{ margin: 0, paddingLeft: 20, color: '#666' }}>
+                <ul style={{ margin: 0, paddingLeft: 20, color: "#666" }}>
                   {qualification.conditions.map((condition, idx) => (
-                    <li key={idx} style={{ marginBottom: 4 }}>{condition}</li>
+                    <li key={idx} style={{ marginBottom: 4 }}>
+                      {condition}
+                    </li>
                   ))}
                 </ul>
               </div>
 
               {/* 核心价值 */}
               <div>
-                <Text strong style={{ color: '#faad14', marginBottom: 4, display: 'block' }}>
+                <Text
+                  strong
+                  style={{
+                    color: "#faad14",
+                    marginBottom: 4,
+                    display: "block",
+                  }}
+                >
                   核心价值
                 </Text>
                 <Space wrap>
                   {qualification.benefits.map((benefit, idx) => (
-                    <Tag key={idx} color="gold">{benefit}</Tag>
+                    <Tag key={idx} color="gold">
+                      {benefit}
+                    </Tag>
                   ))}
                 </Space>
               </div>
@@ -333,15 +389,15 @@ const QualificationDrawer: React.FC<QualificationDrawerProps> = ({
   const renderOptionsList = () => {
     if (filteredQualifications.length === 0) {
       return (
-        <div style={{ padding: '40px 0', textAlign: 'center' }}>
+        <div style={{ padding: "40px 0", textAlign: "center" }}>
           <Empty description="未找到匹配的资质类型" />
         </div>
       );
     }
 
     return (
-      <div style={{ padding: '0 24px 24px' }}>
-        {filteredQualifications.map(q => renderQualificationCard(q))}
+      <div style={{ padding: "0 24px 24px" }}>
+        {filteredQualifications.map((q) => renderQualificationCard(q))}
       </div>
     );
   };
@@ -350,16 +406,18 @@ const QualificationDrawer: React.FC<QualificationDrawerProps> = ({
   const renderSelectedArea = () => {
     if (tempSelected.length === 0) {
       return (
-        <div style={{ padding: '12px 24px', color: '#999', textAlign: 'center' }}>
+        <div
+          style={{ padding: "12px 24px", color: "#999", textAlign: "center" }}
+        >
           暂未选择任何资质
         </div>
       );
     }
 
     return (
-      <div style={{ padding: '12px 24px' }}>
+      <div style={{ padding: "12px 24px" }}>
         <Space wrap>
-          {tempSelected.map(id => {
+          {tempSelected.map((id) => {
             const qualification = getQualificationById(id);
             if (!qualification) return null;
 
@@ -369,7 +427,7 @@ const QualificationDrawer: React.FC<QualificationDrawerProps> = ({
                 closable
                 onClose={() => handleToggleSelect(id)}
                 color="blue"
-                style={{ marginBottom: 4, padding: '4px 8px', fontSize: 13 }}
+                style={{ marginBottom: 4, padding: "4px 8px", fontSize: 13 }}
               >
                 {qualification.label}
               </Tag>
@@ -383,13 +441,17 @@ const QualificationDrawer: React.FC<QualificationDrawerProps> = ({
   return (
     <Drawer
       title={
-        <Space style={{ width: '100%', justifyContent: 'space-between' }}>
+        <Space style={{ width: "100%", justifyContent: "space-between" }}>
           <Space>
-            <TrophyOutlined style={{ color: '#1890ff' }} />
+            <TrophyOutlined style={{ color: "#1890ff" }} />
             <span>选择申报资质类型</span>
           </Space>
-          <Badge count={tempSelected.length} showZero style={{ marginRight: 40 }}>
-            <Text style={{ color: '#666' }}>已选</Text>
+          <Badge
+            count={tempSelected.length}
+            showZero
+            style={{ marginRight: 40 }}
+          >
+            <Text style={{ color: "#666" }}>已选</Text>
           </Badge>
         </Space>
       }
@@ -400,10 +462,21 @@ const QualificationDrawer: React.FC<QualificationDrawerProps> = ({
       maskClosable
       destroyOnClose
       styles={{
-        body: { padding: 0, display: 'flex', flexDirection: 'column', height: '100%' }
+        body: {
+          padding: 0,
+          display: "flex",
+          flexDirection: "column",
+          height: "100%",
+        },
       }}
       footer={
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+          }}
+        >
           <Button
             danger
             icon={<DeleteOutlined />}
@@ -426,45 +499,55 @@ const QualificationDrawer: React.FC<QualificationDrawerProps> = ({
       }
     >
       {/* 顶部搜索区域 */}
-      <div style={{ padding: '16px 24px', borderBottom: '1px solid #e8e8e8', background: '#fafafa' }}>
+      <div
+        style={{
+          padding: "16px 24px",
+          borderBottom: "1px solid #e8e8e8",
+          background: "#fafafa",
+        }}
+      >
         <Input
           size="large"
           prefix={<SearchOutlined />}
           placeholder="搜索资质名称或拼音首字母（如：gjgxjs）"
           value={searchText}
-          onChange={e => setSearchText(e.target.value)}
+          onChange={(e) => setSearchText(e.target.value)}
           allowClear
         />
         {searchText && (
-          <Text type="secondary" style={{ fontSize: 12, marginTop: 8, display: 'block' }}>
+          <Text
+            type="secondary"
+            style={{ fontSize: 12, marginTop: 8, display: "block" }}
+          >
             找到 {filteredQualifications.length} 个匹配结果
           </Text>
         )}
       </div>
 
       {/* 主体内容区域 */}
-      <div style={{ flex: 1, display: 'flex', overflow: 'hidden' }}>
+      <div style={{ flex: 1, display: "flex", overflow: "hidden" }}>
         {/* 左侧分组导航 */}
         <div
           style={{
             width: 280,
-            borderRight: '1px solid #e8e8e8',
-            background: '#fafafa',
-            overflow: 'hidden'
+            borderRight: "1px solid #e8e8e8",
+            background: "#fafafa",
+            overflow: "hidden",
           }}
         >
           {renderGroupNav()}
         </div>
 
         {/* 右侧选项列表 */}
-        <div style={{ flex: 1, overflowY: 'auto', background: '#fff' }}>
-          <div style={{ padding: '16px 24px 0' }}>
+        <div style={{ flex: 1, overflowY: "auto", background: "#fff" }}>
+          <div style={{ padding: "16px 24px 0" }}>
             <Alert
               message={
                 <Space>
                   <InfoCircleOutlined />
                   <span>
-                    点击资质卡片选择，点击 <InfoCircleOutlined /> 图标查看详细信息
+                    点击资质卡片选择，点击 <InfoCircleOutlined />{" "}
+                    图标查看详细信息
                   </span>
                 </Space>
               }
@@ -480,16 +563,16 @@ const QualificationDrawer: React.FC<QualificationDrawerProps> = ({
       {/* 底部已选资质区域 */}
       <div
         style={{
-          borderTop: '2px solid #e8e8e8',
-          background: '#f5f5f5',
+          borderTop: "2px solid #e8e8e8",
+          background: "#f5f5f5",
           maxHeight: 150,
-          overflowY: 'auto'
+          overflowY: "auto",
         }}
       >
-        <div style={{ padding: '8px 24px' }}>
+        <div style={{ padding: "8px 24px" }}>
           <Text strong>已选资质 ({tempSelected.length})</Text>
         </div>
-        <Divider style={{ margin: '0 0 8px 0' }} />
+        <Divider style={{ margin: "0 0 8px 0" }} />
         {renderSelectedArea()}
       </div>
     </Drawer>

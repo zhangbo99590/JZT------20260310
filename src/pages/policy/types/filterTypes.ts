@@ -16,25 +16,25 @@ export interface FilterCondition {
 
 // 筛选类型枚举
 export enum FilterType {
-  DISTRICT = 'district',
-  INDUSTRY = 'industry',
-  LEVEL = 'level',
-  ORG_TYPE = 'orgType',
-  POLICY_ORG = 'policyOrg',
-  SUBSIDY_TYPE = 'subsidyType',
-  KEYWORD = 'keyword',
-  DATE_RANGE = 'dateRange',
-  AMOUNT_RANGE = 'amountRange'
+  DISTRICT = "district",
+  INDUSTRY = "industry",
+  LEVEL = "level",
+  ORG_TYPE = "orgType",
+  POLICY_ORG = "policyOrg",
+  SUBSIDY_TYPE = "subsidyType",
+  KEYWORD = "keyword",
+  DATE_RANGE = "dateRange",
+  AMOUNT_RANGE = "amountRange",
 }
 
 // 筛选操作符
 export enum FilterOperator {
-  EQUALS = 'equals',
-  CONTAINS = 'contains',
-  IN = 'in',
-  BETWEEN = 'between',
-  GREATER_THAN = 'gt',
-  LESS_THAN = 'lt'
+  EQUALS = "equals",
+  CONTAINS = "contains",
+  IN = "in",
+  BETWEEN = "between",
+  GREATER_THAN = "gt",
+  LESS_THAN = "lt",
 }
 
 // 完整的筛选状态接口
@@ -170,13 +170,13 @@ export interface FilterPerformanceMetrics {
 
 // 筛选事件类型
 export enum FilterEventType {
-  CONDITION_ADDED = 'condition_added',
-  CONDITION_REMOVED = 'condition_removed',
-  CONDITION_UPDATED = 'condition_updated',
-  FILTERS_RESET = 'filters_reset',
-  SEARCH_EXECUTED = 'search_executed',
-  RESULTS_LOADED = 'results_loaded',
-  ERROR_OCCURRED = 'error_occurred'
+  CONDITION_ADDED = "condition_added",
+  CONDITION_REMOVED = "condition_removed",
+  CONDITION_UPDATED = "condition_updated",
+  FILTERS_RESET = "filters_reset",
+  SEARCH_EXECUTED = "search_executed",
+  RESULTS_LOADED = "results_loaded",
+  ERROR_OCCURRED = "error_occurred",
 }
 
 // 筛选事件接口

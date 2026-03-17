@@ -276,7 +276,7 @@ const QuickProfileEditModal: React.FC<QuickProfileEditModalProps> = ({
       buttons.push(
         <Button key="prev" onClick={() => onStepChange(currentStep - 1)}>
           上一步
-        </Button>
+        </Button>,
       );
     }
     if (currentStep < 1) {
@@ -287,13 +287,13 @@ const QuickProfileEditModal: React.FC<QuickProfileEditModalProps> = ({
           onClick={() => onStepChange(currentStep + 1)}
         >
           下一步
-        </Button>
+        </Button>,
       );
     } else {
       buttons.push(
         <Button key="save" type="primary" loading={loading} onClick={onSave}>
           保存并提交
-        </Button>
+        </Button>,
       );
     }
     return buttons;
@@ -314,10 +314,7 @@ const QuickProfileEditModal: React.FC<QuickProfileEditModalProps> = ({
           current={currentStep}
           onChange={onStepChange}
           style={{ marginBottom: 24 }}
-          items={[
-            { title: "基础信息" },
-            { title: "财务信息" },
-          ]}
+          items={[{ title: "基础信息" }, { title: "财务信息" }]}
         />
 
         {/* 步骤1：基础信息 */}

@@ -44,7 +44,7 @@ export const UserTable: React.FC<UserTableProps> = ({
         onEdit,
         onDelete,
       }),
-    [onViewDetail, onEdit, onDelete]
+    [onViewDetail, onEdit, onDelete],
   );
 
   return (

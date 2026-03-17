@@ -5,8 +5,23 @@
  */
 
 import React, { useState } from "react";
-import { Card, Row, Col, Input, Button, Select, Modal, Typography, message } from "antd";
-import { SearchOutlined, PlusOutlined, UsergroupAddOutlined, CopyOutlined } from "@ant-design/icons";
+import {
+  Card,
+  Row,
+  Col,
+  Input,
+  Button,
+  Select,
+  Modal,
+  Typography,
+  message,
+} from "antd";
+import {
+  SearchOutlined,
+  PlusOutlined,
+  UsergroupAddOutlined,
+  CopyOutlined,
+} from "@ant-design/icons";
 import { enterpriseService } from "../../../../services/enterpriseService";
 
 const { Text, Title } = Typography;
@@ -107,9 +122,9 @@ export const SearchBar: React.FC<SearchBarProps> = ({
             </Select>
           </Col>
           <Col flex="auto" style={{ textAlign: "right" }}>
-            <Button 
-              type="default" 
-              icon={<UsergroupAddOutlined />} 
+            <Button
+              type="default"
+              icon={<UsergroupAddOutlined />}
               onClick={handleGenerateInviteCode}
               style={{ marginRight: 8 }}
               loading={loading}
@@ -128,24 +143,40 @@ export const SearchBar: React.FC<SearchBarProps> = ({
         open={inviteModalVisible}
         onCancel={() => setInviteModalVisible(false)}
         footer={[
-          <Button key="refresh" onClick={handleRefreshInviteCode} loading={loading}>
+          <Button
+            key="refresh"
+            onClick={handleRefreshInviteCode}
+            loading={loading}
+          >
             刷新邀请码
           </Button>,
-          <Button key="copy" type="primary" icon={<CopyOutlined />} onClick={copyInviteCode}>
+          <Button
+            key="copy"
+            type="primary"
+            icon={<CopyOutlined />}
+            onClick={copyInviteCode}
+          >
             复制邀请码
-          </Button>
+          </Button>,
         ]}
       >
-        <div style={{ 
-          background: '#f5f5f5', 
-          padding: '24px', 
-          borderRadius: '8px', 
-          marginTop: '16px',
-          marginBottom: '24px',
-          textAlign: 'center'
-        }}>
-          <Text type="secondary" style={{ display: 'block', marginBottom: 8 }}>企业专属邀请码</Text>
-          <Title level={2} style={{ margin: 0, color: '#1890ff', letterSpacing: '2px' }}>
+        <div
+          style={{
+            background: "#f5f5f5",
+            padding: "24px",
+            borderRadius: "8px",
+            marginTop: "16px",
+            marginBottom: "24px",
+            textAlign: "center",
+          }}
+        >
+          <Text type="secondary" style={{ display: "block", marginBottom: 8 }}>
+            企业专属邀请码
+          </Text>
+          <Title
+            level={2}
+            style={{ margin: 0, color: "#1890ff", letterSpacing: "2px" }}
+          >
             {inviteCode}
           </Title>
         </div>

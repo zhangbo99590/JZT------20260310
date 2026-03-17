@@ -4,24 +4,24 @@
  * 功能: 提供数据刷新功能和自动刷新选项
  */
 
-import React, { useState, useEffect } from 'react';
-import { Button, Dropdown, Space, Badge, Tooltip, message } from 'antd';
-import type { MenuProps } from 'antd';
-import { 
-  ReloadOutlined, 
-  SettingOutlined, 
+import React, { useState, useEffect } from "react";
+import { Button, Dropdown, Space, Badge, Tooltip, message } from "antd";
+import type { MenuProps } from "antd";
+import {
+  ReloadOutlined,
+  SettingOutlined,
   ClockCircleOutlined,
   PauseOutlined,
-  PlayCircleOutlined
-} from '@ant-design/icons';
+  PlayCircleOutlined,
+} from "@ant-design/icons";
 
 interface RefreshButtonProps {
   onRefresh: () => Promise<void> | void;
   loading?: boolean;
   autoRefresh?: boolean;
   refreshInterval?: number; // 秒
-  size?: 'small' | 'middle' | 'large';
-  type?: 'primary' | 'default' | 'text';
+  size?: "small" | "middle" | "large";
+  type?: "primary" | "default" | "text";
 }
 
 export const RefreshButton: React.FC<RefreshButtonProps> = ({
@@ -29,23 +29,22 @@ export const RefreshButton: React.FC<RefreshButtonProps> = ({
   loading = false,
   autoRefresh = false,
   refreshInterval = 30,
-  size = 'middle',
-  type = 'default'
+  size = "middle",
+  type = "default",
 }) => {
   const [isAutoRefresh, setIsAutoRefresh] = useState(autoRefresh);
   const [countdown, setCountdown] = useState(refreshInterval);
-  const [intervalId, setIntervalId] = useState<NodeJS.Timeout | null>(null);
 
   // 手动刷新
   const handleManualRefresh = async () => {
     try {
       await onRefresh();
-      message.success('数据已刷新');
+      message.success("数据已刷新");
       if (isAutoRefresh) {
         setCountdown(refreshInterval);
       }
     } catch (error) {
-      message.error('刷新失败，请重试');
+      message.error("刷新失败，请重试");
     }
   };
 
@@ -55,7 +54,7 @@ export const RefreshButton: React.FC<RefreshButtonProps> = ({
     if (!isAutoRefresh) {
       message.info(`已开启自动刷新，每${refreshInterval}秒更新一次`);
     } else {
-      message.info('已关闭自动刷新');
+      message.info("已关闭自动刷新");
     }
   };
 
@@ -69,9 +68,10 @@ export const RefreshButton: React.FC<RefreshButtonProps> = ({
 
   // 自动刷新逻辑
   useEffect(() => {
+    let id: NodeJS.Timeout | null = null;
     if (isAutoRefresh && !loading) {
-      const id = setInterval(() => {
-        setCountdown(prev => {
+      id = setInterval(() => {
+        setCountdown((prev) => {
           if (prev <= 1) {
             onRefresh();
             return refreshInterval;
@@ -79,59 +79,46 @@ export const RefreshButton: React.FC<RefreshButtonProps> = ({
           return prev - 1;
         });
       }, 1000);
-      setIntervalId(id);
-      
-      return () => {
-        if (id) clearInterval(id);
-      };
-    } else {
-      if (intervalId) {
-        clearInterval(intervalId);
-        setIntervalId(null);
-      }
     }
+
+    return () => {
+      if (id) clearInterval(id);
+    };
   }, [isAutoRefresh, loading, refreshInterval, onRefresh]);
 
-  // 清理定时器
-  useEffect(() => {
-    return () => {
-      if (intervalId) clearInterval(intervalId);
-    };
-  }, [intervalId]);
-
-  const items: MenuProps['items'] = [
+  const items: MenuProps["items"] = [
     {
-      key: 'toggle',
+      key: "toggle",
       onClick: toggleAutoRefresh,
       icon: isAutoRefresh ? <PauseOutlined /> : <PlayCircleOutlined />,
-      label: isAutoRefresh ? '关闭自动刷新' : '开启自动刷新',
+      label: isAutoRefresh ? "关闭自动刷新" : "开启自动刷新",
     },
     {
-      type: 'divider',
+      type: "divider",
     },
     {
-      key: 'interval',
-      label: '刷新间隔',
+      key: "interval",
+      label: "刷新间隔",
       icon: <ClockCircleOutlined />,
       children: [
         {
-          key: '10',
-          label: '10秒',
+          key: "10",
+          label: "10秒",
           onClick: () => setRefreshInterval(10),
         },
         {
-          key: '30',
-          label: '30秒',
+          key: "30",
+          label: "30秒",
           onClick: () => setRefreshInterval(30),
         },
         {
-          key: '60',
-          label: '1分钟',
+          key: "60",
+          label: "1分钟",
           onClick: () => setRefreshInterval(60),
         },
         {
-          key: '300',
-          label: '5分钟',
+          key: "300",
+          label: "5分钟",
           onClick: () => setRefreshInterval(300),
         },
       ],
@@ -148,7 +135,7 @@ export const RefreshButton: React.FC<RefreshButtonProps> = ({
     >
       刷新
       {isAutoRefresh && !loading && (
-        <span style={{ marginLeft: '4px', fontSize: '12px', opacity: 0.7 }}>
+        <span style={{ marginLeft: "4px", fontSize: "12px", opacity: 0.7 }}>
           ({countdown}s)
         </span>
       )}
@@ -164,11 +151,9 @@ export const RefreshButton: React.FC<RefreshButtonProps> = ({
           </Tooltip>
         </Badge>
       ) : (
-        <Tooltip title="点击刷新数据">
-          {refreshButton}
-        </Tooltip>
+        <Tooltip title="点击刷新数据">{refreshButton}</Tooltip>
       )}
-      <Dropdown menu={{ items }} trigger={['click']} placement="bottomRight">
+      <Dropdown menu={{ items }} trigger={["click"]} placement="bottomRight">
         <Button type={type} size={size} icon={<SettingOutlined />} />
       </Dropdown>
     </Space.Compact>

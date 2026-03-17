@@ -1,8 +1,8 @@
 /**
  * 统一存储工具
  */
-import { useState, useEffect, useCallback } from 'react';
-import { safeJsonParse } from './commonUtils';
+import { useState, useEffect, useCallback } from "react";
+import { safeJsonParse } from "./commonUtils";
 
 export class StorageUtils {
   /**
@@ -13,7 +13,8 @@ export class StorageUtils {
    */
   static setItem(key: string, value: any): boolean {
     try {
-      const serializedValue = typeof value === 'string' ? value : JSON.stringify(value);
+      const serializedValue =
+        typeof value === "string" ? value : JSON.stringify(value);
       localStorage.setItem(key, serializedValue);
       return true;
     } catch {
@@ -31,12 +32,12 @@ export class StorageUtils {
     try {
       const item = localStorage.getItem(key);
       if (item === null) return defaultValue;
-      
+
       // 尝试解析JSON，如果失败则返回原始字符串
-      if (typeof defaultValue === 'string') {
+      if (typeof defaultValue === "string") {
         return item as unknown as T;
       }
-      
+
       return safeJsonParse(item, defaultValue);
     } catch {
       return defaultValue;
@@ -123,7 +124,7 @@ export class StorageUtils {
    */
   static getItems<T>(keys: string[], defaultValue: T): Record<string, T> {
     const result: Record<string, T> = {};
-    keys.forEach(key => {
+    keys.forEach((key) => {
       result[key] = this.getItem(key, defaultValue);
     });
     return result;
@@ -136,21 +137,21 @@ export class StorageUtils {
    */
   static removeItems(keys: string[]): string[] {
     const successKeys: string[] = [];
-    keys.forEach(key => {
+    keys.forEach((key) => {
       if (this.removeItem(key)) {
         successKeys.push(key);
       }
     });
     return successKeys;
   }
-  
+
   /**
    * 获取localStorage中所有符合特定前缀的键
    * @param prefix 键名前缀
    * @returns 符合前缀的键名数组
    */
   static getKeysByPrefix(prefix: string): string[] {
-    return this.getAllKeys().filter(key => key.startsWith(prefix));
+    return this.getAllKeys().filter((key) => key.startsWith(prefix));
   }
 }
 
@@ -163,11 +164,11 @@ export class StorageUtils {
  */
 export function useLocalStorage<T>(
   key: string,
-  initialValue: T
+  initialValue: T,
 ): [T, (value: T | ((val: T) => T)) => void, () => void] {
   // 获取初始值
   const readValue = useCallback((): T => {
-    if (typeof window === 'undefined') {
+    if (typeof window === "undefined") {
       return initialValue;
     }
     return StorageUtils.getItem(key, initialValue);
@@ -179,14 +180,15 @@ export function useLocalStorage<T>(
   const setValue = useCallback(
     (value: T | ((val: T) => T)) => {
       try {
-        const valueToStore = value instanceof Function ? value(storedValue) : value;
+        const valueToStore =
+          value instanceof Function ? value(storedValue) : value;
         setStoredValue(valueToStore);
         StorageUtils.setItem(key, valueToStore);
       } catch {
         // 忽略设置错误
       }
     },
-    [key, storedValue]
+    [key, storedValue],
   );
 
   // 删除值
@@ -210,8 +212,8 @@ export function useLocalStorage<T>(
       }
     };
 
-    window.addEventListener('storage', handleStorageChange);
-    return () => window.removeEventListener('storage', handleStorageChange);
+    window.addEventListener("storage", handleStorageChange);
+    return () => window.removeEventListener("storage", handleStorageChange);
   }, [key, initialValue]);
 
   return [storedValue, setValue, removeValue];

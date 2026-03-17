@@ -23,7 +23,7 @@ class RateLimiter {
       windowMs: 60 * 1000, // 默认1分钟
       maxRequests: 20, // 默认20次，提高限制以适应常用功能
       message: "操作频繁，请稍后再试",
-    }
+    },
   ) {
     this.config = config;
     this.requestRecords = new Map();
@@ -40,7 +40,7 @@ class RateLimiter {
 
     // 过滤掉时间窗口外的记录
     const validRecords = records.filter(
-      (record) => now - record.timestamp < this.config.windowMs
+      (record) => now - record.timestamp < this.config.windowMs,
     );
 
     // 检查是否超出限制
@@ -87,7 +87,7 @@ class RateLimiter {
     const now = Date.now();
     const records = this.requestRecords.get(key) || [];
     const validRecords = records.filter(
-      (record) => now - record.timestamp < this.config.windowMs
+      (record) => now - record.timestamp < this.config.windowMs,
     );
     return validRecords.length;
   }

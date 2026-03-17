@@ -222,9 +222,9 @@ export const saveAuthState = (data: LoginResponse) => {
       companyName: data.enterpriseName || "",
       tenantId: data.tenantId,
       avatar: data.avatar,
-    }
+    },
   };
-  
+
   StorageUtils.setItems(authData);
 
   // 设置 apiClient 的认证 token
@@ -236,8 +236,14 @@ export const saveAuthState = (data: LoginResponse) => {
  */
 export const clearAuthState = () => {
   const authKeys = [
-    "portalToken", "userId", "tenantId", "userInfo", 
-    "isLoggedIn", "lastLoginTime", "username", "auth_user"
+    "portalToken",
+    "userId",
+    "tenantId",
+    "userInfo",
+    "isLoggedIn",
+    "lastLoginTime",
+    "username",
+    "auth_user",
   ];
   StorageUtils.removeItems(authKeys);
 

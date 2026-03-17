@@ -4,21 +4,21 @@
  * 功能: 提供统一的骨架屏加载效果
  */
 
-import React from 'react';
-import { Card, Skeleton, Row, Col } from 'antd';
+import React from "react";
+import { Card, Skeleton, Row, Col } from "antd";
 
 interface SkeletonLoaderProps {
-  type?: 'card' | 'chart' | 'list' | 'overview';
+  type?: "card" | "chart" | "list" | "overview";
   rows?: number;
   loading?: boolean;
   children?: React.ReactNode;
 }
 
 export const SkeletonLoader: React.FC<SkeletonLoaderProps> = ({
-  type = 'card',
+  type = "card",
   rows = 3,
   loading = true,
-  children
+  children,
 }) => {
   if (!loading && children) {
     return <>{children}</>;
@@ -26,10 +26,10 @@ export const SkeletonLoader: React.FC<SkeletonLoaderProps> = ({
 
   const renderSkeleton = () => {
     switch (type) {
-      case 'overview':
+      case "overview":
         return (
           <Row gutter={[16, 16]}>
-            {[1, 2, 3, 4].map(i => (
+            {[1, 2, 3, 4].map((i) => (
               <Col xs={24} sm={12} lg={6} key={i}>
                 <Card>
                   <Skeleton active paragraph={{ rows: 2 }} />
@@ -38,21 +38,21 @@ export const SkeletonLoader: React.FC<SkeletonLoaderProps> = ({
             ))}
           </Row>
         );
-      
-      case 'chart':
+
+      case "chart":
         return (
           <Card>
-            <Skeleton.Input style={{ width: '100%', height: '300px' }} active />
+            <Skeleton.Input style={{ width: "100%", height: "300px" }} active />
           </Card>
         );
-      
-      case 'list':
+
+      case "list":
         return (
           <Card>
             <Skeleton active paragraph={{ rows }} />
           </Card>
         );
-      
+
       default:
         return (
           <Card>
@@ -68,18 +68,21 @@ export const SkeletonLoader: React.FC<SkeletonLoaderProps> = ({
 // 专用的首页骨架屏组件
 export const HomePageSkeleton: React.FC = () => {
   return (
-    <div style={{ padding: '24px' }}>
+    <div style={{ padding: "24px" }}>
       {/* 页面头部骨架 */}
-      <div style={{ marginBottom: '24px' }}>
-        <Skeleton.Input style={{ width: '300px', height: '32px' }} active />
-        <Skeleton.Input style={{ width: '400px', height: '16px', marginTop: '8px' }} active />
+      <div style={{ marginBottom: "24px" }}>
+        <Skeleton.Input style={{ width: "300px", height: "32px" }} active />
+        <Skeleton.Input
+          style={{ width: "400px", height: "16px", marginTop: "8px" }}
+          active
+        />
       </div>
 
       {/* 数据概览骨架 */}
       <SkeletonLoader type="overview" />
 
       {/* 天气和日历骨架 */}
-      <Row gutter={[16, 16]} style={{ margin: '24px 0' }}>
+      <Row gutter={[16, 16]} style={{ margin: "24px 0" }}>
         <Col xs={24} md={12}>
           <SkeletonLoader type="card" rows={4} />
         </Col>
@@ -92,7 +95,7 @@ export const HomePageSkeleton: React.FC = () => {
       <SkeletonLoader type="chart" />
 
       {/* 主要内容区域骨架 */}
-      <Row gutter={[16, 16]} style={{ margin: '24px 0' }}>
+      <Row gutter={[16, 16]} style={{ margin: "24px 0" }}>
         <Col xs={24} lg={12}>
           <SkeletonLoader type="card" rows={4} />
         </Col>

@@ -57,10 +57,11 @@ const SafeECharts: React.FC<SafeEChartsProps> = ({
   const chartRef = useRef<ReactECharts>(null);
 
   useEffect(() => {
+    const currentChartRef = chartRef.current;
     return () => {
       try {
-        if (chartRef.current) {
-          const echartsInstance = chartRef.current.getEchartsInstance();
+        if (currentChartRef) {
+          const echartsInstance = currentChartRef.getEchartsInstance();
           if (echartsInstance) {
             echartsInstance.off();
             if (typeof echartsInstance.dispose === "function") {

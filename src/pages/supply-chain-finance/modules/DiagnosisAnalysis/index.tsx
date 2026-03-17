@@ -46,7 +46,7 @@ const DiagnosisAnalysis: React.FC = () => {
     useState<FinancingDiagnosisData | null>(null);
   const [applyModalVisible, setApplyModalVisible] = useState(false);
   const [selectedOption, setSelectedOption] = useState<FinancingOption | null>(
-    null
+    null,
   );
 
   useEffect(() => {
@@ -59,7 +59,7 @@ const DiagnosisAnalysis: React.FC = () => {
     setSelectedOptions((prev) =>
       prev.includes(optionId)
         ? prev.filter((id) => id !== optionId)
-        : [...prev, optionId]
+        : [...prev, optionId],
     );
   };
 
@@ -155,7 +155,7 @@ const DiagnosisAnalysis: React.FC = () => {
             <Card title="匹配度排名">
               <List
                 dataSource={[...FINANCING_OPTIONS].sort(
-                  (a, b) => b.matchScore - a.matchScore
+                  (a, b) => b.matchScore - a.matchScore,
                 )}
                 renderItem={(item, index) => (
                   <List.Item>

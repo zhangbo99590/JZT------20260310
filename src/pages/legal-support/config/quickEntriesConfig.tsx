@@ -19,7 +19,7 @@ import { QuickEntry } from "../types/index.ts";
  * 函数创建时间: 2026-01-13
  */
 export function createQuickEntriesConfig(
-  handleNavigate: (path: string) => void
+  handleNavigate: (path: string) => void,
 ): QuickEntry[] {
   return [
     {

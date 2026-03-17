@@ -87,15 +87,15 @@ const TimelinessManagement: React.FC = () => {
                   record.changeType === "new"
                     ? "green"
                     : record.changeType === "modified"
-                    ? "orange"
-                    : "red"
+                      ? "orange"
+                      : "red"
                 }
               >
                 {record.changeType === "new"
                   ? "新增"
                   : record.changeType === "modified"
-                  ? "已修订"
-                  : "已废止"}
+                    ? "已修订"
+                    : "已废止"}
               </Tag>
             </div>
           )}
@@ -275,10 +275,10 @@ const TimelinessManagement: React.FC = () => {
                     stat.status === "success"
                       ? "#52c41a"
                       : stat.status === "warning"
-                      ? "#fa8c16"
-                      : stat.status === "error"
-                      ? "#ff4d4f"
-                      : "#1890ff",
+                        ? "#fa8c16"
+                        : stat.status === "error"
+                          ? "#ff4d4f"
+                          : "#1890ff",
                 }}
                 prefix={
                   stat.status === "success" ? (
@@ -388,8 +388,8 @@ const TimelinessManagement: React.FC = () => {
                             change.changeType === "new"
                               ? "green"
                               : change.changeType === "modified"
-                              ? "orange"
-                              : "red"
+                                ? "orange"
+                                : "red"
                           }
                           dot={
                             change.changeType === "new" ? (
@@ -408,16 +408,16 @@ const TimelinessManagement: React.FC = () => {
                                 change.impactLevel === "high"
                                   ? "red"
                                   : change.impactLevel === "medium"
-                                  ? "orange"
-                                  : "green"
+                                    ? "orange"
+                                    : "green"
                               }
                               style={{ marginLeft: 8 }}
                             >
                               {change.impactLevel === "high"
                                 ? "高影响"
                                 : change.impactLevel === "medium"
-                                ? "中影响"
-                                : "低影响"}
+                                  ? "中影响"
+                                  : "低影响"}
                             </Tag>
                             <div style={{ marginTop: 4 }}>
                               <Text type="secondary">{change.description}</Text>
@@ -496,8 +496,8 @@ const TimelinessManagement: React.FC = () => {
                             item.changeType === "new"
                               ? "#52c41a"
                               : item.changeType === "modified"
-                              ? "#fa8c16"
-                              : "#ff4d4f",
+                                ? "#fa8c16"
+                                : "#ff4d4f",
                         }}
                       />
                     }

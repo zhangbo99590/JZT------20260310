@@ -127,15 +127,20 @@ export const userService = {
           username: item.username || item.nickName || item.phone,
           // 角色映射：接口返回 roleName，前端需 roles 数组。如果接口没返回但是 roleType 为 "0"，认为是超级管理员
           roles:
-            (item.roles && item.roles.length > 0)
+            item.roles && item.roles.length > 0
               ? item.roles
-              : (item.roleName 
-                ? [{ roleId: Number(item.roleType || 1), roleName: item.roleName }] 
-                : item.roleType === "0" 
-                  ? [{ roleId: 0, roleName: "超级管理员" }] 
+              : item.roleName
+                ? [
+                    {
+                      roleId: Number(item.roleType || 1),
+                      roleName: item.roleName,
+                    },
+                  ]
+                : item.roleType === "0"
+                  ? [{ roleId: 0, roleName: "超级管理员" }]
                   : item.roleType === "1"
                     ? [{ roleId: 1, roleName: "企业管理员" }]
-                    : [{ roleId: 2, roleName: "普通成员" }]),
+                    : [{ roleId: 2, roleName: "普通成员" }],
           // 状态映射
           status: item.status || "0",
           // 邮箱映射 (全选保护：如果后端返回的是 Email 或 mail 等)
@@ -300,7 +305,6 @@ export const getUserInfo = async (): Promise<UserInfo> => {
       try {
         const authUser = StorageUtils.getItem("auth_user", null);
         if (authUser) {
-
           if (!isRoleTypeValid && authUser.roleType !== undefined) {
             roleType = authUser.roleType;
             // console.log(

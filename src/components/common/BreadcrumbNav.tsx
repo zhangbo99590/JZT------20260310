@@ -26,7 +26,7 @@ const BreadcrumbNav: React.FC = () => {
   // 转换为 Ant Design Breadcrumb 需要的 items 格式
   const items = breadcrumbItems.map((item, index) => {
     const isLast = index === breadcrumbItems.length - 1;
-    
+
     // 如果有路径且不是最后一项，则渲染为链接
     // 注意：最后一项通常是当前页，不需要点击跳转
     if (item.path && !isLast) {
@@ -34,7 +34,7 @@ const BreadcrumbNav: React.FC = () => {
         title: <Link to={item.path}>{item.title}</Link>,
       };
     }
-    
+
     // 否则只渲染文本
     return {
       title: item.title,
@@ -42,11 +42,7 @@ const BreadcrumbNav: React.FC = () => {
   });
 
   return (
-    <Breadcrumb
-      items={items}
-      style={{ marginBottom: "16px" }}
-      separator=">"
-    />
+    <Breadcrumb items={items} style={{ marginBottom: "16px" }} separator=">" />
   );
 };
 

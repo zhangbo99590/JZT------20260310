@@ -216,13 +216,15 @@ export const routeMenuMap: Record<string, string> = {
   // 法律护航模块路由映射
   "/legal-support": "/legal-support/ai-lawyer",
   "/legal-support/regulation-query": "/legal-support/regulation-query", // 法规查询页面
-  "/legal-support/regulation-detail": "/legal-support/regulation-detail/civil-code-2020", // 法规详情页面
+  "/legal-support/regulation-detail":
+    "/legal-support/regulation-detail/civil-code-2020", // 法规详情页面
   "/legal-support/ai-lawyer": "/legal-support/ai-lawyer", // AI律师页面
 
   // 产业管理模块路由映射
   "/industry/service-match": "/industry/service-match/workbench",
   "/industry/service-match/workbench": "/industry/service-match/workbench", // 业务大厅
-  "/industry/service-match/procurement-hall": "/industry/service-match/procurement-hall", // 采购大厅
+  "/industry/service-match/procurement-hall":
+    "/industry/service-match/procurement-hall", // 采购大厅
   "/industry/service-match/my-services": "/industry/service-match/my-services", // 我的业务管理
   "/industry/service-match/publish": "/industry/service-match/my-services", // 发布业务
   "/industry/service-match/detail": "/industry/service-match/procurement-hall", // 业务详情
@@ -231,12 +233,18 @@ export const routeMenuMap: Record<string, string> = {
 
   // 金融服务模块路由映射
   "/supply-chain-finance": "/supply-chain-finance/financing-diagnosis",
-  "/supply-chain-finance/financing-diagnosis": "/supply-chain-finance/financing-diagnosis", // 融资诊断页面
-  "/supply-chain-finance/financing-diagnosis-result": "/supply-chain-finance/diagnosis-report", // 诊断结果
-  "/supply-chain-finance/diagnosis-report": "/supply-chain-finance/diagnosis-report", // 诊断报告页面
-  "/supply-chain-finance/financing-option-detail": "/supply-chain-finance/financing-diagnosis", // 融资方案详情
-  "/supply-chain-finance/application-success": "/supply-chain-finance/financing-diagnosis", // 申请成功
-  "/supply-chain-finance/diagnosis-analysis": "/supply-chain-finance/diagnosis-report", // 诊断分析
+  "/supply-chain-finance/financing-diagnosis":
+    "/supply-chain-finance/financing-diagnosis", // 融资诊断页面
+  "/supply-chain-finance/financing-diagnosis-result":
+    "/supply-chain-finance/diagnosis-report", // 诊断结果
+  "/supply-chain-finance/diagnosis-report":
+    "/supply-chain-finance/diagnosis-report", // 诊断报告页面
+  "/supply-chain-finance/financing-option-detail":
+    "/supply-chain-finance/financing-diagnosis", // 融资方案详情
+  "/supply-chain-finance/application-success":
+    "/supply-chain-finance/financing-diagnosis", // 申请成功
+  "/supply-chain-finance/diagnosis-analysis":
+    "/supply-chain-finance/diagnosis-report", // 诊断分析
 
   // 系统管理模块路由映射
   "/system": "/system/personal-center",
@@ -282,18 +290,18 @@ export const parentMenuPaths = [
 export function getDefaultOpenKeys(pathname: string): string[] {
   // 按路径长度降序排列，确保最长匹配优先
   const sortedPaths = [...parentMenuPaths].sort((a, b) => b.length - a.length);
-  
+
   for (const parentPath of sortedPaths) {
     if (pathname.startsWith(parentPath)) {
       return [parentPath];
     }
   }
-  
+
   // 特殊处理：如果是根路径，不展开任何菜单
   if (pathname === "/") {
     return [];
   }
-  
+
   return [];
 }
 
@@ -317,31 +325,33 @@ export function getDefaultOpenKeys(pathname: string): string[] {
 export function getSelectedKeys(pathname: string): string[] {
   // 处理查询参数
   const fullPath = window.location.pathname + window.location.search;
-  
+
   // 首先尝试完整路径匹配（包含查询参数）
   if (routeMenuMap[fullPath]) {
     return [routeMenuMap[fullPath]];
   }
-  
+
   // 精确路径匹配
   if (routeMenuMap[pathname]) {
     return [routeMenuMap[pathname]];
   }
-  
+
   // 动态路由匹配 - 按最长匹配优先
-  const sortedRoutes = Object.keys(routeMenuMap).sort((a, b) => b.length - a.length);
-  
+  const sortedRoutes = Object.keys(routeMenuMap).sort(
+    (a, b) => b.length - a.length,
+  );
+
   for (const route of sortedRoutes) {
     if (pathname.startsWith(route + "/") || pathname === route) {
       return [routeMenuMap[route]];
     }
   }
-  
+
   // 处理特殊的查询参数路由
   if (pathname === "/application") {
     const searchParams = new URLSearchParams(window.location.search);
     const view = searchParams.get("view");
-    
+
     switch (view) {
       case "list":
         return ["/application?view=list"];
@@ -353,23 +363,29 @@ export function getSelectedKeys(pathname: string): string[] {
         return ["/application?view=list"];
     }
   }
-  
+
   // 模块级别的回退匹配
   const moduleMatches = [
     { prefix: "/application", defaultKey: "/application?view=list" }, // 申报管理已迁移至政策中心，但路由保持不变
     { prefix: "/policy-center", defaultKey: "/policy-center/main" },
     { prefix: "/legal-support", defaultKey: "/legal-support/ai-lawyer" },
-    { prefix: "/industry/service-match", defaultKey: "/industry/service-match/workbench" },
-    { prefix: "/supply-chain-finance", defaultKey: "/supply-chain-finance/financing-diagnosis" },
+    {
+      prefix: "/industry/service-match",
+      defaultKey: "/industry/service-match/workbench",
+    },
+    {
+      prefix: "/supply-chain-finance",
+      defaultKey: "/supply-chain-finance/financing-diagnosis",
+    },
     { prefix: "/system", defaultKey: "/system/personal-center" },
   ];
-  
+
   for (const { prefix, defaultKey } of moduleMatches) {
     if (pathname.startsWith(prefix)) {
       return [defaultKey];
     }
   }
-  
+
   // 默认返回首页
   return ["/"];
 }

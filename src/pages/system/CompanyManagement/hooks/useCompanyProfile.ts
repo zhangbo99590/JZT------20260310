@@ -5,7 +5,10 @@
 
 import { useState, useCallback } from "react";
 import { message } from "antd";
-import { useCompanyProfileContext, CompanyProfile as ContextCompanyProfile } from "../../../../context/CompanyProfileContext";
+import {
+  useCompanyProfileContext,
+  CompanyProfile as ContextCompanyProfile,
+} from "../../../../context/CompanyProfileContext";
 import { CompanyProfile } from "../types";
 
 // 本地类型定义，扩展 Context 中的类型以包含组件特有的 UI 状态
@@ -23,13 +26,17 @@ export interface UICompanyProfile extends ContextCompanyProfile {
 export type { CompanyProfile };
 
 export const useCompanyProfile = () => {
-  const { profile, updateProfile, loading: contextLoading } = useCompanyProfileContext();
-  
+  const {
+    profile,
+    updateProfile,
+    loading: contextLoading,
+  } = useCompanyProfileContext();
+
   const [loading, setLoading] = useState(false);
   const [profileModalVisible, setProfileModalVisible] = useState(false);
   const [editMode, setEditMode] = useState(false);
   const [currentStep, setCurrentStep] = useState(0);
-  
+
   // 编辑表单状态
   const [editForm, setEditForm] = useState<Partial<UICompanyProfile>>({});
 
@@ -40,15 +47,15 @@ export const useCompanyProfile = () => {
     dataSource: {
       business: "success",
       tax: "success",
-      rd: "success"
-    }
+      rd: "success",
+    },
   };
 
   // 打开编辑弹窗
   const handleEditProfile = useCallback(() => {
     if (companyProfile) {
       setEditForm({
-        ...companyProfile
+        ...companyProfile,
       });
       setEditMode(true);
       setProfileModalVisible(true);

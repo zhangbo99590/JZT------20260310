@@ -14,7 +14,7 @@ import { simulateDelay } from "../utils/commonUtils";
  */
 export function withDelay<T extends (...args: any[]) => Promise<any>>(
   fn: T,
-  delay: number = 300
+  delay: number = 300,
 ): T {
   return (async (...args: Parameters<T>) => {
     await simulateDelay(delay);
@@ -30,7 +30,7 @@ export function withDelay<T extends (...args: any[]) => Promise<any>>(
  */
 export function withErrorHandling<T extends (...args: any[]) => Promise<any>>(
   fn: T,
-  errorMessage: string = "操作失败"
+  errorMessage: string = "操作失败",
 ): T {
   return (async (...args: Parameters<T>) => {
     try {
@@ -52,7 +52,7 @@ export function withErrorHandling<T extends (...args: any[]) => Promise<any>>(
 export function createApiCall<T extends (...args: any[]) => Promise<any>>(
   fn: T,
   delay: number = 300,
-  errorMessage: string = "操作失败"
+  errorMessage: string = "操作失败",
 ): T {
   return withErrorHandling(withDelay(fn, delay), errorMessage);
 }

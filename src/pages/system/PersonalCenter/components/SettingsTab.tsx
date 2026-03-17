@@ -91,7 +91,7 @@ const SettingsTab: React.FC<SettingsTabProps> = ({
                         const updated = modulePreferences.map((m) =>
                           m.id === item.id
                             ? { ...m, visible: e.target.checked }
-                            : m
+                            : m,
                         );
                         onModulePreferencesChange(updated);
                       }}
@@ -150,7 +150,7 @@ const SettingsTab: React.FC<SettingsTabProps> = ({
                     const updated = notificationSettings.map((n) =>
                       n.type === record.type
                         ? { ...n, systemMessage: checked }
-                        : n
+                        : n,
                     );
                     onNotificationSettingsChange(updated);
                   }}
@@ -165,7 +165,7 @@ const SettingsTab: React.FC<SettingsTabProps> = ({
                   checked={record.sms}
                   onChange={(checked) => {
                     const updated = notificationSettings.map((n) =>
-                      n.type === record.type ? { ...n, sms: checked } : n
+                      n.type === record.type ? { ...n, sms: checked } : n,
                     );
                     onNotificationSettingsChange(updated);
                   }}
@@ -180,7 +180,7 @@ const SettingsTab: React.FC<SettingsTabProps> = ({
                   checked={record.email}
                   onChange={(checked) => {
                     const updated = notificationSettings.map((n) =>
-                      n.type === record.type ? { ...n, email: checked } : n
+                      n.type === record.type ? { ...n, email: checked } : n,
                     );
                     onNotificationSettingsChange(updated);
                   }}

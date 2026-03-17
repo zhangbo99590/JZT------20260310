@@ -38,13 +38,14 @@ export const useHomeData = () => {
       setHomeData((prev) => ({
         ...prev,
         // 可以在这里更新一些动态数据
-        dataOverview: prev.dataOverview.map(item => ({
+        dataOverview: prev.dataOverview.map((item) => ({
           ...item,
           value: item.value + Math.floor(Math.random() * 5) - 2, // 模拟数据变化
-        }))
+        })),
       }));
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : "获取首页数据失败";
+      const errorMessage =
+        error instanceof Error ? error.message : "获取首页数据失败";
       console.error("获取首页数据失败:", error);
       setError(errorMessage);
       throw error;

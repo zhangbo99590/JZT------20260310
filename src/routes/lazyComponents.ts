@@ -36,7 +36,9 @@ export const CompanyManagement = lazy(
 // 政策中心页面
 // 路由配置更新时间: 2026-03-10
 // PolicyDetail已被EnhancedPolicyDetail替代并删除
-export const EnhancedPolicyDetail = lazy(() => import("../pages/policy/EnhancedPolicyDetail"));
+export const EnhancedPolicyDetail = lazy(
+  () => import("../pages/policy/EnhancedPolicyDetail"),
+);
 export const AIPolicySearchV2 = lazy(
   () => import("../pages/policy/AIPolicySearch"),
 );
@@ -128,4 +130,3 @@ export const ServiceMatchMyMatches = lazy(
 export const ServiceMatchMyMessages = lazy(
   () => import("../pages/industry/service-match/MyMessages"),
 );
-

@@ -4,10 +4,10 @@
  * 功能: 管理未登录用户的申报数据暂存、恢复和清理
  */
 
-import { StorageUtils } from './storage';
+import { StorageUtils } from "./storage";
 
 // 存储键前缀
-const STORAGE_PREFIX = 'jzt_application_';
+const STORAGE_PREFIX = "jzt_application_";
 
 // 数据有效期（7天，单位：毫秒）
 const DATA_EXPIRY = 7 * 24 * 60 * 60 * 1000;
@@ -16,14 +16,14 @@ const DATA_EXPIRY = 7 * 24 * 60 * 60 * 1000;
  * 获取设备ID（如果不存在则生成）
  */
 export const getDeviceId = (): string => {
-  let deviceId = StorageUtils.getItem('jzt_device_id', null);
-  
+  let deviceId = StorageUtils.getItem("jzt_device_id", null);
+
   if (!deviceId) {
     // 生成唯一设备ID
     deviceId = `device_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
-    StorageUtils.setItem('jzt_device_id', deviceId);
+    StorageUtils.setItem("jzt_device_id", deviceId);
   }
-  
+
   return deviceId;
 };
 
@@ -43,7 +43,7 @@ const encodeData = (data: any): string => {
     const jsonStr = JSON.stringify(data);
     return btoa(encodeURIComponent(jsonStr));
   } catch {
-    throw new Error('数据编码失败');
+    throw new Error("数据编码失败");
   }
 };
 
@@ -55,7 +55,7 @@ const decodeData = (encodedData: string): any => {
     const jsonStr = decodeURIComponent(atob(encodedData));
     return JSON.parse(jsonStr);
   } catch {
-    throw new Error('数据解码失败');
+    throw new Error("数据解码失败");
   }
 };
 
@@ -72,17 +72,17 @@ const isDataExpired = (timestamp: number): boolean => {
 export const saveApplicationData = (projectId: string, data: any): boolean => {
   try {
     const storageKey = getStorageKey(projectId);
-    
+
     const storageData = {
       data,
       timestamp: Date.now(),
       deviceId: getDeviceId(),
-      projectId
+      projectId,
     };
-    
+
     const encodedData = encodeData(storageData);
     StorageUtils.setItem(storageKey, encodedData);
-    
+
     return true;
   } catch {
     return false;
@@ -96,19 +96,19 @@ export const getApplicationData = (projectId: string): any | null => {
   try {
     const storageKey = getStorageKey(projectId);
     const encodedData = StorageUtils.getItem(storageKey, null);
-    
+
     if (!encodedData) {
       return null;
     }
-    
+
     const storageData = decodeData(encodedData);
-    
+
     // 检查是否过期
     if (isDataExpired(storageData.timestamp)) {
       removeApplicationData(projectId);
       return null;
     }
-    
+
     return storageData.data;
   } catch {
     return null;
@@ -133,9 +133,11 @@ export const removeApplicationData = (projectId: string): void => {
 export const cleanExpiredData = (): void => {
   try {
     const keys = StorageUtils.getAllKeys();
-    const applicationKeys = keys.filter(key => key.startsWith(STORAGE_PREFIX));
-    
-    applicationKeys.forEach(key => {
+    const applicationKeys = keys.filter((key) =>
+      key.startsWith(STORAGE_PREFIX),
+    );
+
+    applicationKeys.forEach((key) => {
       try {
         const encodedData = StorageUtils.getItem(key, null);
         if (encodedData) {
@@ -161,15 +163,15 @@ export const getRemainingDays = (projectId: string): number => {
   try {
     const storageKey = getStorageKey(projectId);
     const encodedData = StorageUtils.getItem(storageKey, null);
-    
+
     if (!encodedData) {
       return 0;
     }
-    
+
     const storageData = decodeData(encodedData);
     const elapsed = Date.now() - storageData.timestamp;
     const remaining = DATA_EXPIRY - elapsed;
-    
+
     return Math.ceil(remaining / (24 * 60 * 60 * 1000));
   } catch (error) {
     return 0;

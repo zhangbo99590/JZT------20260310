@@ -23,7 +23,7 @@ import "./styles/reset-password.css";
  */
 const ResetPassword: React.FC = () => {
   const [currentStep, setCurrentStep] = useState<ResetStep>(
-    ResetStep.VERIFY_PHONE
+    ResetStep.VERIFY_PHONE,
   );
   const [loading, setLoading] = useState(false);
   const [phone, setPhone] = useState("");

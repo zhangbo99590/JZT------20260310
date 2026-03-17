@@ -2,11 +2,11 @@
  * 通用工具函数
  */
 export const formatFileSize = (bytes: number): string => {
-  if (bytes === 0) return '0 B';
+  if (bytes === 0) return "0 B";
   const k = 1024;
-  const sizes = ['B', 'KB', 'MB', 'GB', 'TB'];
+  const sizes = ["B", "KB", "MB", "GB", "TB"];
   const i = Math.floor(Math.log(bytes) / Math.log(k));
-  return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+  return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + " " + sizes[i];
 };
 
 /**
@@ -14,13 +14,12 @@ export const formatFileSize = (bytes: number): string => {
  * @returns UUID字符串
  */
 export const generateUUID = (): string => {
-  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
-    const r = Math.random() * 16 | 0;
-    const v = c === 'x' ? r : (r & 0x3 | 0x8);
+  return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, function (c) {
+    const r = (Math.random() * 16) | 0;
+    const v = c === "x" ? r : (r & 0x3) | 0x8;
     return v.toString(16);
   });
 };
-
 
 /**
  * 格式化日期时间
@@ -28,26 +27,28 @@ export const generateUUID = (): string => {
  * @param format 格式化模式，默认为 'YYYY-MM-DD HH:mm:ss'
  * @returns 格式化后的日期字符串
  */
-export const formatDateTime = (date: Date | string, format: string = 'YYYY-MM-DD HH:mm:ss'): string => {
+export const formatDateTime = (
+  date: Date | string,
+  format: string = "YYYY-MM-DD HH:mm:ss",
+): string => {
   const d = new Date(date);
-  if (isNaN(d.getTime())) return '';
-  
-  const year = d.getFullYear();
-  const month = String(d.getMonth() + 1).padStart(2, '0');
-  const day = String(d.getDate()).padStart(2, '0');
-  const hours = String(d.getHours()).padStart(2, '0');
-  const minutes = String(d.getMinutes()).padStart(2, '0');
-  const seconds = String(d.getSeconds()).padStart(2, '0');
-  
-  return format
-    .replace('YYYY', year.toString())
-    .replace('MM', month)
-    .replace('DD', day)
-    .replace('HH', hours)
-    .replace('mm', minutes)
-    .replace('ss', seconds);
-};
+  if (isNaN(d.getTime())) return "";
 
+  const year = d.getFullYear();
+  const month = String(d.getMonth() + 1).padStart(2, "0");
+  const day = String(d.getDate()).padStart(2, "0");
+  const hours = String(d.getHours()).padStart(2, "0");
+  const minutes = String(d.getMinutes()).padStart(2, "0");
+  const seconds = String(d.getSeconds()).padStart(2, "0");
+
+  return format
+    .replace("YYYY", year.toString())
+    .replace("MM", month)
+    .replace("DD", day)
+    .replace("HH", hours)
+    .replace("mm", minutes)
+    .replace("ss", seconds);
+};
 
 /**
  * 深拷贝对象
@@ -55,10 +56,10 @@ export const formatDateTime = (date: Date | string, format: string = 'YYYY-MM-DD
  * @returns 深拷贝后的对象
  */
 export const deepClone = <T>(obj: T): T => {
-  if (obj === null || typeof obj !== 'object') return obj;
+  if (obj === null || typeof obj !== "object") return obj;
   if (obj instanceof Date) return new Date(obj.getTime()) as any;
-  if (obj instanceof Array) return obj.map(item => deepClone(item)) as any;
-  if (typeof obj === 'object') {
+  if (obj instanceof Array) return obj.map((item) => deepClone(item)) as any;
+  if (typeof obj === "object") {
     const clonedObj = {} as any;
     for (const key in obj) {
       if (obj.hasOwnProperty(key)) {
@@ -77,9 +78,9 @@ export const deepClone = <T>(obj: T): T => {
  */
 export const isEmpty = (value: any): boolean => {
   if (value === null || value === undefined) return true;
-  if (typeof value === 'string') return value.trim().length === 0;
+  if (typeof value === "string") return value.trim().length === 0;
   if (Array.isArray(value)) return value.length === 0;
-  if (typeof value === 'object') return Object.keys(value).length === 0;
+  if (typeof value === "object") return Object.keys(value).length === 0;
   return false;
 };
 

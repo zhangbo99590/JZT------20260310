@@ -3,28 +3,28 @@
  * 支持分页、排序、批量操作和详情查看
  */
 
-import React, { useState, useMemo } from 'react';
-import { 
-  List, 
-  Card, 
-  Tag, 
-  Space, 
-  Button, 
-  Pagination, 
-  Select, 
-  Checkbox, 
-  Typography, 
-  Tooltip, 
-  Dropdown, 
+import React, { useState, useMemo } from "react";
+import {
+  List,
+  Card,
+  Tag,
+  Space,
+  Button,
+  Pagination,
+  Select,
+  Checkbox,
+  Typography,
+  Tooltip,
+  Dropdown,
   message,
   Modal,
   Progress,
-  Avatar
-} from 'antd';
-import { 
-  EyeOutlined, 
-  DownloadOutlined, 
-  EditOutlined, 
+  Avatar,
+} from "antd";
+import {
+  EyeOutlined,
+  DownloadOutlined,
+  EditOutlined,
   StarOutlined,
   StarFilled,
   CalendarOutlined,
@@ -35,10 +35,10 @@ import {
   SettingOutlined,
   CheckCircleOutlined,
   ClockCircleOutlined,
-  ExclamationCircleOutlined
-} from '@ant-design/icons';
-import type { MenuProps } from 'antd';
-import * as XLSX from 'xlsx';
+  ExclamationCircleOutlined,
+} from "@ant-design/icons";
+import type { MenuProps } from "antd";
+import * as XLSX from "xlsx";
 
 const { Title, Text, Paragraph } = Typography;
 const { Option } = Select;
@@ -53,7 +53,7 @@ interface PolicyItem {
   region: string;
   district?: string;
   subsidyAmount?: string;
-  status: 'active' | 'pending' | 'expired';
+  status: "active" | "pending" | "expired";
   tags: string[];
   summary: string;
   matchScore?: number;
@@ -68,7 +68,7 @@ interface PolicyResultsListProps {
   total: number;
   current: number;
   pageSize: number;
-  sortBy: 'comprehensive' | 'latest' | 'deadline' | 'amount';
+  sortBy: "comprehensive" | "latest" | "deadline" | "amount";
   onPageChange: (page: number, size: number) => void;
   onSortChange: (sortBy: string) => void;
   onViewDetail: (id: string) => void;
@@ -89,7 +89,7 @@ const PolicyResultsList: React.FC<PolicyResultsListProps> = ({
   onViewDetail,
   onBatchEdit,
   onExport,
-  showBatchOperations = true
+  showBatchOperations = true,
 }) => {
   const [selectedItems, setSelectedItems] = useState<string[]>([]);
   const [batchEditVisible, setBatchEditVisible] = useState(false);
@@ -97,45 +97,53 @@ const PolicyResultsList: React.FC<PolicyResultsListProps> = ({
 
   // 排序选项
   const sortOptions = [
-    { value: 'comprehensive', label: '综合排序' },
-    { value: 'latest', label: '最新发布' },
-    { value: 'deadline', label: '截止时间' },
-    { value: 'amount', label: '补贴金额' }
+    { value: "comprehensive", label: "综合排序" },
+    { value: "latest", label: "最新发布" },
+    { value: "deadline", label: "截止时间" },
+    { value: "amount", label: "补贴金额" },
   ];
 
   // 状态映射
   const statusConfig = {
-    active: { color: 'success', icon: <CheckCircleOutlined />, text: '进行中' },
-    pending: { color: 'warning', icon: <ClockCircleOutlined />, text: '待审核' },
-    expired: { color: 'default', icon: <ExclamationCircleOutlined />, text: '已截止' }
+    active: { color: "success", icon: <CheckCircleOutlined />, text: "进行中" },
+    pending: {
+      color: "warning",
+      icon: <ClockCircleOutlined />,
+      text: "待审核",
+    },
+    expired: {
+      color: "default",
+      icon: <ExclamationCircleOutlined />,
+      text: "已截止",
+    },
   };
 
   // 批量操作菜单
-  const batchMenuItems: MenuProps['items'] = [
+  const batchMenuItems: MenuProps["items"] = [
     {
-      key: 'favorite',
+      key: "favorite",
       icon: <StarOutlined />,
-      label: '添加到收藏',
-      onClick: () => handleBatchAction('favorite')
+      label: "添加到收藏",
+      onClick: () => handleBatchAction("favorite"),
     },
     {
-      key: 'tag',
+      key: "tag",
       icon: <EditOutlined />,
-      label: '批量标记',
-      onClick: () => setBatchEditVisible(true)
+      label: "批量标记",
+      onClick: () => setBatchEditVisible(true),
     },
     {
-      key: 'export',
+      key: "export",
       icon: <ExportOutlined />,
-      label: '导出选中项',
-      onClick: () => handleExportSelected()
-    }
+      label: "导出选中项",
+      onClick: () => handleExportSelected(),
+    },
   ];
 
   // 处理全选
   const handleSelectAll = (checked: boolean) => {
     if (checked) {
-      setSelectedItems(data.map(item => item.id));
+      setSelectedItems(data.map((item) => item.id));
     } else {
       setSelectedItems([]);
     }
@@ -144,22 +152,22 @@ const PolicyResultsList: React.FC<PolicyResultsListProps> = ({
   // 处理单项选择
   const handleSelectItem = (id: string, checked: boolean) => {
     if (checked) {
-      setSelectedItems(prev => [...prev, id]);
+      setSelectedItems((prev) => [...prev, id]);
     } else {
-      setSelectedItems(prev => prev.filter(item => item !== id));
+      setSelectedItems((prev) => prev.filter((item) => item !== id));
     }
   };
 
   // 处理收藏
   const handleToggleFavorite = (id: string) => {
-    setFavorites(prev => {
+    setFavorites((prev) => {
       const newFavorites = new Set(prev);
       if (newFavorites.has(id)) {
         newFavorites.delete(id);
-        message.success('已取消收藏');
+        message.success("已取消收藏");
       } else {
         newFavorites.add(id);
-        message.success('已添加收藏');
+        message.success("已添加收藏");
       }
       return newFavorites;
     });
@@ -168,7 +176,7 @@ const PolicyResultsList: React.FC<PolicyResultsListProps> = ({
   // 处理批量操作
   const handleBatchAction = (action: string) => {
     if (selectedItems.length === 0) {
-      message.warning('请先选择要操作的政策');
+      message.warning("请先选择要操作的政策");
       return;
     }
     onBatchEdit?.(selectedItems, action);
@@ -178,28 +186,31 @@ const PolicyResultsList: React.FC<PolicyResultsListProps> = ({
   // 导出选中项
   const handleExportSelected = () => {
     if (selectedItems.length === 0) {
-      message.warning('请先选择要导出的政策');
+      message.warning("请先选择要导出的政策");
       return;
     }
 
-    const selectedData = data.filter(item => selectedItems.includes(item.id));
-    const exportData = selectedData.map(item => ({
-      '政策标题': item.title,
-      '发布日期': item.publishDate,
-      '发布部门': item.department,
-      '适用行业': item.industry.join(', '),
-      '政策级别': item.level,
-      '适用地区': item.region,
-      '补贴金额': item.subsidyAmount || '未明确',
-      '状态': statusConfig[item.status].text,
-      '政策摘要': item.summary
+    const selectedData = data.filter((item) => selectedItems.includes(item.id));
+    const exportData = selectedData.map((item) => ({
+      政策标题: item.title,
+      发布日期: item.publishDate,
+      发布部门: item.department,
+      适用行业: item.industry.join(", "),
+      政策级别: item.level,
+      适用地区: item.region,
+      补贴金额: item.subsidyAmount || "未明确",
+      状态: statusConfig[item.status].text,
+      政策摘要: item.summary,
     }));
 
     const ws = XLSX.utils.json_to_sheet(exportData);
     const wb = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(wb, ws, '政策列表');
-    XLSX.writeFile(wb, `政策列表_${new Date().toISOString().split('T')[0]}.xlsx`);
-    
+    XLSX.utils.book_append_sheet(wb, ws, "政策列表");
+    XLSX.writeFile(
+      wb,
+      `政策列表_${new Date().toISOString().split("T")[0]}.xlsx`,
+    );
+
     message.success(`已导出 ${selectedItems.length} 条政策数据`);
     setSelectedItems([]);
   };
@@ -211,17 +222,26 @@ const PolicyResultsList: React.FC<PolicyResultsListProps> = ({
 
   // 计算选择状态
   const isAllSelected = selectedItems.length === data.length && data.length > 0;
-  const isIndeterminate = selectedItems.length > 0 && selectedItems.length < data.length;
+  const isIndeterminate =
+    selectedItems.length > 0 && selectedItems.length < data.length;
 
   return (
-    <div style={{ background: '#fff', borderRadius: 8, overflow: 'hidden' }}>
+    <div style={{ background: "#fff", borderRadius: 8, overflow: "hidden" }}>
       {/* 列表头部 */}
-      <div style={{ 
-        padding: '16px 24px', 
-        borderBottom: '1px solid #f0f0f0',
-        background: '#fafafa'
-      }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+      <div
+        style={{
+          padding: "16px 24px",
+          borderBottom: "1px solid #f0f0f0",
+          background: "#fafafa",
+        }}
+      >
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+          }}
+        >
           <div>
             <Title level={4} style={{ margin: 0, marginBottom: 4 }}>
               您主动搜索到以下政策
@@ -230,7 +250,7 @@ const PolicyResultsList: React.FC<PolicyResultsListProps> = ({
               共找到 {total} 条政策，当前显示第 {current} 页
             </Text>
           </div>
-          
+
           <Space>
             {/* 排序选择 */}
             <Select
@@ -239,7 +259,7 @@ const PolicyResultsList: React.FC<PolicyResultsListProps> = ({
               style={{ width: 120 }}
               size="small"
             >
-              {sortOptions.map(option => (
+              {sortOptions.map((option) => (
                 <Option key={option.value} value={option.value}>
                   {option.label}
                 </Option>
@@ -256,13 +276,13 @@ const PolicyResultsList: React.FC<PolicyResultsListProps> = ({
                 >
                   全选
                 </Checkbox>
-                
-                <Dropdown 
+
+                <Dropdown
                   menu={{ items: batchMenuItems }}
                   disabled={selectedItems.length === 0}
                 >
-                  <Button 
-                    size="small" 
+                  <Button
+                    size="small"
                     icon={<SettingOutlined />}
                     disabled={selectedItems.length === 0}
                   >
@@ -270,8 +290,8 @@ const PolicyResultsList: React.FC<PolicyResultsListProps> = ({
                   </Button>
                 </Dropdown>
 
-                <Button 
-                  size="small" 
+                <Button
+                  size="small"
                   icon={<ExportOutlined />}
                   onClick={handleExportAll}
                 >
@@ -290,34 +310,42 @@ const PolicyResultsList: React.FC<PolicyResultsListProps> = ({
         renderItem={(item) => (
           <List.Item
             key={item.id}
-            style={{ 
-              padding: '20px 24px',
-              borderBottom: '1px solid #f5f5f5'
+            style={{
+              padding: "20px 24px",
+              borderBottom: "1px solid #f5f5f5",
             }}
             actions={[
               <Tooltip title={favorites.has(item.id) ? "取消收藏" : "添加收藏"}>
                 <Button
                   type="text"
-                  icon={favorites.has(item.id) ? <StarFilled style={{ color: '#faad14' }} /> : <StarOutlined />}
+                  icon={
+                    favorites.has(item.id) ? (
+                      <StarFilled style={{ color: "#faad14" }} />
+                    ) : (
+                      <StarOutlined />
+                    )
+                  }
                   onClick={() => handleToggleFavorite(item.id)}
                 />
               </Tooltip>,
-              <Button 
-                type="primary" 
+              <Button
+                type="primary"
                 icon={<EyeOutlined />}
                 onClick={() => onViewDetail(item.id)}
               >
                 查看详情
-              </Button>
+              </Button>,
             ]}
           >
-            <div style={{ display: 'flex', width: '100%' }}>
+            <div style={{ display: "flex", width: "100%" }}>
               {/* 选择框 */}
               {showBatchOperations && (
                 <div style={{ marginRight: 16, paddingTop: 4 }}>
                   <Checkbox
                     checked={selectedItems.includes(item.id)}
-                    onChange={(e) => handleSelectItem(item.id, e.target.checked)}
+                    onChange={(e) =>
+                      handleSelectItem(item.id, e.target.checked)
+                    }
                   />
                 </div>
               )}
@@ -330,24 +358,24 @@ const PolicyResultsList: React.FC<PolicyResultsListProps> = ({
                       {item.title}
                     </Title>
                     {item.matchScore && (
-                      <Progress 
-                        type="circle" 
+                      <Progress
+                        type="circle"
                         size={40}
-                        percent={item.matchScore} 
-                        format={percent => `${percent}%`}
+                        percent={item.matchScore}
+                        format={(percent) => `${percent}%`}
                         strokeColor="#52c41a"
                       />
                     )}
                   </Space>
                 </div>
 
-                <Paragraph 
-                  style={{ 
-                    color: '#666', 
+                <Paragraph
+                  style={{
+                    color: "#666",
                     marginBottom: 12,
-                    lineHeight: 1.6 
+                    lineHeight: 1.6,
                   }}
-                  ellipsis={{ rows: 2, expandable: true, symbol: '展开' }}
+                  ellipsis={{ rows: 2, expandable: true, symbol: "展开" }}
                 >
                   {item.summary}
                 </Paragraph>
@@ -363,16 +391,14 @@ const PolicyResultsList: React.FC<PolicyResultsListProps> = ({
                     <Tag icon={<TeamOutlined />} color="orange">
                       {item.level}
                     </Tag>
-                    <Tag 
-                      icon={statusConfig[item.status].icon} 
+                    <Tag
+                      icon={statusConfig[item.status].icon}
                       color={statusConfig[item.status].color}
                     >
                       {statusConfig[item.status].text}
                     </Tag>
                     {item.subsidyAmount && (
-                      <Tag color="red">
-                        💰 {item.subsidyAmount}
-                      </Tag>
+                      <Tag color="red">💰 {item.subsidyAmount}</Tag>
                     )}
                   </Space>
                 </div>
@@ -396,23 +422,25 @@ const PolicyResultsList: React.FC<PolicyResultsListProps> = ({
       />
 
       {/* 分页 */}
-      <div style={{ 
-        padding: '16px 24px', 
-        textAlign: 'center',
-        borderTop: '1px solid #f0f0f0',
-        background: '#fafafa'
-      }}>
+      <div
+        style={{
+          padding: "16px 24px",
+          textAlign: "center",
+          borderTop: "1px solid #f0f0f0",
+          background: "#fafafa",
+        }}
+      >
         <Pagination
           current={current}
           pageSize={pageSize}
           total={total}
           showSizeChanger
           showQuickJumper
-          showTotal={(total, range) => 
+          showTotal={(total, range) =>
             `第 ${range[0]}-${range[1]} 条，共 ${total} 条政策`
           }
           onChange={onPageChange}
-          pageSizeOptions={['10', '20', '50', '100']}
+          pageSizeOptions={["10", "20", "50", "100"]}
         />
       </div>
 
@@ -423,16 +451,14 @@ const PolicyResultsList: React.FC<PolicyResultsListProps> = ({
         onCancel={() => setBatchEditVisible(false)}
         footer={null}
       >
-        <Space direction="vertical" style={{ width: '100%' }}>
+        <Space direction="vertical" style={{ width: "100%" }}>
           <Text>已选择 {selectedItems.length} 条政策</Text>
           <Space>
-            <Button onClick={() => handleBatchAction('important')}>
+            <Button onClick={() => handleBatchAction("important")}>
               标记为重要
             </Button>
-            <Button onClick={() => handleBatchAction('archive')}>
-              归档
-            </Button>
-            <Button onClick={() => handleBatchAction('delete')} danger>
+            <Button onClick={() => handleBatchAction("archive")}>归档</Button>
+            <Button onClick={() => handleBatchAction("delete")} danger>
               删除
             </Button>
           </Space>

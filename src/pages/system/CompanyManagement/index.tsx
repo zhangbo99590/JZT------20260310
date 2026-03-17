@@ -8,7 +8,11 @@ import React from "react";
 import { Row, Col, Typography, Button, Breadcrumb } from "antd";
 import { EditOutlined, BankOutlined } from "@ant-design/icons";
 import { ProfileOverviewCard, ProfileEditModal } from "./components/index.ts";
-import { useCompanyProfile, UICompanyProfile, CompanyProfile } from "./hooks/useCompanyProfile.ts";
+import {
+  useCompanyProfile,
+  UICompanyProfile,
+  CompanyProfile,
+} from "./hooks/useCompanyProfile.ts";
 
 const { Title, Text } = Typography;
 

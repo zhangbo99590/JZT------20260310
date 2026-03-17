@@ -56,15 +56,18 @@ export const getTrendChartOption = () => {
 /**
  * 智能看板-申报趋势图配置
  */
-export const getSmartTrendOption = (data: any[], onPointClick?: (params: any) => void) => {
+export const getSmartTrendOption = (
+  data: any[],
+  onPointClick?: (params: any) => void,
+) => {
   return {
     tooltip: {
-      trigger: 'axis',
+      trigger: "axis",
       axisPointer: {
-        type: 'cross',
+        type: "cross",
         label: {
-          backgroundColor: '#6a7985'
-        }
+          backgroundColor: "#6a7985",
+        },
       },
       formatter: (params: any) => {
         const dataIndex = params[0].dataIndex;
@@ -77,53 +80,53 @@ export const getSmartTrendOption = (data: any[], onPointClick?: (params: any) =>
         res += `<div style="color: #999; font-size: 12px; margin-top: 8px;">点击查看该月申报记录</div>`;
         res += `</div>`;
         return res;
-      }
+      },
     },
     legend: {
-      data: ['申报数量', '成功数量']
+      data: ["申报数量", "成功数量"],
     },
     grid: {
-      left: '3%',
-      right: '4%',
-      bottom: '3%',
-      containLabel: true
+      left: "3%",
+      right: "4%",
+      bottom: "3%",
+      containLabel: true,
     },
     xAxis: [
       {
-        type: 'category',
+        type: "category",
         boundaryGap: false,
-        data: data.map(item => item.month)
-      }
+        data: data.map((item) => item.month),
+      },
     ],
     yAxis: [
       {
-        type: 'value'
-      }
+        type: "value",
+      },
     ],
     series: [
       {
-        name: '申报数量',
-        type: 'line',
-        stack: 'Total',
+        name: "申报数量",
+        type: "line",
+        stack: "Total",
         areaStyle: {},
         emphasis: {
-          focus: 'series'
+          focus: "series",
         },
-        data: data.map(item => item.applications),
-        itemStyle: { color: '#1890ff' }
+        data: data.map((item) => item.applications),
+        itemStyle: { color: "#1890ff" },
       },
       {
-        name: '成功数量',
-        type: 'line',
-        stack: 'Total',
+        name: "成功数量",
+        type: "line",
+        stack: "Total",
         areaStyle: {},
         emphasis: {
-          focus: 'series'
+          focus: "series",
         },
-        data: data.map(item => item.success),
-        itemStyle: { color: '#52c41a' }
-      }
-    ]
+        data: data.map((item) => item.success),
+        itemStyle: { color: "#52c41a" },
+      },
+    ],
   };
 };
 
@@ -133,59 +136,64 @@ export const getSmartTrendOption = (data: any[], onPointClick?: (params: any) =>
 export const getFundFlowOption = (data: any[]) => {
   return {
     tooltip: {
-      trigger: 'axis',
+      trigger: "axis",
       axisPointer: {
-        type: 'shadow'
+        type: "shadow",
       },
       formatter: (params: any) => {
-        let res = params[0].name + '<br/>';
+        let res = params[0].name + "<br/>";
         params.forEach((item: any) => {
-          res += item.marker + item.seriesName + ': ¥' + (item.value / 10000).toFixed(0) + '万<br/>';
+          res +=
+            item.marker +
+            item.seriesName +
+            ": ¥" +
+            (item.value / 10000).toFixed(0) +
+            "万<br/>";
         });
         return res;
-      }
+      },
     },
     legend: {},
     grid: {
-      left: '3%',
-      right: '4%',
-      bottom: '3%',
-      containLabel: true
+      left: "3%",
+      right: "4%",
+      bottom: "3%",
+      containLabel: true,
     },
     xAxis: {
-      type: 'value',
-      boundaryGap: [0, 0.01]
+      type: "value",
+      boundaryGap: [0, 0.01],
     },
     yAxis: {
-      type: 'category',
-      data: data.map(item => item.category)
+      type: "category",
+      data: data.map((item) => item.category),
     },
     series: [
       {
-        name: 'Q1',
-        type: 'bar',
-        data: data.map(item => item.Q1),
-        itemStyle: { color: '#1890ff' }
+        name: "Q1",
+        type: "bar",
+        data: data.map((item) => item.Q1),
+        itemStyle: { color: "#1890ff" },
       },
       {
-        name: 'Q2',
-        type: 'bar',
-        data: data.map(item => item.Q2),
-        itemStyle: { color: '#52c41a' }
+        name: "Q2",
+        type: "bar",
+        data: data.map((item) => item.Q2),
+        itemStyle: { color: "#52c41a" },
       },
       {
-        name: 'Q3',
-        type: 'bar',
-        data: data.map(item => item.Q3),
-        itemStyle: { color: '#fa8c16' }
+        name: "Q3",
+        type: "bar",
+        data: data.map((item) => item.Q3),
+        itemStyle: { color: "#fa8c16" },
       },
       {
-        name: 'Q4',
-        type: 'bar',
-        data: data.map(item => item.Q4),
-        itemStyle: { color: '#722ed1' }
-      }
-    ]
+        name: "Q4",
+        type: "bar",
+        data: data.map((item) => item.Q4),
+        itemStyle: { color: "#722ed1" },
+      },
+    ],
   };
 };
 
@@ -195,30 +203,30 @@ export const getFundFlowOption = (data: any[]) => {
 export const getPolicyDistributionOption = (data: any[]) => {
   return {
     tooltip: {
-      trigger: 'item'
+      trigger: "item",
     },
     legend: {
-      orient: 'vertical',
-      left: 'left'
+      orient: "vertical",
+      left: "left",
     },
     series: [
       {
-        name: '政策类型',
-        type: 'pie',
-        radius: '50%',
-        data: data.map(item => ({
+        name: "政策类型",
+        type: "pie",
+        radius: "50%",
+        data: data.map((item) => ({
           value: item.value,
           name: item.name,
-          itemStyle: { color: item.color }
+          itemStyle: { color: item.color },
         })),
         emphasis: {
           itemStyle: {
             shadowBlur: 10,
             shadowOffsetX: 0,
-            shadowColor: 'rgba(0, 0, 0, 0.5)'
-          }
-        }
-      }
-    ]
+            shadowColor: "rgba(0, 0, 0, 0.5)",
+          },
+        },
+      },
+    ],
   };
 };

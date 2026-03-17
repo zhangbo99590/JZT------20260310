@@ -81,10 +81,16 @@ export const UserFormModal: React.FC<UserFormModalProps> = ({
         </Row>
         <Row gutter={16}>
           <Col span={12}>
-            <Form.Item name="roles" label="角色" rules={[{ required: true, message: "请选择角色" }]}>
+            <Form.Item
+              name="roles"
+              label="角色"
+              rules={[{ required: true, message: "请选择角色" }]}
+            >
               <Select placeholder="请选择角色">
                 <Select.Option value="super_admin">超级管理员</Select.Option>
-                <Select.Option value="enterprise_admin">企业管理员</Select.Option>
+                <Select.Option value="enterprise_admin">
+                  企业管理员
+                </Select.Option>
                 <Select.Option value="user">普通成员</Select.Option>
               </Select>
             </Form.Item>

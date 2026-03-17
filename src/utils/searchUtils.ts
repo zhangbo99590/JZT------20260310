@@ -47,7 +47,7 @@ export function searchByKeyword<T>(
   items: T[],
   keyword?: string,
   searchFields?: (keyof T)[],
-  useBooleanSearch: boolean = false
+  useBooleanSearch: boolean = false,
 ): T[] {
   if (!keyword || keyword.trim() === "") {
     return items;
@@ -91,7 +91,7 @@ export function searchByKeyword<T>(
       } else {
         // 在所有字段中搜索
         return Object.values(item).some((value) =>
-          matchValue(value, searchTerm)
+          matchValue(value, searchTerm),
         );
       }
     });
@@ -122,7 +122,7 @@ function matchValue(value: any, searchTerm: string): boolean {
  */
 export function filterByFields<T>(
   items: T[],
-  filters?: Partial<Record<keyof T, any>>
+  filters?: Partial<Record<keyof T, any>>,
 ): T[] {
   if (!filters || Object.keys(filters).length === 0) {
     return items;
@@ -170,7 +170,7 @@ export function filterByFields<T>(
 export function sortArray<T>(
   items: T[],
   sortBy?: keyof T,
-  direction: "asc" | "desc" = "asc"
+  direction: "asc" | "desc" = "asc",
 ): T[] {
   if (!sortBy) return items;
 
@@ -214,7 +214,7 @@ export function sortArray<T>(
 export function paginateArray<T>(
   items: T[],
   page: number = 1,
-  pageSize: number = 10
+  pageSize: number = 10,
 ): PaginatedResult<T> {
   const start = (page - 1) * pageSize;
   const end = start + pageSize;
@@ -237,7 +237,7 @@ export function paginateArray<T>(
  */
 export async function searchItems<T>(
   items: T[],
-  options: SearchOptions<T> = {}
+  options: SearchOptions<T> = {},
 ): Promise<PaginatedResult<T>> {
   // 模拟API延迟
   if (options.delay !== undefined) {
@@ -249,7 +249,7 @@ export async function searchItems<T>(
     items,
     options.keyword,
     options.searchFields,
-    options.booleanSearch
+    options.booleanSearch,
   );
 
   // 字段过滤
@@ -277,7 +277,7 @@ export async function searchItems<T>(
  */
 export function createGroupStats<T>(
   items: T[],
-  groupBy: keyof T
+  groupBy: keyof T,
 ): Array<{ name: string; value: any; count: number; percentage: number }> {
   const groups = new Map<string, number>();
   const total = items.length;

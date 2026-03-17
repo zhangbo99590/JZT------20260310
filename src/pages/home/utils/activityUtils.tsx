@@ -18,7 +18,7 @@ import {
  */
 export const getActivityIcon = (
   type: string,
-  status: string
+  status: string,
 ): React.ReactNode => {
   if (type === "result") {
     return status === "success" ? (

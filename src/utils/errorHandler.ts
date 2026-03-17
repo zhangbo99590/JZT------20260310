@@ -3,18 +3,18 @@
  * 提供错误捕获、日志记录、用户提示等功能
  */
 
-import { message, notification } from 'antd';
+import { message, notification } from "antd";
 
 /**
  * 错误类型枚举
  */
 export enum ErrorType {
-  NETWORK = 'NETWORK',
-  API = 'API',
-  VALIDATION = 'VALIDATION',
-  PERMISSION = 'PERMISSION',
-  BUSINESS = 'BUSINESS',
-  UNKNOWN = 'UNKNOWN',
+  NETWORK = "NETWORK",
+  API = "API",
+  VALIDATION = "VALIDATION",
+  PERMISSION = "PERMISSION",
+  BUSINESS = "BUSINESS",
+  UNKNOWN = "UNKNOWN",
 }
 
 /**
@@ -29,10 +29,10 @@ export class AppError extends Error {
     message: string,
     type: ErrorType = ErrorType.UNKNOWN,
     code?: string,
-    details?: any
+    details?: any,
   ) {
     super(message);
-    this.name = 'AppError';
+    this.name = "AppError";
     this.type = type;
     this.code = code;
     this.details = details;
@@ -64,8 +64,8 @@ class ErrorLogger {
     }
 
     // 在开发环境打印详细错误
-    if (process.env.NODE_ENV === 'development') {
-      console.error('[Error Log]', {
+    if (process.env.NODE_ENV === "development") {
+      console.error("[Error Log]", {
         message: error.message,
         type: (error as AppError).type,
         code: (error as AppError).code,
@@ -110,7 +110,7 @@ interface ErrorHandlerConfig {
 export function handleError(
   error: Error | AppError | any,
   config: ErrorHandlerConfig = {},
-  context?: any
+  context?: any,
 ): void {
   const {
     showMessage: shouldShowMessage = true,
@@ -142,7 +142,7 @@ export function handleError(
 
   if (shouldShowNotification) {
     notification.error({
-      message: '操作失败',
+      message: "操作失败",
       description: getErrorMessage(appError),
       duration: 5,
     });
@@ -160,17 +160,17 @@ export function handleError(
 function getErrorMessage(error: AppError): string {
   switch (error.type) {
     case ErrorType.NETWORK:
-      return '网络连接失败，请检查网络设置';
+      return "网络连接失败，请检查网络设置";
     case ErrorType.API:
-      return error.message || 'API请求失败，请稍后重试';
+      return error.message || "API请求失败，请稍后重试";
     case ErrorType.VALIDATION:
-      return error.message || '数据验证失败，请检查输入';
+      return error.message || "数据验证失败，请检查输入";
     case ErrorType.PERMISSION:
-      return '您没有权限执行此操作';
+      return "您没有权限执行此操作";
     case ErrorType.BUSINESS:
-      return error.message || '业务处理失败';
+      return error.message || "业务处理失败";
     default:
-      return error.message || '操作失败，请稍后重试';
+      return error.message || "操作失败，请稍后重试";
   }
 }
 
@@ -179,13 +179,13 @@ function getErrorMessage(error: AppError): string {
  */
 function reportErrorToService(error: AppError, context?: any): void {
   // 这里可以集成第三方错误监控服务，如 Sentry
-  if (process.env.NODE_ENV === 'production') {
+  if (process.env.NODE_ENV === "production") {
     // 示例：发送到后端API
     try {
-      fetch('/api/error-report', {
-        method: 'POST',
+      fetch("/api/error-report", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({
           message: error.message,
@@ -211,7 +211,7 @@ function reportErrorToService(error: AppError, context?: any): void {
  */
 export function withErrorHandler<T extends (...args: any[]) => Promise<any>>(
   fn: T,
-  config?: ErrorHandlerConfig
+  config?: ErrorHandlerConfig,
 ): T {
   return (async (...args: Parameters<T>) => {
     try {
@@ -228,17 +228,17 @@ export function withErrorHandler<T extends (...args: any[]) => Promise<any>>(
  */
 export function logComponentError(
   error: Error,
-  errorInfo: React.ErrorInfo
+  errorInfo: React.ErrorInfo,
 ): void {
   errorLogger.log(error, {
     componentStack: errorInfo.componentStack,
   });
 
   // 在生产环境上报错误
-  if (process.env.NODE_ENV === 'production') {
+  if (process.env.NODE_ENV === "production") {
     reportErrorToService(
       new AppError(error.message, ErrorType.UNKNOWN),
-      errorInfo
+      errorInfo,
     );
   }
 }
@@ -248,11 +248,7 @@ export function logComponentError(
  */
 export function handleNetworkError(error: any): AppError {
   if (!navigator.onLine) {
-    return new AppError(
-      '网络连接已断开',
-      ErrorType.NETWORK,
-      'OFFLINE'
-    );
+    return new AppError("网络连接已断开", ErrorType.NETWORK, "OFFLINE");
   }
 
   if (error.response) {
@@ -263,63 +259,51 @@ export function handleNetworkError(error: any): AppError {
     switch (status) {
       case 400:
         return new AppError(
-          data?.message || '请求参数错误',
+          data?.message || "请求参数错误",
           ErrorType.VALIDATION,
-          'BAD_REQUEST',
-          data
+          "BAD_REQUEST",
+          data,
         );
       case 401:
         return new AppError(
-          '未授权，请重新登录',
+          "未授权，请重新登录",
           ErrorType.PERMISSION,
-          'UNAUTHORIZED'
+          "UNAUTHORIZED",
         );
       case 403:
-        return new AppError(
-          '没有权限访问',
-          ErrorType.PERMISSION,
-          'FORBIDDEN'
-        );
+        return new AppError("没有权限访问", ErrorType.PERMISSION, "FORBIDDEN");
       case 404:
-        return new AppError(
-          '请求的资源不存在',
-          ErrorType.API,
-          'NOT_FOUND'
-        );
+        return new AppError("请求的资源不存在", ErrorType.API, "NOT_FOUND");
       case 500:
         return new AppError(
-          '服务器内部错误',
+          "服务器内部错误",
           ErrorType.API,
-          'SERVER_ERROR',
-          data
+          "SERVER_ERROR",
+          data,
         );
       case 503:
         return new AppError(
-          '服务暂时不可用',
+          "服务暂时不可用",
           ErrorType.API,
-          'SERVICE_UNAVAILABLE'
+          "SERVICE_UNAVAILABLE",
         );
       default:
         return new AppError(
           data?.message || `请求失败 (${status})`,
           ErrorType.API,
           `HTTP_${status}`,
-          data
+          data,
         );
     }
   } else if (error.request) {
     // 请求已发送但没有收到响应
-    return new AppError(
-      '网络请求超时',
-      ErrorType.NETWORK,
-      'TIMEOUT'
-    );
+    return new AppError("网络请求超时", ErrorType.NETWORK, "TIMEOUT");
   } else {
     // 请求配置错误
     return new AppError(
-      error.message || '请求配置错误',
+      error.message || "请求配置错误",
       ErrorType.UNKNOWN,
-      'REQUEST_ERROR'
+      "REQUEST_ERROR",
     );
   }
 }
@@ -327,9 +311,7 @@ export function handleNetworkError(error: any): AppError {
 /**
  * 表单验证错误处理
  */
-export function handleValidationError(
-  errors: Record<string, string[]>
-): void {
+export function handleValidationError(errors: Record<string, string[]>): void {
   const firstError = Object.values(errors)[0]?.[0];
   if (firstError) {
     message.error(firstError);
@@ -342,7 +324,7 @@ export function handleValidationError(
 export function createBusinessError(
   message: string,
   code?: string,
-  details?: any
+  details?: any,
 ): AppError {
   return new AppError(message, ErrorType.BUSINESS, code, details);
 }
@@ -352,19 +334,19 @@ export function createBusinessError(
  */
 export function setupGlobalErrorHandlers(): void {
   // 捕获未处理的Promise rejection
-  window.addEventListener('unhandledrejection', (event) => {
+  window.addEventListener("unhandledrejection", (event) => {
     event.preventDefault();
     handleError(
       new AppError(
         event.reason?.message || String(event.reason),
-        ErrorType.UNKNOWN
+        ErrorType.UNKNOWN,
       ),
-      { showMessage: false, showNotification: true }
+      { showMessage: false, showNotification: true },
     );
   });
 
   // 捕获全局错误
-  window.addEventListener('error', (event) => {
+  window.addEventListener("error", (event) => {
     event.preventDefault();
     handleError(
       new AppError(event.message, ErrorType.UNKNOWN),
@@ -373,7 +355,7 @@ export function setupGlobalErrorHandlers(): void {
         filename: event.filename,
         lineno: event.lineno,
         colno: event.colno,
-      }
+      },
     );
   });
 }

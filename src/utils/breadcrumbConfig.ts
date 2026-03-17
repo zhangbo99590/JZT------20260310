@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 
 /**
  * 面包屑导航配置
@@ -180,22 +180,37 @@ export const getBreadcrumbItems = (pathname: string): BreadcrumbItem[] => {
   // 移除最后的 ID 部分 (假设 ID 不包含斜杠)
   const dynamicPatterns = [
     // 政策中心
-    { pattern: /\/policy-center\/detail\/[^/]+$/, key: "/policy-center/detail" },
-    
+    {
+      pattern: /\/policy-center\/detail\/[^/]+$/,
+      key: "/policy-center/detail",
+    },
+
     // 申报管理
     { pattern: /\/application\/detail\/[^/]+$/, key: "/application/detail" },
     { pattern: /\/application\/apply\/[^/]+$/, key: "/application/apply" },
     { pattern: /\/application\/success\/[^/]+$/, key: "/application/success" },
-    
+
     // 法律护航
-    { pattern: /\/legal-support\/regulation-detail\/[^/]+$/, key: "/legal-support/regulation-detail" },
-    { pattern: /\/legal-support\/regulation-query\/detail\/[^/]+$/, key: "/legal-support/regulation-query/detail" },
-    
+    {
+      pattern: /\/legal-support\/regulation-detail\/[^/]+$/,
+      key: "/legal-support/regulation-detail",
+    },
+    {
+      pattern: /\/legal-support\/regulation-query\/detail\/[^/]+$/,
+      key: "/legal-support/regulation-query/detail",
+    },
+
     // 企服管理
-    { pattern: /\/industry\/service-match\/detail\/[^/]+$/, key: "/industry/service-match/detail" },
-    
+    {
+      pattern: /\/industry\/service-match\/detail\/[^/]+$/,
+      key: "/industry/service-match/detail",
+    },
+
     // 金融服务
-    { pattern: /\/supply-chain-finance\/financing-option-detail\/[^/]+$/, key: "/supply-chain-finance/financing-option-detail" },
+    {
+      pattern: /\/supply-chain-finance\/financing-option-detail\/[^/]+$/,
+      key: "/supply-chain-finance/financing-option-detail",
+    },
   ];
 
   for (const { pattern, key } of dynamicPatterns) {

@@ -4,30 +4,30 @@
  * 功能: 提供首页布局和显示选项的个性化设置
  */
 
-import React, { useState, useEffect } from 'react';
-import { 
-  Drawer, 
-  Switch, 
-  Slider, 
-  Select, 
-  Card, 
-  Row, 
-  Col, 
-  Typography, 
-  Button, 
+import React, { useState, useEffect } from "react";
+import {
+  Drawer,
+  Switch,
+  Slider,
+  Select,
+  Card,
+  Row,
+  Col,
+  Typography,
+  Button,
   Divider,
   Space,
   ColorPicker,
-  message
-} from 'antd';
-import { 
-  SettingOutlined, 
-  EyeOutlined, 
+  message,
+} from "antd";
+import {
+  SettingOutlined,
+  EyeOutlined,
   BgColorsOutlined,
   LayoutOutlined,
   ReloadOutlined,
-  SaveOutlined
-} from '@ant-design/icons';
+  SaveOutlined,
+} from "@ant-design/icons";
 
 const { Title, Text } = Typography;
 const { Option } = Select;
@@ -39,7 +39,7 @@ interface PersonalizationSettings {
   showQuickTools: boolean;
   autoRefresh: boolean;
   refreshInterval: number;
-  theme: 'light' | 'dark' | 'auto';
+  theme: "light" | "dark" | "auto";
   primaryColor: string;
   compactMode: boolean;
   cardSpacing: number;
@@ -59,19 +59,20 @@ const defaultSettings: PersonalizationSettings = {
   showQuickTools: true,
   autoRefresh: false,
   refreshInterval: 30,
-  theme: 'light',
-  primaryColor: '#1890ff',
+  theme: "light",
+  primaryColor: "#1890ff",
   compactMode: false,
-  cardSpacing: 16
+  cardSpacing: 16,
 };
 
 export const PersonalizationPanel: React.FC<PersonalizationPanelProps> = ({
   visible,
   onClose,
   onSettingsChange,
-  currentSettings
+  currentSettings,
 }) => {
-  const [settings, setSettings] = useState<PersonalizationSettings>(currentSettings);
+  const [settings, setSettings] =
+    useState<PersonalizationSettings>(currentSettings);
   const [hasChanges, setHasChanges] = useState(false);
 
   useEffect(() => {
@@ -79,7 +80,10 @@ export const PersonalizationPanel: React.FC<PersonalizationPanelProps> = ({
     setHasChanges(false);
   }, [currentSettings, visible]);
 
-  const handleSettingChange = (key: keyof PersonalizationSettings, value: any) => {
+  const handleSettingChange = (
+    key: keyof PersonalizationSettings,
+    value: any,
+  ) => {
     const newSettings = { ...settings, [key]: value };
     setSettings(newSettings);
     setHasChanges(true);
@@ -87,20 +91,20 @@ export const PersonalizationPanel: React.FC<PersonalizationPanelProps> = ({
 
   const handleSave = () => {
     onSettingsChange(settings);
-    localStorage.setItem('homePageSettings', JSON.stringify(settings));
+    localStorage.setItem("homePageSettings", JSON.stringify(settings));
     setHasChanges(false);
-    message.success('设置已保存');
+    message.success("设置已保存");
   };
 
   const handleReset = () => {
     setSettings(defaultSettings);
     setHasChanges(true);
-    message.info('已重置为默认设置');
+    message.info("已重置为默认设置");
   };
 
   const handleApply = () => {
     onSettingsChange(settings);
-    message.success('设置已应用');
+    message.success("设置已应用");
   };
 
   return (
@@ -120,9 +124,9 @@ export const PersonalizationPanel: React.FC<PersonalizationPanelProps> = ({
           <Button size="small" onClick={handleReset}>
             重置
           </Button>
-          <Button 
-            type="primary" 
-            size="small" 
+          <Button
+            type="primary"
+            size="small"
             icon={<SaveOutlined />}
             onClick={handleSave}
             disabled={!hasChanges}
@@ -132,57 +136,67 @@ export const PersonalizationPanel: React.FC<PersonalizationPanelProps> = ({
         </Space>
       }
     >
-      <div style={{ padding: '0 0 20px 0' }}>
+      <div style={{ padding: "0 0 20px 0" }}>
         {/* 显示模块设置 */}
-        <Card size="small" style={{ marginBottom: '16px' }}>
+        <Card size="small" style={{ marginBottom: "16px" }}>
           <Title level={5}>
-            <EyeOutlined style={{ marginRight: '8px' }} />
+            <EyeOutlined style={{ marginRight: "8px" }} />
             显示模块
           </Title>
-          <Space direction="vertical" style={{ width: '100%' }}>
+          <Space direction="vertical" style={{ width: "100%" }}>
             <Row justify="space-between" align="middle">
               <Text>天气信息</Text>
               <Switch
                 checked={settings.showWeather}
-                onChange={(checked) => handleSettingChange('showWeather', checked)}
+                onChange={(checked) =>
+                  handleSettingChange("showWeather", checked)
+                }
               />
             </Row>
             <Row justify="space-between" align="middle">
               <Text>日程管理</Text>
               <Switch
                 checked={settings.showCalendar}
-                onChange={(checked) => handleSettingChange('showCalendar', checked)}
+                onChange={(checked) =>
+                  handleSettingChange("showCalendar", checked)
+                }
               />
             </Row>
             <Row justify="space-between" align="middle">
               <Text>智能看板</Text>
               <Switch
                 checked={settings.showSmartDashboard}
-                onChange={(checked) => handleSettingChange('showSmartDashboard', checked)}
+                onChange={(checked) =>
+                  handleSettingChange("showSmartDashboard", checked)
+                }
               />
             </Row>
             <Row justify="space-between" align="middle">
               <Text>快捷工具</Text>
               <Switch
                 checked={settings.showQuickTools}
-                onChange={(checked) => handleSettingChange('showQuickTools', checked)}
+                onChange={(checked) =>
+                  handleSettingChange("showQuickTools", checked)
+                }
               />
             </Row>
           </Space>
         </Card>
 
         {/* 刷新设置 */}
-        <Card size="small" style={{ marginBottom: '16px' }}>
+        <Card size="small" style={{ marginBottom: "16px" }}>
           <Title level={5}>
-            <ReloadOutlined style={{ marginRight: '8px' }} />
+            <ReloadOutlined style={{ marginRight: "8px" }} />
             数据刷新
           </Title>
-          <Space direction="vertical" style={{ width: '100%' }}>
+          <Space direction="vertical" style={{ width: "100%" }}>
             <Row justify="space-between" align="middle">
               <Text>自动刷新</Text>
               <Switch
                 checked={settings.autoRefresh}
-                onChange={(checked) => handleSettingChange('autoRefresh', checked)}
+                onChange={(checked) =>
+                  handleSettingChange("autoRefresh", checked)
+                }
               />
             </Row>
             {settings.autoRefresh && (
@@ -193,13 +207,15 @@ export const PersonalizationPanel: React.FC<PersonalizationPanelProps> = ({
                   max={300}
                   step={10}
                   value={settings.refreshInterval}
-                  onChange={(value) => handleSettingChange('refreshInterval', value)}
+                  onChange={(value) =>
+                    handleSettingChange("refreshInterval", value)
+                  }
                   marks={{
-                    10: '10s',
-                    30: '30s',
-                    60: '1m',
-                    180: '3m',
-                    300: '5m'
+                    10: "10s",
+                    30: "30s",
+                    60: "1m",
+                    180: "3m",
+                    300: "5m",
                   }}
                 />
               </div>
@@ -208,18 +224,18 @@ export const PersonalizationPanel: React.FC<PersonalizationPanelProps> = ({
         </Card>
 
         {/* 外观设置 */}
-        <Card size="small" style={{ marginBottom: '16px' }}>
+        <Card size="small" style={{ marginBottom: "16px" }}>
           <Title level={5}>
-            <BgColorsOutlined style={{ marginRight: '8px' }} />
+            <BgColorsOutlined style={{ marginRight: "8px" }} />
             外观设置
           </Title>
-          <Space direction="vertical" style={{ width: '100%' }}>
+          <Space direction="vertical" style={{ width: "100%" }}>
             <Row justify="space-between" align="middle">
               <Text>主题模式</Text>
               <Select
                 value={settings.theme}
                 style={{ width: 100 }}
-                onChange={(value) => handleSettingChange('theme', value)}
+                onChange={(value) => handleSettingChange("theme", value)}
               >
                 <Option value="light">浅色</Option>
                 <Option value="dark">深色</Option>
@@ -230,12 +246,14 @@ export const PersonalizationPanel: React.FC<PersonalizationPanelProps> = ({
               <Text>主色调</Text>
               <ColorPicker
                 value={settings.primaryColor}
-                onChange={(color) => handleSettingChange('primaryColor', color.toHexString())}
+                onChange={(color) =>
+                  handleSettingChange("primaryColor", color.toHexString())
+                }
                 presets={[
-                  { label: '蓝色', colors: ['#1890ff', '#096dd9', '#0050b3'] },
-                  { label: '绿色', colors: ['#52c41a', '#389e0d', '#237804'] },
-                  { label: '橙色', colors: ['#fa8c16', '#d46b08', '#ad4e00'] },
-                  { label: '紫色', colors: ['#722ed1', '#531dab', '#391085'] }
+                  { label: "蓝色", colors: ["#1890ff", "#096dd9", "#0050b3"] },
+                  { label: "绿色", colors: ["#52c41a", "#389e0d", "#237804"] },
+                  { label: "橙色", colors: ["#fa8c16", "#d46b08", "#ad4e00"] },
+                  { label: "紫色", colors: ["#722ed1", "#531dab", "#391085"] },
                 ]}
               />
             </Row>
@@ -243,16 +261,18 @@ export const PersonalizationPanel: React.FC<PersonalizationPanelProps> = ({
               <Text>紧凑模式</Text>
               <Switch
                 checked={settings.compactMode}
-                onChange={(checked) => handleSettingChange('compactMode', checked)}
+                onChange={(checked) =>
+                  handleSettingChange("compactMode", checked)
+                }
               />
             </Row>
           </Space>
         </Card>
 
         {/* 布局设置 */}
-        <Card size="small" style={{ marginBottom: '16px' }}>
+        <Card size="small" style={{ marginBottom: "16px" }}>
           <Title level={5}>
-            <LayoutOutlined style={{ marginRight: '8px' }} />
+            <LayoutOutlined style={{ marginRight: "8px" }} />
             布局设置
           </Title>
           <div>
@@ -262,12 +282,12 @@ export const PersonalizationPanel: React.FC<PersonalizationPanelProps> = ({
               max={32}
               step={4}
               value={settings.cardSpacing}
-              onChange={(value) => handleSettingChange('cardSpacing', value)}
+              onChange={(value) => handleSettingChange("cardSpacing", value)}
               marks={{
-                8: '紧密',
-                16: '标准',
-                24: '宽松',
-                32: '超宽'
+                8: "紧密",
+                16: "标准",
+                24: "宽松",
+                32: "超宽",
               }}
             />
           </div>
@@ -276,7 +296,7 @@ export const PersonalizationPanel: React.FC<PersonalizationPanelProps> = ({
         <Divider />
 
         {/* 操作按钮 */}
-        <Space style={{ width: '100%', justifyContent: 'center' }}>
+        <Space style={{ width: "100%", justifyContent: "center" }}>
           <Button onClick={handleApply} disabled={!hasChanges}>
             预览效果
           </Button>
@@ -285,9 +305,17 @@ export const PersonalizationPanel: React.FC<PersonalizationPanelProps> = ({
           </Button>
         </Space>
 
-        <div style={{ marginTop: '16px', padding: '12px', background: '#f6f6f6', borderRadius: '6px' }}>
-          <Text type="secondary" style={{ fontSize: '12px' }}>
-            💡 提示：设置会自动保存到本地存储，下次访问时会自动应用您的个性化配置。
+        <div
+          style={{
+            marginTop: "16px",
+            padding: "12px",
+            background: "#f6f6f6",
+            borderRadius: "6px",
+          }}
+        >
+          <Text type="secondary" style={{ fontSize: "12px" }}>
+            💡
+            提示：设置会自动保存到本地存储，下次访问时会自动应用您的个性化配置。
           </Text>
         </div>
       </div>
@@ -297,27 +325,28 @@ export const PersonalizationPanel: React.FC<PersonalizationPanelProps> = ({
 
 // Hook for managing personalization settings
 export const usePersonalizationSettings = () => {
-  const [settings, setSettings] = useState<PersonalizationSettings>(defaultSettings);
+  const [settings, setSettings] =
+    useState<PersonalizationSettings>(defaultSettings);
 
   useEffect(() => {
-    const savedSettings = localStorage.getItem('homePageSettings');
+    const savedSettings = localStorage.getItem("homePageSettings");
     if (savedSettings) {
       try {
         const parsed = JSON.parse(savedSettings);
         setSettings({ ...defaultSettings, ...parsed });
       } catch (error) {
-        console.error('Failed to parse saved settings:', error);
+        console.error("Failed to parse saved settings:", error);
       }
     }
   }, []);
 
   const updateSettings = (newSettings: PersonalizationSettings) => {
     setSettings(newSettings);
-    localStorage.setItem('homePageSettings', JSON.stringify(newSettings));
+    localStorage.setItem("homePageSettings", JSON.stringify(newSettings));
   };
 
   return {
     settings,
-    updateSettings
+    updateSettings,
   };
 };

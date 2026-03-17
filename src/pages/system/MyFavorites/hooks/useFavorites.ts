@@ -29,7 +29,7 @@ export function useFavorites() {
   useEffect(() => {
     const loadFavorites = () => {
       let storedFavorites = StorageUtils.getItem("my-favorites", null);
-      
+
       // 如果本地没有数据，加载模拟数据
       if (storedFavorites === null) {
         storedFavorites = mockFavorites;

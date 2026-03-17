@@ -48,10 +48,7 @@ import { useNavigate, useParams, useLocation } from "react-router-dom";
 
 import type { FinancingOption } from "./types";
 import { getFinancingOptionDetail, PURPOSE_OPTIONS } from "./config";
-import {
-  getMatchColor,
-  generateApplicationId,
-} from "./utils";
+import { getMatchColor, generateApplicationId } from "./utils";
 import { StorageUtils } from "../../../../utils/storage";
 
 const { Title, Text, Paragraph } = Typography;

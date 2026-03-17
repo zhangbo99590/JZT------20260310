@@ -21,7 +21,7 @@ export function useDiagnosisForm() {
       JSON.stringify({
         ...formData,
         saveTime: new Date().toISOString(),
-      })
+      }),
     );
     message.success("草稿已保存");
   }, [form]);
@@ -37,7 +37,7 @@ export function useDiagnosisForm() {
         JSON.stringify({
           ...values,
           submitTime: new Date().toISOString(),
-        })
+        }),
       );
 
       message.success("诊断完成，正在生成报告...");

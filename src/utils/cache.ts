@@ -231,7 +231,6 @@ class CacheManager {
       }
     });
 
-
     return deletedCount;
   }
 

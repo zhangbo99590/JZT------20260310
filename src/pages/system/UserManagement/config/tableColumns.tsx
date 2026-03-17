@@ -72,18 +72,24 @@ export function createUserColumns(
       align: "center",
       render: (roles: Array<{ roleName: string }>) => (
         <Space size={4}>
-          {roles && roles.length > 0 ? (
-            roles.map((role, index) => {
-              let color = "default";
-              if (role.roleName === "超级管理员") color = "red";
-              else if (role.roleName === "企业管理员" || role.roleName === "管理员") color = "blue";
-              else if (role.roleName === "普通成员") color = "green";
-              
-              return <Tag color={color} key={index}>{role.roleName}</Tag>;
-            })
-          ) : (
-            "无"
-          )}
+          {roles && roles.length > 0
+            ? roles.map((role, index) => {
+                let color = "default";
+                if (role.roleName === "超级管理员") color = "red";
+                else if (
+                  role.roleName === "企业管理员" ||
+                  role.roleName === "管理员"
+                )
+                  color = "blue";
+                else if (role.roleName === "普通成员") color = "green";
+
+                return (
+                  <Tag color={color} key={index}>
+                    {role.roleName}
+                  </Tag>
+                );
+              })
+            : "无"}
         </Space>
       ),
     },
