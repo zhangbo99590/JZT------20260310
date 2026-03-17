@@ -15,3 +15,4 @@ export { WeatherCalendarSection } from "./WeatherCalendarSection.tsx";
 export { SmartDashboardSection } from "./SmartDashboardSection.tsx";
 export { PersonalizedRecommendationSection } from "./PersonalizedRecommendationSection.tsx";
 export { QuickToolsSection } from "./QuickToolsSection.tsx";
+export { EnterpriseGuideSection } from "./EnterpriseGuideSection.tsx";

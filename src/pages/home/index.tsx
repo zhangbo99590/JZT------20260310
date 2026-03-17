@@ -20,6 +20,7 @@ import {
   SmartDashboardSection,
   PersonalizedRecommendationSection,
   QuickToolsSection,
+  EnterpriseGuideSection,
 } from "./components/index";
 import { useHomeData } from "./hooks/useHomeData";
 import { ErrorBoundary, SimpleErrorBoundary } from "../../components/common/ErrorBoundary";
@@ -135,6 +136,11 @@ const Home: React.FC = () => {
             />
           </Space>
         </div>
+
+        {/* 企业画像与认证引导 */}
+        <SimpleErrorBoundary>
+          <EnterpriseGuideSection loading={loading} />
+        </SimpleErrorBoundary>
 
         {/* 政策申报动态轮播图 */}
         <SimpleErrorBoundary>

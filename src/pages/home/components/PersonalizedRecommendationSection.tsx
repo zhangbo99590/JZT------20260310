@@ -39,10 +39,16 @@ interface PolicyRecommendation {
   benefits: string[];
   isHot: boolean;
   isUrgent: boolean;
+  type: 'policy' | 'service'; // 新增类型区分
+  provider?: string;          // 服务商（仅服务类有）
+  score?: number;             // 评分（仅服务类有）
 }
 
 export const PersonalizedRecommendationSection: React.FC = () => {
   const navigate = useNavigate();
+  // 增加标签页切换状态
+  const [activeTab, setActiveTab] = useState<'policy' | 'service'>('policy');
+
   const [companyProfile] = useState<CompanyProfile>({
     industry: '软件和信息技术服务业',
     size: '小微企业',
@@ -53,6 +59,7 @@ export const PersonalizedRecommendationSection: React.FC = () => {
   });
 
   const [recommendations, setRecommendations] = useState<PolicyRecommendation[]>([
+    // 政策数据
     {
       id: 1,
       title: '中关村高新技术企业认定补贴',
@@ -65,7 +72,8 @@ export const PersonalizedRecommendationSection: React.FC = () => {
       requirements: ['高新技术企业认定', '近两年研发投入占比>3%', '拥有自主知识产权'],
       benefits: ['最高50万资金支持', '税收优惠政策', '优先推荐上市辅导'],
       isHot: true,
-      isUrgent: true
+      isUrgent: true,
+      type: 'policy'
     },
     {
       id: 2,
@@ -79,7 +87,8 @@ export const PersonalizedRecommendationSection: React.FC = () => {
       requirements: ['注册时间不超过5年', '员工人数少于20人', '入驻认定基地'],
       benefits: ['租金补贴50%', '免费创业辅导', '融资对接服务'],
       isHot: false,
-      isUrgent: false
+      isUrgent: false,
+      type: 'policy'
     },
     {
       id: 3,
@@ -93,9 +102,48 @@ export const PersonalizedRecommendationSection: React.FC = () => {
       requirements: ['软件企业认定', '有明确的研发项目', '规范的财务核算'],
       benefits: ['研发费用175%扣除', '降低企业所得税', '提升现金流'],
       isHot: true,
-      isUrgent: false
+      isUrgent: false,
+      type: 'policy'
+    },
+    // 新增服务数据
+    {
+      id: 101,
+      title: '高新技术企业认定全程代办',
+      description: '专业团队提供高新认定辅导，包含材料整理、财务审计、专利申请全流程服务',
+      matchScore: 98,
+      category: '企业服务',
+      deadline: '',
+      maxAmount: 0,
+      difficulty: 'easy',
+      requirements: [],
+      benefits: [],
+      isHot: true,
+      isUrgent: false,
+      type: 'service',
+      provider: '知产无忧服务有限公司',
+      score: 4.9
+    },
+    {
+      id: 102,
+      title: '软件著作权加急登记服务',
+      description: '最快3个工作日下证，专业撰写申请材料，不成功全额退款',
+      matchScore: 90,
+      category: '知识产权',
+      deadline: '',
+      maxAmount: 0,
+      difficulty: 'easy',
+      requirements: [],
+      benefits: [],
+      isHot: false,
+      isUrgent: false,
+      type: 'service',
+      provider: '权大师知识产权代理',
+      score: 4.8
     }
   ]);
+
+  // 根据当前Tab筛选数据
+  const currentList = recommendations.filter(item => item.type === activeTab);
 
   const getDifficultyColor = (difficulty: string) => {
     switch (difficulty) {
@@ -162,14 +210,32 @@ export const PersonalizedRecommendationSection: React.FC = () => {
           title={
             <div style={{ display: 'flex', alignItems: 'center' }}>
               <StarOutlined style={{ color: '#fa8c16', marginRight: '8px' }} />
-              智能推荐 ({recommendations.length})
+              智能推荐 ({currentList.length})
+            </div>
+          }
+          extra={
+            <div style={{ display: 'flex', gap: 8 }}>
+              <Button 
+                size="small" 
+                type={activeTab === 'policy' ? 'primary' : 'default'}
+                onClick={() => setActiveTab('policy')}
+              >
+                匹配政策
+              </Button>
+              <Button 
+                size="small"
+                type={activeTab === 'service' ? 'primary' : 'default'}
+                onClick={() => setActiveTab('service')}
+              >
+                同行服务
+              </Button>
             </div>
           }
           style={{ height: '400px' }}
         >
           <div style={{ height: '320px', overflowY: 'auto' }}>
             <List
-              dataSource={recommendations}
+              dataSource={currentList}
               renderItem={(item) => (
                 <List.Item style={{ padding: '16px 0', borderBottom: '1px solid #f0f0f0' }}>
                   <div style={{ width: '100%' }}>
@@ -208,37 +274,62 @@ export const PersonalizedRecommendationSection: React.FC = () => {
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
                       <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                         <Tag color="blue">{item.category}</Tag>
-                        <Tag color={getDifficultyColor(item.difficulty)}>
-                          {getDifficultyText(item.difficulty)}
-                        </Tag>
-                        {item.maxAmount > 0 && (
-                          <Tag color="gold">
-                            最高{(item.maxAmount / 10000).toFixed(0)}万
-                          </Tag>
+                        {item.type === 'policy' ? (
+                          <>
+                            <Tag color={getDifficultyColor(item.difficulty)}>
+                              {getDifficultyText(item.difficulty)}
+                            </Tag>
+                            {item.maxAmount > 0 && (
+                              <Tag color="gold">
+                                最高{(item.maxAmount / 10000).toFixed(0)}万
+                              </Tag>
+                            )}
+                          </>
+                        ) : (
+                          <>
+                            <Tag color="cyan">{item.provider}</Tag>
+                            <Tag color="orange" icon={<StarOutlined />}>{item.score}</Tag>
+                          </>
                         )}
                       </div>
                       <div style={{ display: 'flex', alignItems: 'center' }}>
-                        <ClockCircleOutlined style={{ color: '#fa8c16', marginRight: '4px' }} />
-                        <Text type="secondary" style={{ fontSize: '12px' }}>
-                          {item.deadline}截止
-                        </Text>
+                        {item.type === 'policy' && (
+                          <>
+                            <ClockCircleOutlined style={{ color: '#fa8c16', marginRight: '4px' }} />
+                            <Text type="secondary" style={{ fontSize: '12px' }}>
+                              {item.deadline}截止
+                            </Text>
+                          </>
+                        )}
                       </div>
                     </div>
 
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                       <div style={{ display: 'flex', gap: '8px' }}>
-                        <ApplyButton 
-                          size="small"
-                          status="in_progress"
-                          onApply={() => navigate(`/application/apply/${item.id}`)}
-                        />
-                        <Button 
-                          size="small"
-                          onClick={() => navigate(`/application/detail/${item.id}`)}
-                        >
-                          查看详情
-                        </Button>
-                        <Tooltip title="收藏此政策">
+                        {item.type === 'policy' ? (
+                          <>
+                            <ApplyButton 
+                              size="small"
+                              status="in_progress"
+                              onApply={() => navigate(`/application/apply/${item.id}`)}
+                            />
+                            <Button 
+                              size="small"
+                              onClick={() => navigate(`/application/detail/${item.id}`)}
+                            >
+                              查看详情
+                            </Button>
+                          </>
+                        ) : (
+                          <Button 
+                            type="primary"
+                            size="small"
+                            onClick={() => message.success('已发起对接请求')}
+                          >
+                            立即对接
+                          </Button>
+                        )}
+                        <Tooltip title="收藏">
                           <Button 
                             size="small" 
                             icon={<HeartOutlined />}

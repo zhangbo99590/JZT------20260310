@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Card, Tabs, List, Tag, Typography, Pagination, Empty, Button } from 'antd';
+import { Card, Tabs, List, Tag, Typography, Pagination, Empty, Button, Space } from 'antd';
 import { FileTextOutlined, AppstoreOutlined, CalendarOutlined, BankOutlined } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
 import HighlightText from '../../../components/common/HighlightText';
@@ -177,17 +177,5 @@ const SmartPolicyResults: React.FC<SmartPolicyResultsProps> = ({
     </div>
   );
 };
-
-// Helper components for icons
-const Divider = ({ type }: { type: 'vertical' | 'horizontal' }) => (
-  <div style={{ 
-    display: 'inline-block', 
-    width: type === 'vertical' ? 1 : '100%', 
-    height: type === 'vertical' ? '1em' : 1, 
-    background: '#e8e8e8',
-    verticalAlign: 'middle',
-    margin: '0 8px'
-  }} />
-);
 
 export default SmartPolicyResults;
