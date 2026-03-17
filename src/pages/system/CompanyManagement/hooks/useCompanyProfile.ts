@@ -3,10 +3,10 @@
  * 创建时间: 2026-01-13
  */
 
-import { useState, useCallback, useEffect } from "react";
+import { useState, useCallback } from "react";
 import { message } from "antd";
-import { useCompanyProfileContext } from "../../../../context/CompanyProfileContext";
-import type { CompanyProfile as ContextCompanyProfile } from "../../../../context/CompanyProfileContext";
+import { useCompanyProfileContext, CompanyProfile as ContextCompanyProfile } from "../../../../context/CompanyProfileContext";
+import { CompanyProfile } from "../types";
 
 // 本地类型定义，扩展 Context 中的类型以包含组件特有的 UI 状态
 export interface UICompanyProfile extends ContextCompanyProfile {
@@ -18,6 +18,9 @@ export interface UICompanyProfile extends ContextCompanyProfile {
     rd: "success" | "syncing" | "failed";
   };
 }
+
+// 导出别名以兼容原有代码
+export type { CompanyProfile };
 
 export const useCompanyProfile = () => {
   const { profile, updateProfile, loading: contextLoading } = useCompanyProfileContext();

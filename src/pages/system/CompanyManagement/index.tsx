@@ -8,7 +8,7 @@ import React from "react";
 import { Row, Col, Typography, Button, Breadcrumb } from "antd";
 import { EditOutlined, BankOutlined } from "@ant-design/icons";
 import { ProfileOverviewCard, ProfileEditModal } from "./components/index.ts";
-import { useCompanyProfile } from "./hooks/useCompanyProfile.ts";
+import { useCompanyProfile, UICompanyProfile, CompanyProfile } from "./hooks/useCompanyProfile.ts";
 
 const { Title, Text } = Typography;
 
@@ -102,15 +102,15 @@ const CompanyManagement: React.FC = () => {
         visible={profileModalVisible}
         editMode={editMode}
         loading={loading}
-        companyProfile={companyProfile}
-        editForm={editForm}
+        companyProfile={companyProfile as unknown as CompanyProfile}
+        editForm={editForm as Partial<CompanyProfile>}
         currentStep={currentStep}
         onClose={handleCloseModal}
         onSave={handleSaveProfile}
         onCancelEdit={handleCancelEdit}
         onEditModeChange={setEditMode}
         onStepChange={setCurrentStep}
-        onFormChange={setEditForm}
+        onFormChange={(form) => setEditForm(form as Partial<UICompanyProfile>)}
       />
     </div>
   );

@@ -72,6 +72,17 @@ export interface CompanyProfile {
   // 荣誉奖项
   awards: string[];
 
+  // 动态画像 (新增)
+  behaviorTags?: string[]; // 行为标签
+  businessStatus?: string[]; // 业务状态
+  
+  // 标签体系 (新增)
+  tags?: {
+    l1: string[]; // 基础标签
+    l2: string[]; // 资质标签
+    l3: string[]; // 意向标签
+  };
+
   // 系统信息
   lastSyncTime: string;
   syncStatus: SyncStatus;

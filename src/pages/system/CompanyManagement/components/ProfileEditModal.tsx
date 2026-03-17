@@ -651,11 +651,11 @@ const ProfileEditModal: React.FC<ProfileEditModalProps> = ({
             </Select>
           ) : (
             <div style={{ marginTop: "4px" }}>
-              {companyProfile.qualifications.map((q, i) => (
+              {companyProfile.qualifications?.map((q, i) => (
                 <Tag key={i} color="blue">
                   {q}
                 </Tag>
-              ))}
+              )) || <Text type="secondary">暂无资质</Text>}
             </div>
           )}
         </Col>
@@ -679,11 +679,11 @@ const ProfileEditModal: React.FC<ProfileEditModalProps> = ({
             </Select>
           ) : (
             <div style={{ marginTop: "4px" }}>
-              {companyProfile.certifications.map((c, i) => (
+              {companyProfile.certifications?.map((c, i) => (
                 <Tag key={i} color="green">
                   {c}
                 </Tag>
-              ))}
+              )) || <Text type="secondary">暂无认证</Text>}
             </div>
           )}
         </Col>
@@ -857,11 +857,134 @@ const ProfileEditModal: React.FC<ProfileEditModalProps> = ({
             />
           ) : (
             <div style={{ marginTop: "4px" }}>
-              {companyProfile.awards.map((a, i) => (
+              {companyProfile.awards?.map((a, i) => (
                 <Tag key={i} color="gold">
                   {a}
                 </Tag>
-              ))}
+              )) || <Text type="secondary">暂无奖项</Text>}
+            </div>
+          )}
+        </Col>
+      </Row>
+    </>
+  );
+
+  // 渲染动态标签步骤 (新增)
+  const renderTagsStep = () => (
+    <>
+      <Divider />
+      <Title level={4}>动态画像标签</Title>
+      <Row gutter={[16, 16]}>
+        <Col span={24}>
+          <Text type="secondary">行为标签 (如：搜索裁员、关注研发补贴)</Text>
+          {editMode ? (
+            <Select
+              mode="tags"
+              value={editForm.behaviorTags}
+              onChange={(value) => onFormChange({ ...editForm, behaviorTags: value })}
+              placeholder="输入或选择行为标签"
+              style={{ width: "100%", marginTop: "4px" }}
+            >
+              <Option value="搜索裁员">搜索裁员</Option>
+              <Option value="关注研发补贴">关注研发补贴</Option>
+              <Option value="高频访问政策库">高频访问政策库</Option>
+            </Select>
+          ) : (
+            <div style={{ marginTop: "4px" }}>
+              {companyProfile.behaviorTags?.map((t, i) => (
+                <Tag key={i} color="geekblue">{t}</Tag>
+              )) || <Text type="secondary">暂无行为标签</Text>}
+            </div>
+          )}
+        </Col>
+        <Col span={24}>
+          <Text type="secondary">业务状态 (如：近期中标、新增专利)</Text>
+          {editMode ? (
+            <Select
+              mode="tags"
+              value={editForm.businessStatus}
+              onChange={(value) => onFormChange({ ...editForm, businessStatus: value })}
+              placeholder="输入或选择业务状态"
+              style={{ width: "100%", marginTop: "4px" }}
+            >
+              <Option value="近期中标">近期中标</Option>
+              <Option value="新增专利">新增专利</Option>
+              <Option value="发生融资">发生融资</Option>
+              <Option value="主要人员变更">主要人员变更</Option>
+            </Select>
+          ) : (
+            <div style={{ marginTop: "4px" }}>
+              {companyProfile.businessStatus?.map((t, i) => (
+                <Tag key={i} color="purple">{t}</Tag>
+              )) || <Text type="secondary">暂无业务状态</Text>}
+            </div>
+          )}
+        </Col>
+      </Row>
+
+      <Divider />
+      <Title level={4}>分层标签体系</Title>
+      <Row gutter={[16, 16]}>
+        <Col span={24}>
+          <Text type="secondary">L1 基础标签 (行业、规模)</Text>
+          {editMode ? (
+            <Select
+              mode="tags"
+              value={editForm.tags?.l1}
+              onChange={(value) => onFormChange({ 
+                ...editForm, 
+                tags: { ...editForm.tags!, l1: value } 
+              })}
+              placeholder="输入基础标签"
+              style={{ width: "100%", marginTop: "4px" }}
+            />
+          ) : (
+            <div style={{ marginTop: "4px" }}>
+              {companyProfile.tags?.l1?.map((t, i) => (
+                <Tag key={i} color="cyan">{t}</Tag>
+              )) || <Text type="secondary">暂无基础标签</Text>}
+            </div>
+          )}
+        </Col>
+        <Col span={24}>
+          <Text type="secondary">L2 资质标签 (高新、专精特新)</Text>
+          {editMode ? (
+            <Select
+              mode="tags"
+              value={editForm.tags?.l2}
+              onChange={(value) => onFormChange({ 
+                ...editForm, 
+                tags: { ...editForm.tags!, l2: value } 
+              })}
+              placeholder="输入资质标签"
+              style={{ width: "100%", marginTop: "4px" }}
+            />
+          ) : (
+            <div style={{ marginTop: "4px" }}>
+              {companyProfile.tags?.l2?.map((t, i) => (
+                <Tag key={i} color="volcano">{t}</Tag>
+              )) || <Text type="secondary">暂无资质标签</Text>}
+            </div>
+          )}
+        </Col>
+        <Col span={24}>
+          <Text type="secondary">L3 意向标签 (融资偏好、采购意向)</Text>
+          {editMode ? (
+            <Select
+              mode="tags"
+              value={editForm.tags?.l3}
+              onChange={(value) => onFormChange({ 
+                ...editForm, 
+                tags: { ...editForm.tags!, l3: value } 
+              })}
+              placeholder="输入意向标签"
+              style={{ width: "100%", marginTop: "4px" }}
+            />
+          ) : (
+            <div style={{ marginTop: "4px" }}>
+              {companyProfile.tags?.l3?.map((t, i) => (
+                <Tag key={i} color="magenta">{t}</Tag>
+              )) || <Text type="secondary">暂无意向标签</Text>}
             </div>
           )}
         </Col>
@@ -890,7 +1013,7 @@ const ProfileEditModal: React.FC<ProfileEditModalProps> = ({
           </Button>
         );
       }
-      if (currentStep < 2) {
+      if (currentStep < 3) {
         buttons.push(
           <Button
             key="next"
@@ -944,6 +1067,7 @@ const ProfileEditModal: React.FC<ProfileEditModalProps> = ({
               { title: "基础信息" },
               { title: "财务信息" },
               { title: "资质信息" },
+              { title: "动态标签" },
             ]}
           />
         )}
@@ -956,6 +1080,9 @@ const ProfileEditModal: React.FC<ProfileEditModalProps> = ({
 
         {/* 步骤3：资质信息 */}
         {(!editMode || currentStep === 2) && renderQualificationStep()}
+        
+        {/* 步骤4：动态标签 */}
+        {(!editMode || currentStep === 3) && renderTagsStep()}
 
         <Divider />
 
